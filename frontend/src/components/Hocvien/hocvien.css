@@ -1,0 +1,750 @@
+/* Reset mặc định */  
+* {  
+  margin: 0;  
+  padding: 0;  
+  box-sizing: border-box;  
+}  
+
+/* Biến màu sắc toàn cục */  
+:root {  
+  --primary-blue: #2563eb;  
+  --secondary-blue: #007bff;  
+  --light-blue: #dbeafe;  
+  --gray-text: #4b5563;  
+  --dark-gray: #1a2526;  
+  --white: #ffffff;  
+}  
+
+body {  
+  font-family: 'Roboto', sans-serif;  
+  background-color: #f5f5f5;  
+}  
+
+.container {  
+  display: flex;  
+  height: 100vh; /* Đảm bảo chiều cao bao quát */  
+}  
+
+/* Sidebar */  
+.sidebar {  
+  width: 250px; /* Width của sidebar */  
+  background-color: #d1e7ff;  
+  padding: 20px;
+  position: fixed; /* Giữ sidebar cố định */  
+  top: 0; /* Đặt vị trí ở trên cùng */  
+  left: 0; /* Đặt vị trí ở bên trái */  
+  height: 100vh; /* Đảm bảo sidebar không bị ngắn */  
+  box-sizing: border-box;  
+}  
+
+.sidebar h2 {  
+  color: #3399ff;  
+  font-size: 30px;
+  margin-bottom: 20px;  
+}  
+
+.sidebar ul {  
+  list-style: none;  
+  padding: 10px;
+}  
+
+.sidebar ul li {  
+  margin-bottom: 20px;  
+  padding: 10px 0px;
+  white-space: nowrap; /* Ensure items do not wrap to the next line */
+}  
+
+.sidebar ul li a {  
+  text-decoration: none;  
+  color: #333;  
+  font-size: 18px;  
+  display: flex;  
+  align-items: center;  
+}  
+
+.sidebar ul li a i {  
+  margin-right: 10px;  
+}  
+
+.sidebar ul li a.active {  
+  color: #3399ff;  
+  font-weight: bold;  
+}  
+
+.sidebar ul li a:hover {  
+  color: #3399ff;  
+}  
+
+.sidebar ul li.logout {  
+  position: absolute;  
+  bottom: 20px;  
+}  
+
+.content {  
+  flex-grow: 1; /* Cho phép content chiếm không gian còn lại */  
+  margin-left: 250px; /* Đảm bảo nội dung không chồng lên sidebar */  
+  padding: 20px;  
+  padding-top: 60px; /* Đảm bảo nội dung không bị che bởi header */  
+}  
+
+/* Header */  
+.header {  
+  background-color: #d1e7ff;  
+  padding:14px 20px;
+  display: flex;  
+  justify-content: space-between;  
+  align-items: center;  
+  border-radius: 0;  
+  position: fixed; /* Tọa độ cố định chứng tỏ thanh header */  
+  top: 0; /* Đặt vị trí ở trên cùng */  
+  right: 0; /* Đảm bảo không có khoảng cách bên phải */  
+  left: 250px; /* Đặt từ vị trí bắt đầu x = 250px để tránh găp sidebar */  
+  width: calc(100% - 250px); /* Tính toán chiều rộng của header */  
+  z-index: 1000;  
+}
+
+.header h1 {  
+  color: #3399ff;  
+  font-size: 24px;  
+}  
+
+.header input {  
+  width: 60%;
+  padding: 10px 20px;
+  border: 1px solid #95bfff;
+  border-radius: 9999px;
+  box-sizing: border-box;
+  margin: 0;
+}  
+
+.header .user-info {  
+  display: flex;  
+  align-items: center;  
+  position: relative;  
+}  
+
+.header .user-info i {  
+  margin-right: 10px;  
+  color: #0080ff;  
+  cursor: pointer; 
+  padding-right:30px;
+  font-size: 22px;
+}  
+
+.header .user-info img {  
+  border-radius: 50%;  
+  width: 40px;  
+  height: 40px;  
+  margin-right: 10px;  
+  cursor: pointer;  
+}  
+
+.header .user-info span {  
+  font-size: 16px;  
+  color: #3399ff;  
+}  
+
+/* Dropdown menu */
+.header .dropdown-menu {  
+  position: absolute;  
+  top: 60px; /* Adjusted to appear below the avatar */
+  right: 12px;
+  background-color: #fff;  
+  border: 1px solid #ccc;  
+  border-radius: 4px;  
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  
+  padding: 10px;  
+  display: flex;  
+  flex-direction: column;  
+  z-index: 1000; /* Ensure it appears above other elements */
+  width: 200px; /* Increase width */
+  border: #8cc5ff;
+}
+
+.header .dropdown-menu button {  
+  background-color: #fffafa;  
+  color: #000000;  
+  border-color:  #8cc5ff;
+  padding: 10px;  
+  margin: 5px 0;  
+  border-radius: 8px;
+  cursor: pointer;  
+  text-align: left; /* Align text to the left */
+  width: 100%; /* Ensure buttons take full width */
+}  
+
+.header .dropdown-menu button:hover {  
+  background-color: #daecff; 
+}
+
+/* Main Content */
+.homestudents-main-content {
+  width: 86%;
+  box-sizing: border-box;
+  overflow-y: auto; /* Ensure vertical scrolling */
+  position: fixed;
+  padding-top: 40px;
+  padding-bottom: 40px; /* Add padding at the bottom for better spacing */
+  height: 100vh; /* Ensure the content takes the full height */
+}
+
+/* Banner */
+.homestudents-banner {
+position: relative;
+height: 246px;
+border-radius: 10px;
+margin-left: 80px;
+margin-right: 80px;
+margin-bottom: 32px;
+overflow: hidden;
+}
+
+.homestudents-banner-image {
+width: 100%;
+height: 100%;
+object-fit: cover;
+transition: opacity 1s ease-in-out;
+}
+
+/* Pagination */
+.homestudents-pagination {
+display: flex;
+justify-content: center;
+gap: 8px;
+margin-bottom: 20px;
+}
+
+.homestudents-pagination div {
+width: 30px;
+height: 8px;
+background: #868686;
+border-radius: 9999px;
+transition: background 0.3s ease;
+}
+
+.homestudents-pagination-buttons {
+display: flex;
+justify-content: center;
+gap: 12px; /* Add spacing between buttons */
+margin-top: 20px;
+padding-bottom: 40px;
+}
+
+.homestudents-pagination-buttons button {
+padding: 8px 16px;
+background: white;
+border: none;
+border-radius: 9999px;
+cursor: pointer;
+transition: background 0.3s ease;
+}
+
+.homestudents-pagination-buttons button.homestudents-active {
+background: #8adaff; /* Change to a different color for the active button */
+}
+
+.homestudents-pagination-buttons button:hover {
+background: #8adaff; /* Change to a different color on hover */
+}
+
+.homestudents-pagination div.homestudents-active {
+background: #1d78ff; /* Change to a different color for the active dot */
+}
+
+/* Course Card */
+.homestudents-course-card {
+background: #cbe2ff;
+padding: 40px;
+border-radius: 10px;
+text-align: center;
+}
+
+.homestudents-course-image {
+width: 100%;
+height: 150px;
+object-fit: cover;
+border-radius: 10px;
+margin-bottom: 16px;
+}
+
+/* Courses Section */  
+.homestudents-courses-header {  
+display: flex;  
+justify-content: space-between;  
+align-items: center;  
+margin-left: 30px;  
+}  
+
+.homestudents-courses-header h2 {  
+font-size: 30px;  
+font-weight: bold;  
+}  
+
+.homestudents-courses-header a {  
+color: #2563eb;  
+}  
+
+.homestudents-course-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr); /* Ensure each row has 4 courses */
+gap: 40px 50px; /* Increase row spacing (40px) and maintain column spacing (50px) */
+padding: 40px;
+}
+
+.homestudents-course-card {
+background: #cbe2ff;
+padding: 40px;
+border-radius: 10px;
+text-align: center;
+}
+
+.homestudents-course-image {
+width: 100%;
+height: 150px;
+object-fit: cover;
+border-radius: 10px;
+margin-bottom: 16px;
+}
+.homestudents-course-card .homestudents-course-header {
+display: flex;
+justify-content: space-between;
+margin-bottom: 8px;
+}
+
+.homestudents-course-card h3 {
+font-size: 18px;
+font-weight: bold;
+margin-bottom: 8px;
+}
+
+.homestudents-course-card p {
+font-size: 14px;
+color: #6b7280;
+}
+
+.homestudents-course-header span {
+display: flex;
+align-items: center;
+gap: 8px;
+}
+
+.homestudents-course-header i {
+color: #2563eb; /* Adjust the color as needed */
+}
+
+/* Additional Styles for Homestudents Section */
+.homestudents-banner-title {
+position: absolute;
+bottom: 20px;
+left: 20px;
+color: var(--white);
+font-size: 24px;
+font-weight: bold;
+background-color: rgba(0, 0, 0, 0.5);
+padding: 10px;
+border-radius: 5px;
+}
+
+.homestudents-banner-description {
+position: absolute;
+bottom: 60px;
+left: 20px;
+color: var(--white);
+font-size: 16px;
+background-color: rgba(0, 0, 0, 0.5);
+padding: 10px;
+border-radius: 5px;
+}
+
+.homestudents-course-button {
+background-color: var(--primary-blue);
+color: var(--white);
+padding: 0.5rem 1rem;
+border-radius: 9999px;
+border: none;
+cursor: pointer;
+margin-top: 1rem;
+transition: background-color 0.3s ease;
+}
+
+.homestudents-course-button:hover {
+background-color: #1d4ed8;
+}
+/*///////////////////////////////////////////////////////////////////////*/
+/* Main Content */
+.mycourse-main-content {
+  width: 86%;
+  box-sizing: border-box;
+  overflow-y: auto; /* Ensure vertical scrolling */
+  position: fixed;
+  padding-top: 40px;
+  padding-bottom: 40px; /* Add padding at the bottom for better spacing */
+  height: 100vh; /* Ensure the content takes the full height */
+}
+
+/* Pagination */
+.mycourse-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.mycourse-pagination div {
+  width: 30px;
+  height: 8px;
+  background: #ffffff;
+  border-radius: 9999px;
+  transition: background 0.3s ease;
+ 
+}
+
+.mycourse-pagination-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* Add spacing between buttons */
+  margin-top: 20px;
+  padding-bottom: 40px;
+}
+
+.mycourse-pagination-buttons button {
+  padding: 8px 16px;
+  background: white;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.mycourse-pagination-buttons button.mycourse-active {
+  background: #8adaff; /* Change to a different color for the active button */
+}
+
+.mycourse-pagination-buttons button:hover {
+  background: #8adaff; /* Change to a different color on hover */
+}
+
+.mycourse-pagination div.mycourse-active {
+  background: #1d78ff; /* Change to a different color for the active dot */
+}
+
+/* Course Card */
+.mycourse-course-card {
+  background: #cbe2ff;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.mycourse-course-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+/* Courses Section */  
+.mycourse-courses-header {  
+  display: flex;  
+  justify-content: space-between;  
+  align-items: center;  
+  margin-left: 30px;  
+}  
+
+.mycourse-courses-header h2 {  
+  font-size: 30px;  
+  font-weight: bold;  
+}  
+
+.mycourse-courses-header a {  
+  color: #2563eb;  
+}  
+
+.mycourse-course-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Ensure each row has 4 courses */
+  gap: 40px 50px; /* Increase row spacing (40px) and maintain column spacing (50px) */
+  padding: 40px;
+}
+
+.mycourse-course-card {
+  background: #cbe2ff;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.mycourse-course-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+.mycourse-course-card .mycourse-course-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.mycourse-course-card h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.mycourse-course-card p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.mycourse-course-header span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mycourse-course-header i {
+  color: #2563eb; /* Adjust the color as needed */
+}
+
+/*-----------------------------------------------------------------------*/
+
+/* Main Content */
+.learningprogress-main-content {
+  width: 84%;
+  box-sizing: border-box;
+  overflow-y: auto;
+  position: fixed;
+  padding-top: 40px;
+  padding-bottom: 40px; /* Add padding at the bottom for better spacing */
+  height: 100vh; /* Ensure the content takes the full height */
+}
+
+/* Pagination */
+.learningprogress-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin-bottom: 20px;
+}
+
+.learningprogress-pagination div {
+  width: 30px;
+  height: 8px;
+  background: #ffffff;
+  border-radius: 9999px;
+  transition: background 0.3s ease;
+}
+
+.learningprogress-pagination-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 12px; /* Add spacing between buttons */
+  margin-top: 20px;
+}
+
+.learningprogress-pagination-buttons button {
+  padding: 8px 16px;
+  background: white;
+  border: none;
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.learningprogress-pagination-buttons button.learningprogress-active {
+  background: #8adaff; /* Change to a different color for the active button */
+}
+
+.learningprogress-pagination-buttons button:hover {
+  background: #8adaff; /* Change to a different color on hover */
+}
+
+.learningprogress-pagination div.learningprogress-active {
+  background: #1d78ff; /* Change to a different color for the active dot */
+}
+
+/* Course Card */
+.learningprogress-course-card {
+  background: #cbe2ff;
+  padding: 40px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.learningprogress-course-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}
+
+/* Courses Section */  
+.learningprogress-courses-header {  
+  display: flex;  
+  justify-content: space-between;  
+  align-items: center;  
+  margin-left: 30px;  
+}  
+
+.learningprogress-courses-header h2 {  
+  font-size: 30px;  
+  font-weight: bold;  
+}  
+
+.learningprogress-courses-header a {  
+  color: #2563eb;  
+}  
+
+.learningprogress-course-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* Ensure each row has 4 courses */
+  gap: 40px 50px; /* Increase row spacing (40px) and maintain column spacing (50px) */
+  padding: 40px;
+}
+
+.learningprogress-course-card .learningprogress-course-header {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.learningprogress-course-card h3 {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.learningprogress-course-card p {
+  font-size: 14px;
+  color: #6b7280;
+}
+
+.learningprogress-course-header span {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.learningprogress-course-header i {
+  color: #2563eb; /* Adjust the color as needed */
+}
+
+/* Progress Bar */
+.learningprogress-progress-bar {
+  width: 100%;
+  background-color: #e0e0e0;
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 10px;
+}
+
+.learningprogress-progress {
+  height: 10px;
+  background-color: #5ff4ff;
+  border-radius: 9999px;
+}
+
+/*----------------------------------------------------------------------------------*/
+.featured-articles {
+  padding: 40px;
+  background-color: #f9f9f9;
+}
+
+.featured-articles h2 {
+  font-size: 30px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.featured-articles p {
+  font-size: 16px;
+  color: #6b7280;
+  margin-bottom: 40px;
+}
+
+.articles-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.article-card {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: relative;
+}
+
+.article-header {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 16px;
+}
+
+.article-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 10px;
+}
+
+.article-author {
+  font-size: 14px;
+  font-weight: bold;
+  color: #2563eb;
+  flex: 1;
+}
+
+.article-ellipsis {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  color: #6b7280;
+}
+
+.article-content {
+  text-align: left;
+  width: 100%;
+}
+
+.article-category {
+  font-size: 14px;
+  color: #2563eb;
+  margin-bottom: 8px;
+}
+
+.article-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.article-description {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 8px;
+}
+
+.article-subject {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 16px;
+}
+
+.article-image {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin-bottom: 16px;
+}

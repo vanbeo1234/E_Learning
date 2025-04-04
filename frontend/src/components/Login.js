@@ -11,7 +11,7 @@ const Login = () => {
 
   const styles = {
     loginHeader: {  
-      backgroundColor: 'rgb(19, 208, 255)',  
+      backgroundColor: 'rgb(128, 229, 255)',  
       padding: '20px',  
       display: 'flex',  
       justifyContent: 'space-between',  
@@ -49,14 +49,15 @@ const Login = () => {
       alignItems: 'center',  
       minHeight: '80vh',  
       backgroundSize: 'cover',  
+      padding: '205px',
     },  
     loginFormContainer: {  
       backgroundColor: '#ffffff',  
-      width: '500px',   
+      width: '550px',   
       maxHeight: '90vh',  
       padding: '50px',  
       border: '1px solid #88d5ff',  
-      boxShadow: '0px 0px 15px rgba(0, 0, 0, 0.1)',  
+      boxShadow: '0px 0px 15px rgba(255, 255, 255, 0.1)',  
       borderRadius: '8px',  
     },  
     loginButtonContainer: {  
@@ -148,7 +149,7 @@ const Login = () => {
               <button style={styles.loginButton}>Đăng nhập</button>        
             </Link>
             <Link to="/signup">
-              <button style={styles.registerButton}>Đăng kí</button>
+              <button style={styles.registerButton}>Đăng ký</button>
             </Link>
           </div>
           <div style={styles.loginInputFields}>  

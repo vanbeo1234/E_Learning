@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocation } from 'react-router-dom';
 
-const Sidebar = () => {
+const Sidebars = () => {
   const location = useLocation();
   const getActivePage = () => {
     const path = location.pathname.slice(1);
@@ -37,4 +37,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Sidebars;
