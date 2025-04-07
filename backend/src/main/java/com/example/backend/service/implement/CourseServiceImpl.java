@@ -10,7 +10,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
-
+/**
+ * Lớp triển khai {@link CourseService} cung cấp các chức năng xử lý liên quan đến khóa học,
+ * bao gồm lấy tất cả khóa học, lấy khóa học theo ID hoặc mã khóa học,
+ * đồng thời tích hợp dữ liệu giảng viên tham gia từng khóa học.
+ *
+ * <p>Lớp này đóng vai trò trung gian giữa lớp Controller và tầng Repository,
+ * thực hiện việc tổng hợp dữ liệu từ nhiều nguồn trước khi trả về client.</p>
+ */
 @Service
 public class CourseServiceImpl implements CourseService {
 
