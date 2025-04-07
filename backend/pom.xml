@@ -63,6 +63,45 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- Add validation -->
+        <dependency>
+             <groupId>javax.validation</groupId>
+             <artifactId>validation-api</artifactId>
+              <version>2.0.1.Final</version>
+        </dependency>
+        <!-- Add -->
+        <dependency>
+            <groupId>jakarta.validation</groupId>
+            <artifactId>jakarta.validation-api</artifactId>
+             <version>3.0.2</version>
+        </dependency>
+        <!-- Add -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+		<!-- Add -->
+		<dependency>
+            <groupId>org.hibernate.validator</groupId>
+            <artifactId>hibernate-validator</artifactId>
+              <version>6.2.0.Final</version> 
+        </dependency>
+		<!-- Add -->
+		<dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>0.11.5</version>
+        </dependency>
+		<!-- JJWT Jackson (hoặc Gson) để xử lý JSON -->
+    <dependency>
+        <groupId>io.jsonwebtoken</groupId>
+        <artifactId>jjwt-jackson</artifactId>
+        <version>0.11.5</version>
+        <scope>runtime</scope>
+    </dependency>
+
+
 	</dependencies>
 
 	<build>
