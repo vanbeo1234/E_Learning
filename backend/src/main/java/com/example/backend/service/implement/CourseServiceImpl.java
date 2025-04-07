@@ -8,7 +8,6 @@ import com.example.backend.repository.CourseRepository;
 import com.example.backend.service.CourseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,34 +24,52 @@ public class CourseServiceImpl implements CourseService {
     public List<CourseResp> getAllCourses() {
         List<Course> courses = courseRepository.findAll();
         return courses.stream()
-                .map(course -> mapToCourseResp(course))
+                .map(course -> {
+                    CourseResp courseResp = mapToCourseResp(course);
+
+                    // Lấy danh sách Instructor theo từng course
+                    List<Instructor> instructorEnrollments = instructorRepository.findByCourseId(course.getId());
+
+                    List<InstructorResp> instructors = instructorEnrollments.stream()
+                            .map(enrollment -> {
+                                InstructorResp instructorResp = new InstructorResp();
+                                instructorResp.setId(enrollment.getInstructor().getId());
+                                instructorResp.setName(enrollment.getInstructor().getName());
+                                return instructorResp;
+                            })
+                            .collect(Collectors.toList());
+
+                    courseResp.setInstructors(instructors);
+
+                    return courseResp;
+                })
                 .collect(Collectors.toList());
     }
 
     @Override
-public CourseResp getCourseById(Long id) {
-    Course course = courseRepository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Course not found"));
+    public CourseResp getCourseById(Long id) {
+        Course course = courseRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
 
-    // Lấy danh sách Instructor (thực ra là InstructorEnrollment)
-    List<Instructor> instructorEnrollments = instructorRepository.findByCourseId(id);
+        // Lấy danh sách Instructor (thực ra là InstructorEnrollment)
+        List<Instructor> instructorEnrollments = instructorRepository.findByCourseId(id);
 
-    // Chuyển sang InstructorResp
-    List<InstructorResp> instructors = instructorEnrollments.stream()
-            .map(instructorEnrollment -> {
-                InstructorResp instructorResp = new InstructorResp();
-                instructorResp.setId(instructorEnrollment.getInstructor().getId());
-                instructorResp.setName(instructorEnrollment.getInstructor().getName());
-                return instructorResp;
-            })
-            .collect(Collectors.toList());
+        // Chuyển sang InstructorResp
+        List<InstructorResp> instructors = instructorEnrollments.stream()
+                .map(instructorEnrollment -> {
+                    InstructorResp instructorResp = new InstructorResp();
+                    instructorResp.setId(instructorEnrollment.getInstructor().getId());
+                    instructorResp.setName(instructorEnrollment.getInstructor().getName());
+                    return instructorResp;
+                })
+                .collect(Collectors.toList());
 
-    // Gán vào CourseResp
-    CourseResp courseResp = mapToCourseResp(course);
-    courseResp.setInstructors(instructors);
+        // Gán vào CourseResp
+        CourseResp courseResp = mapToCourseResp(course);
+        courseResp.setInstructors(instructors);
 
-    return courseResp;
-}
+        return courseResp;
+    }
 
     @Override
     public CourseResp getCourseByCode(String courseCode) {
