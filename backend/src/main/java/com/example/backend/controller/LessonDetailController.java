@@ -1,4 +1,5 @@
 package com.example.backend.controller;
+
 import com.example.backend.dto.request.LessonDetailReq;
 import com.example.backend.dto.request.LessonReorderReq;
 import com.example.backend.dto.response.LessonResp;
@@ -6,6 +7,7 @@ import com.example.backend.service.LessonDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import java.util.List;
 
 /**
  * Controller quản lý các API liên quan đến bài học.
@@ -18,7 +20,6 @@ public class LessonDetailController {
     @Autowired
     private LessonDetailService lessonDetailService;
 
-    
     /**
      * API thêm bài học mới.
      *
@@ -30,7 +31,6 @@ public class LessonDetailController {
         return lessonDetailService.addLesson(request);
     }
 
-
     /**
      * API cập nhật thông tin bài học đã có.
      *
@@ -41,7 +41,7 @@ public class LessonDetailController {
     public LessonResp updateLesson(@RequestBody LessonDetailReq request) {
         return lessonDetailService.updateLesson(request);
     }
-    
+
     /**
      * API sắp xếp lại thứ tự các bài học.
      *
@@ -53,7 +53,7 @@ public class LessonDetailController {
         lessonDetailService.reorderLessons(request);
         return ResponseEntity.ok("Cập nhật thứ tự bài học thành công!");
     }
- 
+
     /**
      * API xóa bài học theo ID.
      *
@@ -64,6 +64,20 @@ public class LessonDetailController {
     public ResponseEntity<String> deleteLesson(@PathVariable Long id) {
         lessonDetailService.deleteLesson(id);
         return ResponseEntity.ok("Xóa bài học thành công!");
+    }
+
+    /**
+     * Đức thêm method này
+     * API lấy danh sách bài giảng theo ID khóa học
+     * 
+     * @param courseId ID của khóa học
+     * @return ResponseEntity chứa danh sách bài giảng sắp xếp theo lessonOrder tăng
+     *         dần
+     */
+    @GetMapping("/course/{courseId}")
+    public ResponseEntity<List<LessonResp>> getLessonsByCourseId(@PathVariable Long courseId) {
+        List<LessonResp> lessons = lessonDetailService.getLessonsByCourseId(courseId);
+        return ResponseEntity.ok(lessons);
     }
 
 }

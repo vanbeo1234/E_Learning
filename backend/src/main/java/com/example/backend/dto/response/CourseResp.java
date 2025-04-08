@@ -1,10 +1,17 @@
 package com.example.backend.dto.response;
 
-import lombok.Data;
-import java.time.LocalDate;
-import java.util.List; // ✅ Phải thêm dòng này
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * Response trả về thông tin khóa học, bao gồm cả giảng viên và danh sách bài
+ * giảng.
+ */
+@Getter
+@Setter
 public class CourseResp {
     private Long id;
     private String courseCode;

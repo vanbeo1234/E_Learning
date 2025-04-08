@@ -2,17 +2,13 @@ package com.example.backend.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
-
 import java.time.LocalDate;
 
 @Getter
 @Setter
-public class CourseReq {
-    private String courseCode;
+public class CourseSearchReq {
     private String courseName;
-    private String description;
-    private int lessonCount;
-    private LocalDate startDate;
-    private LocalDate endDate;
+    private String instructorName;
+    private LocalDate createdDate;
     private String statusCode;
 }

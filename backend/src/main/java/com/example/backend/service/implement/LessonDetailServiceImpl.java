@@ -29,11 +29,13 @@ public class LessonDetailServiceImpl implements LessonDetailService {
     @Autowired
     private CourseRepository courseRepository;
 
-     /**
-     * Chuyển đổi đối tượng LessonDetail sang LessonResp để phản hồi về frontend.
-     *
-     * @param lesson đối tượng bài học
-     * @return đối tượng phản hồi
+    /**
+     * Đức thêm hàm nàynày
+     * Hàm dùng để chuyển đổi từ entity LessonDetail sang DTO LessonResp
+     * phục vụ cho việc trả dữ liệu về frontend theo định dạng chuẩn.
+     * 
+     * @param lesson đối tượng bài học từ DB
+     * @return đối tượng phản hồi DTO gửi về frontend
      */
     private LessonResp mapToResp(LessonDetail lesson) {
         LessonResp resp = new LessonResp();
@@ -45,8 +47,7 @@ public class LessonDetailServiceImpl implements LessonDetailService {
         resp.setResourceLink(lesson.getResourceLink());
         return resp;
     }
-    
-    
+
     /**
      * Thêm mới một bài học vào cơ sở dữ liệu.
      *
@@ -54,35 +55,36 @@ public class LessonDetailServiceImpl implements LessonDetailService {
      * @return đối tượng LessonResp phản hồi sau khi thêm thành công
      */
     @Override
-public LessonResp addLesson(LessonDetailReq request) {
-    Course course = courseRepository.findById(request.getCourseId())
-            .orElseThrow(() -> new RuntimeException("Course not found"));
+    public LessonResp addLesson(LessonDetailReq request) {
+        Course course = courseRepository.findById(request.getCourseId())
+                .orElseThrow(() -> new RuntimeException("Course not found"));
 
-    // Tự động gán lessonOrder nếu null
-    Integer lessonOrder = request.getLessonOrder();
-    if (lessonOrder == null) {
-        List<LessonDetail> existingLessons = lessonDetailRepository.findByCourseOrderByLessonOrderAsc(course);
-        lessonOrder = existingLessons.isEmpty() ? 1 : existingLessons.get(existingLessons.size() - 1).getLessonOrder() + 1;
+        // Tự động gán lessonOrder nếu null
+        Integer lessonOrder = request.getLessonOrder();
+        if (lessonOrder == null) {
+            List<LessonDetail> existingLessons = lessonDetailRepository.findByCourseOrderByLessonOrderAsc(course);
+            lessonOrder = existingLessons.isEmpty() ? 1
+                    : existingLessons.get(existingLessons.size() - 1).getLessonOrder() + 1;
+        }
+
+        // Tự động gán lessonCode nếu không nhập
+        String lessonCode = request.getLessonCode();
+        if (lessonCode == null || lessonCode.trim().isEmpty()) {
+            lessonCode = "COURSE_" + course.getId() + "_L" + lessonOrder;
+        }
+
+        LessonDetail lesson = LessonDetail.builder()
+                .lessonCode(lessonCode)
+                .lessonOrder(lessonOrder)
+                .lessonName(request.getLessonName())
+                .videoLink(request.getVideoLink())
+                .resourceLink(request.getResourceLink())
+                .course(course)
+                .build();
+
+        LessonDetail saved = lessonDetailRepository.save(lesson);
+        return mapToResp(saved);
     }
-
-    // Tự động gán lessonCode nếu không nhập
-    String lessonCode = request.getLessonCode();
-    if (lessonCode == null || lessonCode.trim().isEmpty()) {
-        lessonCode = "COURSE_" + course.getId() + "_L" + lessonOrder;
-    }
-
-    LessonDetail lesson = LessonDetail.builder()
-            .lessonCode(lessonCode)
-            .lessonOrder(lessonOrder)
-            .lessonName(request.getLessonName())
-            .videoLink(request.getVideoLink())
-            .resourceLink(request.getResourceLink())
-            .course(course)
-            .build();
-
-    LessonDetail saved = lessonDetailRepository.save(lesson);
-    return mapToResp(saved);
-}
 
     /**
      * Cập nhật lại thứ tự các bài học dựa trên danh sách ID được gửi từ frontend.
@@ -111,7 +113,7 @@ public LessonResp addLesson(LessonDetailReq request) {
         lessonDetailRepository.saveAll(reordered);
     }
 
-     /**
+    /**
      * Cập nhật thông tin của một bài học đã có.
      *
      * @param request thông tin bài học cần cập nhật
@@ -138,8 +140,6 @@ public LessonResp addLesson(LessonDetailReq request) {
         return mapToResp(updated);
     }
 
-   
-
     /**
      * Xóa bài học theo ID.
      *
@@ -150,5 +150,24 @@ public LessonResp addLesson(LessonDetailReq request) {
         LessonDetail lesson = lessonDetailRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Lesson not found with ID: " + id));
         lessonDetailRepository.delete(lesson);
-}
+    }
+
+    /**
+     * Đức thêm
+     * Lấy danh sách bài giảng theo khóa học, sắp xếp theo lessonOrder tăng dần.
+     * 
+     * @param courseId ID của khóa học
+     * @return Danh sách bài giảng LessonResp
+     */
+    @Override
+    public List<LessonResp> getLessonsByCourseId(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+
+        return lessonDetailRepository.findByCourseOrderByLessonOrderAsc(course)
+                .stream()
+                .map(this::mapToResp)
+                .collect(Collectors.toList());
+    }
+
 }
