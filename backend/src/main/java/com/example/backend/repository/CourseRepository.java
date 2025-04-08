@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface CourseRepository extends JpaRepository<Course, Long> {
     // Có thể thêm các phương thức tìm kiếm, ví dụ theo course code
     Course findByCourseCode(String courseCode);
+    
 }

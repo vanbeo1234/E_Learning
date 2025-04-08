@@ -1,0 +1,154 @@
+package com.example.backend.service.implement;
+
+import com.example.backend.dto.response.LessonResp;
+import com.example.backend.dto.request.LessonDetailReq;
+import com.example.backend.dto.request.LessonReorderReq;
+import com.example.backend.model.Course;
+import com.example.backend.model.LessonDetail;
+import com.example.backend.repository.CourseRepository;
+import com.example.backend.repository.LessonDetailRepository;
+import com.example.backend.service.LessonDetailService;
+
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+/**
+ * Triển khai các nghiệp vụ liên quan đến bài học (LessonDetailService).
+ */
+@Service
+public class LessonDetailServiceImpl implements LessonDetailService {
+
+    @Autowired
+    private LessonDetailRepository lessonDetailRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+     /**
+     * Chuyển đổi đối tượng LessonDetail sang LessonResp để phản hồi về frontend.
+     *
+     * @param lesson đối tượng bài học
+     * @return đối tượng phản hồi
+     */
+    private LessonResp mapToResp(LessonDetail lesson) {
+        LessonResp resp = new LessonResp();
+        resp.setId(lesson.getId());
+        resp.setLessonCode(lesson.getLessonCode());
+        resp.setLessonOrder(lesson.getLessonOrder());
+        resp.setLessonName(lesson.getLessonName());
+        resp.setVideoLink(lesson.getVideoLink());
+        resp.setResourceLink(lesson.getResourceLink());
+        return resp;
+    }
+    
+    
+    /**
+     * Thêm mới một bài học vào cơ sở dữ liệu.
+     *
+     * @param request thông tin bài học cần thêm
+     * @return đối tượng LessonResp phản hồi sau khi thêm thành công
+     */
+    @Override
+public LessonResp addLesson(LessonDetailReq request) {
+    Course course = courseRepository.findById(request.getCourseId())
+            .orElseThrow(() -> new RuntimeException("Course not found"));
+
+    // Tự động gán lessonOrder nếu null
+    Integer lessonOrder = request.getLessonOrder();
+    if (lessonOrder == null) {
+        List<LessonDetail> existingLessons = lessonDetailRepository.findByCourseOrderByLessonOrderAsc(course);
+        lessonOrder = existingLessons.isEmpty() ? 1 : existingLessons.get(existingLessons.size() - 1).getLessonOrder() + 1;
+    }
+
+    // Tự động gán lessonCode nếu không nhập
+    String lessonCode = request.getLessonCode();
+    if (lessonCode == null || lessonCode.trim().isEmpty()) {
+        lessonCode = "COURSE_" + course.getId() + "_L" + lessonOrder;
+    }
+
+    LessonDetail lesson = LessonDetail.builder()
+            .lessonCode(lessonCode)
+            .lessonOrder(lessonOrder)
+            .lessonName(request.getLessonName())
+            .videoLink(request.getVideoLink())
+            .resourceLink(request.getResourceLink())
+            .course(course)
+            .build();
+
+    LessonDetail saved = lessonDetailRepository.save(lesson);
+    return mapToResp(saved);
+}
+
+    /**
+     * Cập nhật lại thứ tự các bài học dựa trên danh sách ID được gửi từ frontend.
+     *
+     * @param request danh sách ID của các bài học theo thứ tự mới
+     */
+    @Override
+    public void reorderLessons(LessonReorderReq request) {
+        List<Long> ids = request.getLessonIds();
+
+        List<LessonDetail> lessons = lessonDetailRepository.findAllById(ids);
+        // Chuyển danh sách thành Map để tra cứu nhanh
+        Map<Long, LessonDetail> lessonMap = lessons.stream()
+                .collect(Collectors.toMap(LessonDetail::getId, l -> l));
+
+        List<LessonDetail> reordered = new ArrayList<>();
+        int order = 1;
+        for (Long id : ids) {
+            LessonDetail lesson = lessonMap.get(id);
+            if (lesson != null) {
+                lesson.setLessonOrder(order++);
+                reordered.add(lesson);
+            }
+        }
+        // Lưu lại danh sách bài học đã cập nhật thứ tự
+        lessonDetailRepository.saveAll(reordered);
+    }
+
+     /**
+     * Cập nhật thông tin của một bài học đã có.
+     *
+     * @param request thông tin bài học cần cập nhật
+     * @return phản hồi chứa thông tin bài học sau khi cập nhật
+     */
+    @Override
+    public LessonResp updateLesson(LessonDetailReq request) {
+        LessonDetail lesson = lessonDetailRepository.findById(request.getId())
+                .orElseThrow(() -> new RuntimeException("Lesson not found"));
+
+        if (request.getCourseId() != null) {
+            Course course = courseRepository.findById(request.getCourseId())
+                    .orElseThrow(() -> new RuntimeException("Course not found"));
+            lesson.setCourse(course);
+        }
+
+        lesson.setLessonCode(request.getLessonCode());
+        lesson.setLessonOrder(request.getLessonOrder());
+        lesson.setLessonName(request.getLessonName());
+        lesson.setVideoLink(request.getVideoLink());
+        lesson.setResourceLink(request.getResourceLink());
+
+        LessonDetail updated = lessonDetailRepository.save(lesson);
+        return mapToResp(updated);
+    }
+
+   
+
+    /**
+     * Xóa bài học theo ID.
+     *
+     * @param id ID của bài học cần xóa
+     */
+    @Override
+    public void deleteLesson(Long id) {
+        LessonDetail lesson = lessonDetailRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Lesson not found with ID: " + id));
+        lessonDetailRepository.delete(lesson);
+}
+}

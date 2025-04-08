@@ -113,6 +113,7 @@ public class CourseServiceImpl implements CourseService {
      * @param course Thực thể khóa học cần chuyển đổi.
      * @return Đối tượng phản hồi chứa thông tin khóa học và danh sách bài học.
      */
+    
     private CourseResp mapToCourseResp(Course course) {
         CourseResp responseDTO = new CourseResp();
         responseDTO.setId(course.getId());
