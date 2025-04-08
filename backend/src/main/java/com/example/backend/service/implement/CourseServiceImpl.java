@@ -1,7 +1,9 @@
 package com.example.backend.service.implement;
 import com.example.backend.repository.InstructorRepository;
+import com.example.backend.repository.LessonDetailRepository;
 import com.example.backend.dto.response.CourseResp;
 import com.example.backend.dto.response.InstructorResp;
+import com.example.backend.dto.response.LessonResp;
 import com.example.backend.model.Course;
 import com.example.backend.model.Instructor;
 import com.example.backend.repository.CourseRepository;
@@ -27,6 +29,14 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private InstructorRepository instructorRepository;
 
+    @Autowired
+    private LessonDetailRepository lessonDetailRepository;
+
+    /**
+     * Lấy danh sách tất cả các khóa học, kèm theo thông tin giảng viên và danh sách bài học.
+     *
+     * @return Danh sách {@link CourseResp} chứa thông tin chi tiết của từng khóa học.
+     */
     @Override
     public List<CourseResp> getAllCourses() {
         List<Course> courses = courseRepository.findAll();
@@ -53,6 +63,13 @@ public class CourseServiceImpl implements CourseService {
                 .collect(Collectors.toList());
     }
 
+     /**
+     * Lấy thông tin một khóa học theo ID, bao gồm cả giảng viên liên quan.
+     *
+     * @param id ID của khóa học cần lấy.
+     * @return {@link CourseResp} chứa thông tin chi tiết của khóa học.
+     * @throws RuntimeException nếu không tìm thấy khóa học.
+     */
     @Override
     public CourseResp getCourseById(Long id) {
         Course course = courseRepository.findById(id)
@@ -78,12 +95,24 @@ public class CourseServiceImpl implements CourseService {
         return courseResp;
     }
 
+     /**
+     * Lấy thông tin một khóa học theo mã khóa học.
+     *
+     * @param courseCode Mã của khóa học.
+     * @return {@link CourseResp} chứa thông tin chi tiết của khóa học.
+     */
     @Override
     public CourseResp getCourseByCode(String courseCode) {
         Course course = courseRepository.findByCourseCode(courseCode);
         return mapToCourseResp(course);
     }
 
+    /**
+     * Chuyển đổi đối tượng {@link Course} sang {@link CourseResp}, bao gồm thông tin bài học.
+     *
+     * @param course Thực thể khóa học cần chuyển đổi.
+     * @return Đối tượng phản hồi chứa thông tin khóa học và danh sách bài học.
+     */
     private CourseResp mapToCourseResp(Course course) {
         CourseResp responseDTO = new CourseResp();
         responseDTO.setId(course.getId());
@@ -94,6 +123,22 @@ public class CourseServiceImpl implements CourseService {
         responseDTO.setStartDate(course.getStartDate());
         responseDTO.setEndDate(course.getEndDate());
         responseDTO.setStatusCode(course.getStatusCode());
+    
+        // Lấy danh sách bài học theo CourseId
+        var lessonEntities = lessonDetailRepository.findByCourseId(course.getId());
+        var lessonDTOs = lessonEntities.stream().map(lesson -> {
+            LessonResp lessonResp = new LessonResp();
+            lessonResp.setId(lesson.getId());
+            lessonResp.setLessonCode(lesson.getLessonCode());
+            lessonResp.setLessonOrder(lesson.getLessonOrder());
+            lessonResp.setLessonName(lesson.getLessonName());
+            lessonResp.setVideoLink(lesson.getVideoLink());
+            lessonResp.setResourceLink(lesson.getResourceLink());
+            return lessonResp;
+        }).collect(Collectors.toList());
+    
+        responseDTO.setLessons(lessonDTOs);
+    
         return responseDTO;
     }
 }
