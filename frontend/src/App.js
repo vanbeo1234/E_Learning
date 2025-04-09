@@ -28,18 +28,13 @@ const App = () => {
 
   return (
     <Router>
- <div className="container">
-        <Sidebar />
-        <div className="content">
-          <Routes>
-            <Route path="/home" element={<><Header title="Trang chủ" isSearch={true} /><Home /></>} />
-            <Route path="/my-course" element={<><Header title="Khóa học của tôi" /><MyCourse /></>} />
-            <Route path="/progress" element={<><Header title="Tiến độ học tập" /><LearningProgress /></>} />
-            <Route path="/article" element={<><Header title="Bài viết" /><Article /></>} />
-            <Route path="/course/:courseId" element={<><Header title="Thông tin khóa học" /><CourseReactJS courses={courses} /></>} />
-            <Route path="/learn1" element={<><Header title="Học ReactJS" /><Learn1 /></>} />
-            <Route path="*" element={<Navigate to="/home" />} />
-          </Routes>
+      <div className="app-container">
+        <Sidebara />
+        <div className="app-content">
+        <Headersa />
+          <div className="main-content">
+            <UserManagement />
+          </div>
         </div>
       </div>
     </Router>
@@ -59,5 +54,15 @@ export default App;
             <Route path="/learn1" element={<><Header title="Học ReactJS" /><Learn1 /></>} />
             <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
+        </div>
+      </div> */
+
+      /**      <div className="app-container">
+        <Headersa />
+        <div className="app-content">
+          <Sidebara />
+          <div className="main-content">
+            <UserManagement />
+          </div>
         </div>
       </div> */
