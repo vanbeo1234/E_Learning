@@ -6,7 +6,7 @@ import lombok.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "COURSE") 
+@Table(name = "COURSE")
 @Getter
 @Setter
 @NoArgsConstructor
@@ -38,5 +38,13 @@ public class Course {
     @Column(name = "STATUS_CODE")
     private String statusCode;
 
-    
+    @Column(name = "LEARNING_OUTCOME")
+    private String learningOutcome;
+
+    @Column(name = "BACKGROUND_IMG")
+    private String backgroundImg;
+
+    @Column(name = "CREATED_BY")
+    private String createdBy;
+
 }
