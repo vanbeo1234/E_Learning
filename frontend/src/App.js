@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 import Login from './components/Login';
-import Singup from './components/Singup';
+import Signup from './components/Singup';
 import Sidebar from './components/Hocvien/Sidebar';
 import Header from './components/Hocvien/Header';
 import Home from './components/Hocvien/Home';
@@ -16,6 +16,8 @@ import Headersa from './components/Admin/Headera';
 import Sidebara from './components/Admin/Sidebara';
 
 const App = () => {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const courses = [
     {
       image: '/logo512.png',
@@ -28,15 +30,24 @@ const App = () => {
 
   return (
     <Router>
-      <div className="app-container">
-        <Sidebara />
-        <div className="app-content">
-        <Headersa />
-          <div className="main-content">
-            <UserManagement />
+      <Routes>
+        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/admin" element={isAuthenticated ? (
+          <div className="app-container">
+            <Sidebara />
+            <div className="app-content">
+              <Headersa />
+              <div className="main-content">
+                <UserManagement />
+              </div>
+            </div>
           </div>
-        </div>
-      </div>
+        ) : (
+          <Navigate to="/login" />
+        )} />
+        <Route path="/" element={<Navigate to="/login" />} />
+      </Routes>
     </Router>
   );
 };
