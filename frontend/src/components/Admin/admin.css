@@ -1,0 +1,619 @@
+/* Reset mặc định */  
+* {  
+    margin: 0;  
+    padding: 0;  
+    box-sizing: border-box;  
+}  
+  
+/* Biến màu sắc toàn cục */  
+:root {  
+    --primary-blue: #2563eb;  
+    --secondary-blue: #007bff;  
+    --light-blue: #dbeafe;  
+    --gray-text: #4b5563;  
+    --dark-gray: #1a2526;  
+    --white: #ffffff;  
+}  
+  
+body {  
+    font-family: 'Roboto', sans-serif;  
+    background-color: #f5f5f5;  
+}  
+  
+.container {  
+    display: flex;  
+    height: 100vh; /* Đảm bảo chiều cao bao quát */  
+}  
+  
+/* Sidebar */  
+.sidebar {  
+    width: 250px; /* Width của sidebar */  
+    background-color: #d1e7ff;  
+    padding: 20px;
+    position: fixed; /* Giữ sidebar cố định */  
+    top: 0; /* Đặt vị trí ở trên cùng */  
+    left: 0; /* Đặt vị trí ở bên trái */  
+    height: 100vh; /* Đảm bảo sidebar không bị ngắn */  
+    box-sizing: border-box;  
+}  
+  
+.sidebar h2 {  
+    color: #3399ff;  
+    font-size: 30px;
+    margin-bottom: 20px;  
+}  
+  
+.sidebar ul {  
+    list-style: none;  
+    padding: 10px;
+}  
+  
+.sidebar ul li {  
+    margin-bottom: 20px;  
+    padding: 10px 0px;
+    white-space: nowrap; /* Ensure items do not wrap to the next line */
+}  
+  
+.sidebar ul li a {  
+    text-decoration: none;  
+    color: #333;  
+    font-size: 18px;  
+    display: flex;  
+    align-items: center;  
+}  
+  
+.sidebar ul li a i {  
+    margin-right: 10px;  
+}  
+  
+.sidebar ul li a.active {  
+    color: #3399ff;  
+    font-weight: bold;  
+}  
+  
+.sidebar ul li a:hover {  
+    color: #3399ff;  
+}  
+  
+.sidebar ul li.logout {  
+    position: absolute;  
+    bottom: 20px;  
+}  
+  
+.content {  
+    flex-grow: 1; /* Cho phép content chiếm không gian còn lại */  
+    margin-left: 250px; /* Đảm bảo nội dung không chồng lên sidebar */  
+    padding: 20px;  
+    padding-top: 40px; /* Đảm bảo nội dung không bị che bởi header */  
+}  
+  
+/* Header */  
+.header {  
+    background-color: #d1e7ff;  
+    padding:14px 20px;
+    display: flex;  
+    justify-content: space-between;  
+    align-items: center;  
+    border-radius: 0;  
+    position: fixed; /* Tọa độ cố định chứng tỏ thanh header */  
+    top: 0; /* Đặt vị trí ở trên cùng */  
+    right: 0; /* Đảm bảo không có khoảng cách bên phải */  
+    left: 250px; /* Đặt từ vị trí bắt đầu x = 250px để tránh găp sidebar */  
+    width: calc(100% - 250px); /* Tính toán chiều rộng của header */  
+    z-index: 1000;  
+}
+  
+.header h1 {  
+    color: #3399ff;  
+    font-size: 24px;  
+}  
+  
+.header input {  
+    width: 60%;
+    padding: 10px 20px;
+    border: 1px solid #95bfff;
+    border-radius: 9999px;
+    box-sizing: border-box;
+    margin: 0;
+}  
+  
+.header .user-info {  
+    display: flex;  
+    align-items: center;  
+    position: relative;  
+}  
+  
+.header .user-info i {  
+    margin-right: 10px;  
+    color: #0080ff;  
+    cursor: pointer; 
+    padding-right:30px;
+    font-size: 22px;
+}  
+  
+.header .user-info img {  
+    border-radius: 50%;  
+    width: 40px;  
+    height: 40px;  
+    margin-right: 10px;  
+    cursor: pointer;  
+}  
+  
+.header .user-info span {  
+    font-size: 16px;  
+    color: #3399ff;  
+}  
+  
+/* Dropdown menu */
+.header .dropdown-menu {  
+    position: absolute;  
+    top: 60px; /* Adjusted to appear below the avatar */
+    right: 12px;
+    background-color: #fff;  
+    border: 1px solid #ccc;  
+    border-radius: 4px;  
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  
+    padding: 10px;  
+    display: flex;  
+    flex-direction: column;  
+    z-index: 1000; /* Ensure it appears above other elements */
+    width: 200px; /* Increase width */
+    border: #8cc5ff;
+}
+  
+.header .dropdown-menu button {  
+    background-color: #fffafa;  
+    color: #000000;  
+    border-color:  #8cc5ff;
+    padding: 10px;  
+    margin: 5px 0;  
+    border-radius: 8px;
+    cursor: pointer;  
+    text-align: left; /* Align text to the left */
+    width: 100%; /* Ensure buttons take full width */
+}  
+  
+.header .dropdown-menu button:hover {  
+    background-color: #daecff; 
+}
+
+
+/* Thẻ chứa nội dung */
+.user-management-card {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-top: 6rem; /* Điều chỉnh cho header cố định */
+    margin-left: 270px; /* Điều chỉnh cho sidebar cố định */
+    width: calc(100% - 290px); /* Điều chỉnh độ rộng để phù hợp với sidebar và header */
+    padding-bottom: 40px;
+}
+
+.user-management-search-form {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.user-management-search-form input,
+.user-management-search-form select {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+}
+
+/* Nút hành động */
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-blue {
+    background-color: #3b82f6;
+}
+
+.btn-green {
+    background-color: #10b981;
+}
+
+.btn-red {
+    background-color: #ef4444;
+}
+
+.btn-yellow {
+    background-color: #f59e0b;
+}
+
+.user-management-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.user-management-action-buttons div {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.icon-edit {
+    color: rgb(255, 196, 0); /* Thay đổi màu của icon thành màu vàng */
+    font-size: 15px; /* Kích thước của icon */
+}
+
+/* Table container with horizontal scrolling and scroll handle */
+.table-container {
+    overflow-x: auto; /* Bật tính năng cuộn ngang */
+    margin-top: 1rem; /* Thêm khoảng cách phía trên bảng */
+    position: relative; /* Định vị cho tay cầm cuộn */
+    padding-bottom: 1rem; /* Khoảng cách phía dưới để hiện thị cuộn */
+}
+
+/* Scroll handle for better horizontal navigation */
+.table-scroll-handle {
+    display: none; /* Ẩn mặc định */
+    position: absolute;
+    bottom: 0; /* Căn chỉnh ở đáy của container */
+    left: 0;
+    width: 100%;
+    height: 8px; /* Tay cầm cuộn mỏng */
+    background-color: #e5e7eb; /* Nền màu xám nhạt */
+    cursor: pointer;
+    border-radius: 4px; /* Góc tròn cho tay cầm */
+}
+
+.table-container:hover .table-scroll-handle {
+    display: block; /* Hiện tay cầm cuộn khi hover */
+}
+
+.table-scroll-handle:hover {
+    background-color: #9ca3af; /* Màu tối hơn khi hover */
+}
+
+/* Điều chỉnh cho bảng */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px; /* Đảm bảo cuộn ngang cho màn hình nhỏ hơn */
+}
+
+th, td {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #e6e6e6;
+    text-align: left;
+}
+
+td:hover {
+    background-color: #f3f4f6; /* Hiệu ứng hover cho hàng */
+}
+
+/* Căn chỉnh cột checkbox cho khoảng cách tốt hơn */
+th:first-child, td:first-child {
+    width: 50px;
+    text-align: center;
+}
+
+/* Phân trang */
+.user-management-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.user-management-pagination select {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    color: #4b5563;
+    font-size: 1rem;
+}
+
+.pagination-buttons {
+    display: flex;
+    justify-content: center; /* Căn giữa các nút phân trang */
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.pagination-buttons button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    background-color: #fff;
+    color: #4b5563;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-buttons button:hover {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+.pagination-buttons button:first-child {
+    border-radius: 0.25rem 0 0 0.25rem;
+}
+
+.pagination-buttons button:last-child {
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+/* CSS cho cửa sổ bật lên (modal) */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal-content {
+    background-color: white;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 42rem;
+    position: relative;
+}
+
+.modal-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #4b5563;
+}
+
+.modal-h2 {
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #3b82f6;
+    margin-bottom: 1.5rem;
+}
+
+.modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.modal-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+@media (min-width: 768px) {
+    .modal-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+.modal-label {  
+    display: block; /* Đảm bảo label chiếm toàn bộ chiều rộng của phần tử chứa nó */  
+    width: 200px;  /* Tăng chiều rộng của label theo nhu cầu */  
+    font-size: 1rem;  
+    font-weight: 500;  
+    color: #4b5563;  
+    padding-left: 5px;  
+}  
+
+.modal-required {
+    color: #ef4444;
+}
+
+.modal-input, .modal-select {
+    margin-top: 0.25rem;
+    width: 100%;
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    padding: 0.5rem;
+    box-sizing: border-box;
+}
+
+.modal-flex {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.modal-phone-input {
+    display: flex;
+}
+
+.modal-phone-input .modal-select {
+    border-radius: 0.375rem 0 0 0.375rem;
+    width: auto;
+}
+
+.modal-phone-input .modal-input {
+    border-radius: 0 0.375rem 0.375rem 0;
+    flex-grow: 1;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 1.5rem;
+}
+
+.modal-button-submit {
+    background-color: #3b82f6;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-button-reset {
+    background-color: #ef4444;
+    color: white;
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: none;
+    cursor: pointer;
+}
+
+/* Style cho popup xác nhận */
+.confirm-modal-content {
+    max-width: 20rem; /* Thu nhỏ kích thước */
+    padding: 1.5rem; /* Giảm padding */
+    text-align: center;
+    border-radius: 0.25rem; /* Bo góc nhẹ hơn */
+}
+
+.confirm-modal-content .modal-h2 {
+    font-size: 1.25rem; /* Thu nhỏ tiêu đề */
+    margin-bottom: 1rem;
+}
+
+.confirm-modal-content .modal-buttons {
+    justify-content: center; /* Căn giữa các nút */
+    gap: 1rem; /* Tăng khoảng cách giữa các nút */
+}
+
+.confirm-modal-content .modal-button-submit,
+.confirm-modal-content .modal-button-reset {
+    padding: 0.5rem 1.5rem; /* Thu nhỏ nút */
+    font-size: 0.875rem; /* Thu nhỏ chữ trên nút */
+}
+
+.confirm-modal-content .modal-close-btn {
+    display: none; /* Ẩn nút đóng */
+}
+
+/* CSS cho cửa sổ bật lên chỉnh sửa người dùng */
+.edit-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.edit-container {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 600px;
+    position: relative;
+}
+
+.edit-close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #4b5563;
+}
+
+.edit-container h2 {
+    text-align: center;
+    color: #2196F3;
+}
+
+.edit-form-group {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.edit-form-group label {
+    width: 30%;
+    align-self: center;
+}
+
+.edit-form-group input,
+.edit-form-group select {
+    width: 65%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.edit-form-group .edit-certifications {
+    display: flex;
+    align-items: center;
+}
+
+.edit-form-group .edit-certifications span {
+    margin-right: 10px;
+    display: flex;
+    align-items: center;
+    background-color: #f0f0f0;
+    padding: 3px 8px;
+    border-radius: 4px;
+}
+
+.edit-form-group .edit-certifications span .edit-remove {
+    margin-left: 5px;
+    color: red;
+    cursor: pointer;
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+    text-align: center;
+    line-height: 14px;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.edit-form-group .edit-certifications .edit-add-cert {
+    color: green;
+    cursor: pointer;
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    text-align: center;
+    line-height: 18px;
+    border-radius: 50%;
+    background-color: #fff;
+}
+
+.edit-buttons {
+    text-align: center;
+}
+
+.edit-buttons button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    margin: 0 10px;
+}
+
+.edit-buttons .edit-update {
+    background-color: #2196F3; /* Màu cho nút cập nhật */
+}
+
+.edit-buttons .edit-cancel {
+    background-color: #f44336; /* Màu cho nút hủy bỏ */
+}
