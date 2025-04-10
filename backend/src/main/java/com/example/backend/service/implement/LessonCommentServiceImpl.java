@@ -19,114 +19,132 @@ import java.util.stream.Collectors;
 public class LessonCommentServiceImpl implements LessonCommentService {
 
     private final LessonCommentRepository commentRepository;
-    private final UserRepository userRepository;       // 👈 thêm
-    private final CourseRepository courseRepository;   // 👈 thêm
+    private final UserRepository userRepository;
+    private final CourseRepository courseRepository;
+
+    /**
+     * Lấy tất cả bình luận liên quan đến một khóa học cụ thể theo mã khóa học.
+     * Mỗi bình luận sẽ bao gồm cả tên người gửi và tên khóa học để tiện cho việc hiển thị phía client.
+     */
     @Override
-public List<LessonCommentResp> getCommentsByCourseId(String courseCode) {
-    List<LessonComment> comments = commentRepository.findByCourseCode(courseCode);
+    public List<LessonCommentResp> getCommentsByCourseId(String courseCode) {
+        List<LessonComment> comments = commentRepository.findByCourseCode(courseCode);
 
-    // Lấy tên khóa học một lần thôi cho đỡ tốn truy vấn
-    String courseName = courseRepository.findByCourseCode(courseCode)
-            .map(course -> course.getCourseName())
-            .orElse("Unknown");
+        // Lấy tên khóa học một lần để dùng chung cho tất cả bình luận
+        String courseName = courseRepository.findByCourseCode(courseCode)
+                .map(course -> course.getCourseName())
+                .orElse("Unknown");
 
-    return comments.stream().map(comment -> {
-        String senderName = userRepository.findByUserCode(comment.getSendUserId())
+        // Duyệt qua các comment và chuyển thành dạng DTO kèm tên người gửi và tên khóa học
+        return comments.stream().map(comment -> {
+            String senderName = userRepository.findByUserCode(comment.getSendUserId())
+                    .map(user -> user.getName())
+                    .orElse("Unknown");
+
+            return LessonCommentResp.builder()
+                    .lessonId(comment.getLessonId())
+                    .senderCode(comment.getSendUserId())
+                    .senderName(senderName)
+                    .message(comment.getMessage())
+                    .commentTime(comment.getCommentTime())
+                    .courseName(courseName)
+                    .build();
+        }).collect(Collectors.toList());
+    }
+
+
+    /**
+     * Lấy bình luận mới nhất của từng khóa học (mỗi khóa 1 comment).
+     * Có thể lọc thêm theo tên người gửi, tên khóa học hoặc ngày gửi bình luận.
+     */
+    @Override
+    public List<LessonCommentResp> getLastCommentsEachCourse(String senderName, String courseName, String commentDate) {
+        List<LessonComment> lastComments = commentRepository.findLastCommentsPerCourse();
+
+        return lastComments.stream()
+                .filter(comment -> {
+                    boolean matchSender = true;
+                    boolean matchCourse = true;
+                    boolean matchDate = true;
+
+                    // Kiểm tra tên người gửi có khớp không (nếu có truyền vào)
+                    if (senderName != null && !senderName.isEmpty()) {
+                        matchSender = userRepository.findByUserCode(comment.getSendUserId())
+                                .map(user -> user.getName().toLowerCase().contains(senderName.toLowerCase()))
+                                .orElse(false);
+                    }
+
+                    // Kiểm tra tên khóa học có khớp không (nếu có truyền vào)
+                    if (courseName != null && !courseName.isEmpty()) {
+                        matchCourse = courseRepository.findByCourseCode(comment.getCourseCode())
+                                .map(course -> course.getCourseName().toLowerCase().contains(courseName.toLowerCase()))
+                                .orElse(false);
+                    }
+
+                    // Kiểm tra ngày gửi bình luận có khớp không (nếu có truyền vào)
+                    if (commentDate != null && !commentDate.isEmpty()) {
+                        matchDate = comment.getCommentTime().toLocalDate().toString().equals(commentDate);
+                    }
+
+                    return matchSender && matchCourse && matchDate;
+                })
+                .map(comment -> {
+                    String sender = userRepository.findByUserCode(comment.getSendUserId())
+                            .map(user -> user.getName())
+                            .orElse("Unknown");
+
+                    String course = courseRepository.findByCourseCode(comment.getCourseCode())
+                            .map(c -> c.getCourseName())
+                            .orElse("Unknown");
+
+                    return LessonCommentResp.builder()
+                            .lessonId(comment.getLessonId())
+                            .senderCode(comment.getSendUserId())
+                            .senderName(sender)
+                            .message(comment.getMessage())
+                            .commentTime(comment.getCommentTime())
+                            .courseName(course)
+                            .build();
+                })
+                .collect(Collectors.toList());
+    }
+
+
+    /**
+     * Tạo một bình luận mới cho bài học.
+     * Sau khi lưu, trả về DTO của bình luận đã lưu kèm tên người gửi và tên khóa học.
+     */
+    @Override
+    public LessonCommentResp addComment(CreateCommentReq request) {
+        LessonComment comment = LessonComment.builder()
+                .courseCode(request.getCourseCode())
+                .lessonId(request.getLessonId())
+                .sendUserId(request.getSendUserId())
+                .message(request.getMessage())
+                .commentTime(LocalDateTime.now())
+                .build();
+
+        // Lưu bình luận vào cơ sở dữ liệu
+        LessonComment saved = commentRepository.save(comment);
+
+        // Lấy tên người gửi
+        String senderName = userRepository.findByUserCode(saved.getSendUserId())
                 .map(user -> user.getName())
                 .orElse("Unknown");
 
+        // Lấy tên khóa học
+        String courseName = courseRepository.findByCourseCode(saved.getCourseCode())
+                .map(course -> course.getCourseName())
+                .orElse("Unknown");
+
+        // Trả về thông tin bình luận dưới dạng DTO
         return LessonCommentResp.builder()
-                .lessonId(comment.getLessonId())
-                .senderCode(comment.getSendUserId())
+                .lessonId(saved.getLessonId())
+                .senderCode(saved.getSendUserId())
                 .senderName(senderName)
-                .message(comment.getMessage())
-                .commentTime(comment.getCommentTime())
-                .courseName(courseName) // 👈 Thêm tên khóa học vào đây
+                .message(saved.getMessage())
+                .commentTime(saved.getCommentTime())
+                .courseName(courseName)
                 .build();
-    }).collect(Collectors.toList());
-}
-
-
-@Override
-public List<LessonCommentResp> getLastCommentsEachCourse(String senderName, String courseName, String commentDate) {
-    List<LessonComment> lastComments = commentRepository.findLastCommentsPerCourse();
-
-    return lastComments.stream()
-            .filter(comment -> {
-                boolean matchSender = true;
-                boolean matchCourse = true;
-                boolean matchDate = true;
-
-                if (senderName != null && !senderName.isEmpty()) {
-                    matchSender = userRepository.findByUserCode(comment.getSendUserId())
-                            .map(user -> user.getName().toLowerCase().contains(senderName.toLowerCase()))
-                            .orElse(false);
-                }
-
-                if (courseName != null && !courseName.isEmpty()) {
-                    matchCourse = courseRepository.findByCourseCode(comment.getCourseCode())
-                            .map(course -> course.getCourseName().toLowerCase().contains(courseName.toLowerCase()))
-                            .orElse(false);
-                }
-
-                if (commentDate != null && !commentDate.isEmpty()) {
-                    matchDate = comment.getCommentTime().toLocalDate().toString().equals(commentDate);
-                }
-
-                return matchSender && matchCourse && matchDate;
-            })
-            .map(comment -> {
-                String sender = userRepository.findByUserCode(comment.getSendUserId())
-                        .map(user -> user.getName())
-                        .orElse("Unknown");
-
-                String course = courseRepository.findByCourseCode(comment.getCourseCode())
-                        .map(c -> c.getCourseName())
-                        .orElse("Unknown");
-
-                return LessonCommentResp.builder()
-                        .lessonId(comment.getLessonId())
-                        .senderCode(comment.getSendUserId())
-                        .senderName(sender)
-                        .message(comment.getMessage())
-                        .commentTime(comment.getCommentTime())
-                        .courseName(course)
-                        .build();
-            })
-            .collect(Collectors.toList());
-}
-
-
-    @Override
-public LessonCommentResp addComment(CreateCommentReq request) {
-    LessonComment comment = LessonComment.builder()
-            .courseCode(request.getCourseCode())
-            .lessonId(request.getLessonId())  // Có thể null
-            .sendUserId(request.getSendUserId())
-            .message(request.getMessage())
-            .commentTime(LocalDateTime.now())
-            .build();
-
-    LessonComment saved = commentRepository.save(comment);
-
-    // Lấy tên người gửi
-    String senderName = userRepository.findByUserCode(saved.getSendUserId())
-            .map(user -> user.getName())
-            .orElse("Unknown");
-
-    // Lấy tên khóa học
-    String courseName = courseRepository.findByCourseCode(saved.getCourseCode())
-            .map(course -> course.getCourseName())
-            .orElse("Unknown");
-
-    return LessonCommentResp.builder()
-            .lessonId(saved.getLessonId())
-            .senderCode(saved.getSendUserId())
-            .senderName(senderName)
-            .message(saved.getMessage())
-            .commentTime(saved.getCommentTime())
-            .courseName(courseName)
-            .build();
-}
-
+    }
 }

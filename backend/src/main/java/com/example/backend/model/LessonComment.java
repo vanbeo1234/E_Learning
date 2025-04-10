@@ -5,6 +5,10 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
+/**
+ * Entity đại diện cho bảng lesson_comment trong cơ sở dữ liệu.
+ * Lưu trữ các bình luận của người dùng gửi trong từng bài học của một khóa học cụ thể.
+ */
 @Entity
 @Table(name = "lesson_comment")
 @Getter
