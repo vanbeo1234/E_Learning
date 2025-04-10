@@ -7,7 +7,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "lesson_comment")
-@Data
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -17,7 +18,7 @@ public class LessonComment {
     private Integer id;
 
     @Column(name = "course_code")
-    private Integer courseCode;
+    private String courseCode;
 
     @Column(name = "lesson_id")
     private Integer lessonId;

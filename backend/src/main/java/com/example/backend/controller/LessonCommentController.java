@@ -1,8 +1,7 @@
 package com.example.backend.controller;
 
-import com.example.backend.dto.request.CreateCommentRequest;
+import com.example.backend.dto.request.CreateCommentReq;
 import com.example.backend.dto.response.LessonCommentResp;
-import com.example.backend.model.LessonComment;
 import com.example.backend.service.LessonCommentService;
 import lombok.RequiredArgsConstructor;
 
@@ -19,17 +18,25 @@ public class LessonCommentController {
 
     private final LessonCommentService commentService;
 
-    @GetMapping("/course/{courseId}")
-    public List<LessonCommentResp> getCommentsByCourse(@PathVariable Integer courseId) {
-        return commentService.getCommentsByCourseId(courseId);
+    @GetMapping("/course/{courseCode}")
+    public List<LessonCommentResp> getCommentsByCourse(@PathVariable String courseCode) {
+        return commentService.getCommentsByCourseId(courseCode);
     }
     @GetMapping("/latest-by-course")
-    public ResponseEntity<List<LessonCommentResp>> getLastCommentsEachCourse() {
-        return ResponseEntity.ok(commentService.getLastCommentsEachCourse());
+    public ResponseEntity<List<LessonCommentResp>> getLastCommentsEachCourse(
+            @RequestParam(required = false) String senderName,
+            @RequestParam(required = false) String courseName,
+            @RequestParam(required = false) String commentDate
+    ) {
+        return ResponseEntity.ok(
+                commentService.getLastCommentsEachCourse(senderName, courseName, commentDate)
+        );
     }
+
     @PostMapping
-    public ResponseEntity<LessonComment> createComment(@RequestBody CreateCommentRequest request) {
-        LessonComment savedComment = commentService.addComment(request);
+    public ResponseEntity<LessonCommentResp> createComment(@RequestBody CreateCommentReq request) {
+        LessonCommentResp savedComment = commentService.addComment(request);
         return ResponseEntity.ok(savedComment);
-}
+    }
+
 }

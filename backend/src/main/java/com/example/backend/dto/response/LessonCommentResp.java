@@ -3,13 +3,16 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-@Data
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class LessonCommentResp {
     private Integer lessonId;
     private String senderCode;
+    private String senderName;
     private String message;
     private LocalDateTime commentTime;
+    private String courseName;
 }
