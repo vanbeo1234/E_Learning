@@ -186,14 +186,14 @@ body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     margin-top: 6rem; /* Điều chỉnh cho header cố định */
     margin-left: 270px; /* Điều chỉnh cho sidebar cố định */
-    width: calc(100% - 290px); /* Điều chỉnh độ rộng để phù hợp với sidebar và header */
+    width: calc(100% - 300px); /* Điều chỉnh độ rộng để phù hợp với sidebar và header */
     padding-bottom: 40px;
 }
 
 .user-management-search-form {
     display: grid;
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
+    grid-template-columns: auto auto auto auto auto; /* Điều chỉnh để các mục nằm trên một dòng */
+    gap: 1rem; /* Giảm khoảng cách giữa các mục */
     margin-bottom: 1rem;
     width: 100%;
 }
@@ -203,6 +203,12 @@ body {
     padding: 0.5rem;
     border: 1px solid #d1d5db;
     border-radius: 0.25rem;
+}
+
+.user-management-search-form label {
+    align-self: center;
+    font-weight: bold;
+    margin-right: 1rem; /* Giảm khoảng cách giữa nhãn và mục chọn */
 }
 
 /* Nút hành động */
@@ -243,7 +249,7 @@ body {
 }
 
 .icon-edit {
-    color: rgb(255, 196, 0); /* Thay đổi màu của icon thành màu vàng */
+    color: rgb(24, 182, 255); /* Thay đổi màu của icon thành màu vàng */
     font-size: 15px; /* Kích thước của icon */
 }
 
@@ -348,272 +354,475 @@ th:first-child, td:first-child {
 }
 
 /* CSS cho cửa sổ bật lên (modal) */
+/* Add User Modal CSS */
+/* Modal common styles */
 .modal {
-    display: none;
     position: fixed;
-    top: 0;
+    z-index: 1000; /* Ensure it overlays other content */
     left: 0;
+    top: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto;
+    background-color: rgba(0,0,0,0.4); /* Semi-transparent background */
+    display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000;
+    font-family: Arial, sans-serif;
 }
 
 .modal-content {
-    background-color: white;
+    background-color: #ffffff;
     padding: 2rem;
     border-radius: 0.5rem;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     width: 100%;
-    max-width: 42rem;
-    position: relative;
+    max-width: 800px;
 }
 
 .modal-close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5rem;
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.modal-close-btn:hover,
+.modal-close-btn:focus {
+    color: black;
+    text-decoration: none;
     cursor: pointer;
-    color: #4b5563;
 }
 
 .modal-h2 {
     text-align: center;
+    color: #3b82f6;
     font-size: 1.5rem;
     font-weight: bold;
-    color: #3b82f6;
     margin-bottom: 1.5rem;
 }
 
 .modal-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
 }
 
 .modal-grid {
     display: grid;
-    grid-template-columns: 1fr;
-    gap: 2rem;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
 }
 
-@media (min-width: 768px) {
-    .modal-grid {
-        grid-template-columns: 1fr 1fr;
-    }
+.modal-grid div {
+    display: flex;
+    flex-direction: column;
 }
 
-.modal-label {  
-    display: block; /* Đảm bảo label chiếm toàn bộ chiều rộng của phần tử chứa nó */  
-    width: 200px;  /* Tăng chiều rộng của label theo nhu cầu */  
-    font-size: 1rem;  
-    font-weight: 500;  
-    color: #4b5563;  
-    padding-left: 5px;  
-}  
-
-.modal-required {
-    color: #ef4444;
+.modal-grid label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
 }
 
-.modal-input, .modal-select {
-    margin-top: 0.25rem;
-    width: 100%;
+.modal-grid input,
+.modal-grid select {
     border: 1px solid #d1d5db;
     border-radius: 0.375rem;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     padding: 0.5rem;
-    box-sizing: border-box;
 }
 
-.modal-flex {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.modal-phone-input {
-    display: flex;
-}
-
-.modal-phone-input .modal-select {
-    border-radius: 0.375rem 0 0 0.375rem;
-    width: auto;
-}
-
-.modal-phone-input .modal-input {
-    border-radius: 0 0.375rem 0.375rem 0;
-    flex-grow: 1;
+.modal-grid input[type="radio"] {
+    margin-right: 10px;
 }
 
 .modal-buttons {
     display: flex;
     justify-content: flex-end;
-    gap: 0.5rem;
     margin-top: 1.5rem;
+    gap: 1rem;
 }
 
 .modal-button-submit {
     background-color: #3b82f6;
-    color: white;
+    color: #ffffff;
     padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
     border: none;
+    border-radius: 0.375rem;
     cursor: pointer;
 }
 
 .modal-button-reset {
     background-color: #ef4444;
-    color: white;
+    color: #ffffff;
     padding: 0.5rem 1rem;
-    border-radius: 0.375rem;
     border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    gap: 1rem;
+}
+
+.modal-button-submit {
+    background-color: #3b82f6;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
     cursor: pointer;
 }
 
-/* Style cho popup xác nhận */
-.confirm-modal-content {
-    max-width: 20rem; /* Thu nhỏ kích thước */
-    padding: 1.5rem; /* Giảm padding */
-    text-align: center;
-    border-radius: 0.25rem; /* Bo góc nhẹ hơn */
+.modal-button-reset {
+    background-color: #ef4444;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
 }
 
-.confirm-modal-content .modal-h2 {
-    font-size: 1.25rem; /* Thu nhỏ tiêu đề */
+/* Edit User Modal CSS */
+.edit-modal {
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.edit-modal-content {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+}
+
+.edit-modal-close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.edit-modal-close-btn:hover,
+.edit-modal-close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.edit-modal-h2 {
+    text-align: center;
+    color: #3b82f6;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.edit-modal-form {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-modal-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+}
+
+.edit-modal-grid div {
+    display: flex;
+    flex-direction: column;
+}
+
+.edit-modal-grid label {
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+}
+
+.edit-modal-grid input,
+.edit-modal-grid select {
+    border: 1px solid #d1d5db;
+    border-radius: 0.375rem;
+    padding: 0.5rem;
+}
+
+.edit-modal-grid input[type="radio"] {
+    margin-right: 10px;
+}
+
+.edit-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    gap: 1rem;
+}
+
+.edit-modal-button-submit {
+    background-color: #3b82f6;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+.edit-modal-button-reset {
+    background-color: #ef4444;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+/* Confirmation Modal CSS */
+.confirm-modal {
+    background-color: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+.confirm-modal-content {
+    background-color: #ffffff;
+    padding: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 800px;
+}
+
+.confirm-modal-close-btn {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.confirm-modal-close-btn:hover,
+.confirm-modal-close-btn:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.confirm-modal-h2 {
+    text-align: center;
+    color: #3b82f6;
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1.5rem;
+}
+
+.confirm-modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 1.5rem;
+    gap: 1rem;
+}
+
+.confirm-modal-button-submit {
+    background-color: #3b82f6;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+.confirm-modal-button-reset {
+    background-color: #ef4444;
+    color: #ffffff;
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.375rem;
+    cursor: pointer;
+}
+
+
+
+/*------------------------------------------------*/
+/* Thẻ chứa nội dung */
+.course-management-card {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-top: 6rem; /* Điều chỉnh cho header cố định */
+    margin-left: 270px; /* Điều chỉnh cho sidebar cố định */
+    width: calc(100% - 300px); /* Điều chỉnh độ rộng để phù hợp với sidebar và header */
+    padding-bottom: 40px;
+}
+
+.course-management-search-form {
+    display: grid;
+    grid-template-columns: auto auto auto auto auto; /* Điều chỉnh để các mục nằm trên một dòng */
+    gap: 1rem; /* Giảm khoảng cách giữa các mục */
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.course-management-search-form input,
+.course-management-search-form select {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+}
+
+.course-management-search-form label {
+    align-self: center;
+    font-weight: bold;
+    margin-right: 1rem; /* Giảm khoảng cách giữa nhãn và mục chọn */
+}
+
+/* Nút hành động */
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-blue {
+    background-color: #3b82f6;
+}
+
+.btn-green {
+    background-color: #10b981;
+}
+
+.btn-red {
+    background-color: #ef4444;
+}
+
+.btn-yellow {
+    background-color: #f59e0b;
+}
+
+.course-management-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
     margin-bottom: 1rem;
 }
 
-.confirm-modal-content .modal-buttons {
-    justify-content: center; /* Căn giữa các nút */
-    gap: 1rem; /* Tăng khoảng cách giữa các nút */
+.course-management-action-buttons div {
+    display: flex;
+    gap: 0.5rem;
 }
 
-.confirm-modal-content .modal-button-submit,
-.confirm-modal-content .modal-button-reset {
-    padding: 0.5rem 1.5rem; /* Thu nhỏ nút */
-    font-size: 0.875rem; /* Thu nhỏ chữ trên nút */
+.icon-edit {
+    color: rgb(24, 182, 255); /* Thay đổi màu của icon thành màu vàng */
+    font-size: 15px; /* Kích thước của icon */
 }
 
-.confirm-modal-content .modal-close-btn {
-    display: none; /* Ẩn nút đóng */
+/* Table container with horizontal scrolling and scroll handle */
+.table-container {
+    overflow-x: auto; /* Bật tính năng cuộn ngang */
+    margin-top: 1rem; /* Thêm khoảng cách phía trên bảng */
+    position: relative; /* Định vị cho tay cầm cuộn */
+    padding-bottom: 1rem; /* Khoảng cách phía dưới để hiện thị cuộn */
 }
 
-/* CSS cho cửa sổ bật lên chỉnh sửa người dùng */
-.edit-modal {
-    display: none;
-    position: fixed;
-    top: 0;
+/* Scroll handle for better horizontal navigation */
+.table-scroll-handle {
+    display: none; /* Ẩn mặc định */
+    position: absolute;
+    bottom: 0; /* Căn chỉnh ở đáy của container */
     left: 0;
     width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.edit-container {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    width: 600px;
-    position: relative;
-}
-
-.edit-close-btn {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 1.5rem;
+    height: 8px; /* Tay cầm cuộn mỏng */
+    background-color: #e5e7eb; /* Nền màu xám nhạt */
     cursor: pointer;
-    color: #4b5563;
+    border-radius: 4px; /* Góc tròn cho tay cầm */
 }
 
-.edit-container h2 {
+.table-container:hover .table-scroll-handle {
+    display: block; /* Hiện tay cầm cuộn khi hover */
+}
+
+.table-scroll-handle:hover {
+    background-color: #9ca3af; /* Màu tối hơn khi hover */
+}
+
+/* Điều chỉnh cho bảng */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 1200px; /* Đảm bảo cuộn ngang cho màn hình nhỏ hơn */
+}
+
+th, td {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #e6e6e6;
+    text-align: left;
+}
+
+td:hover {
+    background-color: #f3f4f6; /* Hiệu ứng hover cho hàng */
+}
+
+/* Căn chỉnh cột checkbox cho khoảng cách tốt hơn */
+th:first-child, td:first-child {
+    width: 50px;
     text-align: center;
-    color: #2196F3;
 }
 
-.edit-form-group {
+/* Phân trang */
+.course-management-pagination {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 15px;
-}
-
-.edit-form-group label {
-    width: 30%;
-    align-self: center;
-}
-
-.edit-form-group input,
-.edit-form-group select {
-    width: 65%;
-    padding: 5px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.edit-form-group .edit-certifications {
-    display: flex;
     align-items: center;
+    margin-bottom: 1rem;
 }
 
-.edit-form-group .edit-certifications span {
-    margin-right: 10px;
+.course-management-pagination select {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    color: #4b5563;
+    font-size: 1rem;
+}
+
+.pagination-buttons {
     display: flex;
-    align-items: center;
-    background-color: #f0f0f0;
-    padding: 3px 8px;
-    border-radius: 4px;
+    justify-content: center; /* Căn giữa các nút phân trang */
+    gap: 0.5rem;
+    margin-top: 1rem;
 }
 
-.edit-form-group .edit-certifications span .edit-remove {
-    margin-left: 5px;
-    color: red;
-    cursor: pointer;
-    font-size: 14px;
-    width: 14px;
-    height: 14px;
-    text-align: center;
-    line-height: 14px;
-    border-radius: 50%;
+.pagination-buttons button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
     background-color: #fff;
-}
-
-.edit-form-group .edit-certifications .edit-add-cert {
-    color: green;
+    color: #4b5563;
     cursor: pointer;
-    font-size: 18px;
-    width: 18px;
-    height: 18px;
-    text-align: center;
-    line-height: 18px;
-    border-radius: 50%;
-    background-color: #fff;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s, color 0.3s;
 }
 
-.edit-buttons {
-    text-align: center;
+.pagination-buttons button:hover {
+    background-color: #3b82f6;
+    color: #fff;
 }
 
-.edit-buttons button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    color: white;
-    cursor: pointer;
-    margin: 0 10px;
+.pagination-buttons button:first-child {
+    border-radius: 0.25rem 0 0 0.25rem;
 }
 
-.edit-buttons .edit-update {
-    background-color: #2196F3; /* Màu cho nút cập nhật */
-}
-
-.edit-buttons .edit-cancel {
-    background-color: #f44336; /* Màu cho nút hủy bỏ */
+.pagination-buttons button:last-child {
+    border-radius: 0 0.25rem 0.25rem 0;
 }

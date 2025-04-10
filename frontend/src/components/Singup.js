@@ -200,7 +200,6 @@ const Signup = ({ setIsAuthenticated }) => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-              <i className="fas fa-eye" style={styles.signupPasswordIcon}></i>
             </div>
           </div>
 
@@ -219,7 +218,6 @@ const Signup = ({ setIsAuthenticated }) => {
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 required
               />
-              <i className="fas fa-eye" style={styles.signupPasswordIcon}></i>
             </div>
           </div>
 

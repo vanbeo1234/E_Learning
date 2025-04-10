@@ -12,6 +12,7 @@ import Article from './components/Hocvien/Article';
 import CourseReactJS from './components/Hocvien/Course Information/CourseReactJS';
 import Learn1 from './components/Hocvien/Course Information/Study Course/Learn1';
 import UserManagement from './components/Admin/UserManagement';
+import CourseManagement from './components/Admin/CourseManagement';
 import Headersa from './components/Admin/Headera';
 import Sidebara from './components/Admin/Sidebara';
 
@@ -30,29 +31,25 @@ const App = () => {
 
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/admin" element={isAuthenticated ? (
-          <div className="app-container">
-            <Sidebara />
-            <div className="app-content">
-              <Headersa />
-              <div className="main-content">
-                <UserManagement />
-              </div>
-            </div>
+      <div className="app-container">
+        <Headersa />
+        <div className="app-content">
+          <Sidebara />
+          <div className="main-content">
+            <Routes>
+              <Route path="/user-management" element={<UserManagement />} />
+              <Route path="/course-management" element={<CourseManagement />} />
+              <Route path="*" element={<Navigate to="/user-management" />} />
+            </Routes>
           </div>
-        ) : (
-          <Navigate to="/login" />
-        )} />
-        <Route path="/" element={<Navigate to="/login" />} />
-      </Routes>
+        </div>
+      </div>
     </Router>
   );
 };
 
 export default App;
+
 /**      <div className="container">
         <Sidebar />
         <div className="content">
@@ -77,3 +74,22 @@ export default App;
           </div>
         </div>
       </div> */
+
+      /**      <Routes>
+        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/admin" element={isAuthenticated ? (
+          <div className="app-container">
+            <Sidebara />
+            <div className="app-content">
+              <Headersa />
+              <div className="main-content">
+                <UserManagement />
+              </div>
+            </div>
+          </div>
+        ) : (
+          <Navigate to="/login" />
+        )} />
+        <Route path="/" element={<Navigate to="/login" />} />
+      </Routes> */

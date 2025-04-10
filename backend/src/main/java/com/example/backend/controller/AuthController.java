@@ -10,7 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 //API đăng ký và đăng nhập tài khoản người dùng
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = " ")
 @RestController
 @RequestMapping("/v1/api/auth")
 public class AuthController {
