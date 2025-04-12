@@ -3,10 +3,6 @@ import lombok.*;
 
 import java.time.LocalDateTime;
 
-/**
- * DTO dùng để trả về thông tin của một bình luận trong hệ thống.
- * Thường được sử dụng trong API phản hồi sau khi lấy hoặc tạo bình luận.
- */
 @Getter
 @Setter
 @AllArgsConstructor
