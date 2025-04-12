@@ -22,41 +22,32 @@ import org.springframework.http.ResponseEntity;
 public class UserController {
     private final UserService userService;
 
-    /**
-     * Constructor cho UserController.
-     *
-     * @param userService Service xử lý nghiệp vụ người dùng
-     */
+    // Constructor cho UserController.
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    /**
-     * API Lấy danh sách người dùng với phân trang.
-     *
-     * @param page Số trang cần lấy.
-     * @param size Số lượng người dùng mỗi trang.
-     * @return Danh sách người dùng phân trang.
-     */
+    // API Lấy danh sách người dùng với phân trang.
     @GetMapping
-    public Page<UserResp> getAllUsers(
+    public ResponseEntity<Map<String, Object>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "2") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return userService.getAllUsers(pageable);
+        Page<UserResp> resultPage = userService.getAllUsers(pageable);
+
+        Map<String, Object> response = new HashMap<>();
+        response.put("errorStatus", 900);
+        response.put("message", "Lấy danh sách người dùng thành công");
+        response.put("data", resultPage.getContent());
+        response.put("pagination", Map.of(
+                "totalPages", resultPage.getTotalPages(),
+                "totalItems", resultPage.getTotalElements(),
+                "currentPage", resultPage.getNumber()));
+
+        return ResponseEntity.ok(response);
     }
 
-    /**
-     * API Tìm kiếm người dùng theo các tiêu chí.
-     *
-     * @param name        Tên người dùng cần tìm kiếm.
-     * @param dateOfBirth Ngày sinh của người dùng.
-     * @param roleId      Vai trò người dùng.
-     * @param statusCode  Trạng thái của người dùng.
-     * @param page        Số trang cần lấy.
-     * @param size        Số lượng người dùng mỗi trang.
-     * @return Kết quả tìm kiếm người dùng, phân trang.
-     */
+    // API Tìm kiếm người dùng theo các tiêu chí.
     @GetMapping("/search")
     public ResponseEntity<Map<String, Object>> searchUsers(
             @RequestParam(required = false) String name,
@@ -74,9 +65,9 @@ public class UserController {
         response.put("message", "Lấy danh sách người dùng thành công");
         response.put("data", resultPage.getContent());
         response.put("pagination", Map.of(
-                "currentPage", resultPage.getNumber(),
                 "totalPages", resultPage.getTotalPages(),
-                "totalItems", resultPage.getTotalElements()));
+                "totalItems", resultPage.getTotalElements(),
+                "currentPage", resultPage.getNumber()));
 
         return ResponseEntity.ok(response);
     }

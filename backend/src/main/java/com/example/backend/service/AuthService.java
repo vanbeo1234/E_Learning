@@ -28,4 +28,5 @@ public interface AuthService {
      *         trả về sau khi đăng nhập thành công hoặc thất bại.
      */
     AuthResp loginUser(UserReq userLoginReq);
+
 }

@@ -1,6 +1,7 @@
 package com.example.backend.service;
 
 import com.example.backend.dto.request.UserInfoUpdateReq;
+import com.example.backend.dto.request.UserRegisterReq;
 import com.example.backend.dto.response.UserResp;
 import com.example.backend.model.User;
 import org.springframework.data.domain.Page;
@@ -85,5 +86,16 @@ public interface UserService {
          * 
          * @param user Đối tượng người dùng cần lưu
          */
+
         void save(User user);
+
+        /**
+         * Tạo người dùng mới.
+         *
+         * @param req               Thông tin đăng ký người dùng.
+         * @param encryptedPassword Mật khẩu đã mã hóa.
+         * @param publicKeyString   Khóa công khai RSA.
+         * @return Đối tượng User đã được tạo và lưu vào cơ sở dữ liệu.
+         */
+        User createUser(UserRegisterReq req, String encryptedPassword, String publicKeyString);
 }

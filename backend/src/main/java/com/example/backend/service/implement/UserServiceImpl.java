@@ -1,5 +1,6 @@
 package com.example.backend.service.implement;
 
+import org.springframework.transaction.annotation.Transactional;
 import com.example.backend.dto.request.UserInfoUpdateReq;
 import com.example.backend.dto.response.UserResp;
 import com.example.backend.model.User;
@@ -8,6 +9,7 @@ import com.example.backend.service.UserService;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import com.example.backend.dto.request.UserRegisterReq;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -15,20 +17,37 @@ import java.util.Optional;
 
 import static com.example.backend.common.util.DateTimeUtil.formatDate;
 
+/**
+ * Triển khai các chức năng liên quan đến người dùng.
+ * <p>
+ * Các chức năng chính bao gồm:
+ * - Lấy danh sách người dùng với phân trang.
+ * - Tìm kiếm người dùng theo các tiêu chí như tên, ngày sinh, vai trò, và trạng
+ * thái.
+ * - Cập nhật thông tin người dùng.
+ * - Kiểm tra sự tồn tại của người dùng theo email hoặc mã người dùng.
+ * - Tạo người dùng mới.
+ * </p>
+ */
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    /**
+     * Constructor cho UserServiceImpl.
+     *
+     * @param userRepository Repository xử lý người dùng.
+     */
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     /**
-     * Lấy toàn bộ danh sách người dùng với phân trang.
-     * 
-     * @param pageable Pageable đối tượng chứa thông tin phân trang.
-     * @return Một trang người dùng dưới dạng {@link Page<UserResp>}.
+     * Lấy danh sách người dùng với phân trang.
+     *
+     * @param pageable Thông tin phân trang (số trang và kích thước trang).
+     * @return Danh sách người dùng phân trang dưới dạng {@link Page<UserResp>}.
      */
     @Override
     public Page<UserResp> getAllUsers(Pageable pageable) {
@@ -49,16 +68,15 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Tìm kiếm người dùng theo các tiêu chí như tên, ngày sinh, vai trò và trạng
+     * Tìm kiếm người dùng theo các tiêu chí như tên, ngày sinh, vai trò, và trạng
      * thái.
-     * 
-     * @param name        Tên người dùng.
-     * @param dateOfBirth Ngày sinh người dùng.
+     *
+     * @param name        Tên người dùng cần tìm kiếm.
+     * @param dateOfBirth Ngày sinh của người dùng.
      * @param roleId      Vai trò người dùng.
-     * @param statusCode  Trạng thái người dùng.
-     * @param pageable    Pageable đối tượng chứa thông tin phân trang.
-     * @return Một trang kết quả tìm kiếm người dùng dưới dạng
-     *         {@link Page<UserResp>}.
+     * @param statusCode  Trạng thái của người dùng.
+     * @param pageable    Thông tin phân trang.
+     * @return Kết quả tìm kiếm người dùng dưới dạng {@link Page<UserResp>}.
      */
     @Override
     public Page<UserResp> searchUsers(String name, LocalDateTime dateOfBirth, Integer roleId, String statusCode,
@@ -80,12 +98,11 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Cập nhật thông tin người dùng dựa trên userCode và đối tượng
-     * {@link UserInfoUpdateReq}.
-     * 
-     * @param userCode  Mã người dùng.
+     * Cập nhật thông tin người dùng.
+     *
+     * @param userCode  Mã người dùng cần cập nhật.
      * @param updateReq Thông tin cập nhật người dùng.
-     * @throws RuntimeException Nếu không tìm thấy người dùng với mã userCode.
+     * @throws RuntimeException Nếu người dùng không tồn tại.
      */
     @Override
     public void updateUserInfo(String userCode, UserInfoUpdateReq updateReq) {
@@ -103,10 +120,10 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Kiểm tra sự tồn tại của email trong hệ thống.
-     * 
-     * @param email Email cần kiểm tra.
-     * @return {@code true} nếu email đã tồn tại, {@code false} nếu không.
+     * Kiểm tra sự tồn tại của người dùng theo email.
+     *
+     * @param email Địa chỉ email cần kiểm tra.
+     * @return True nếu người dùng tồn tại, false nếu không.
      */
     @Override
     public boolean existsByEmail(String email) {
@@ -114,10 +131,10 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Kiểm tra sự tồn tại của mã người dùng trong hệ thống.
-     * 
+     * Kiểm tra sự tồn tại của người dùng theo mã người dùng.
+     *
      * @param userCode Mã người dùng cần kiểm tra.
-     * @return {@code true} nếu userCode đã tồn tại, {@code false} nếu không.
+     * @return True nếu người dùng tồn tại, false nếu không.
      */
     @Override
     public boolean existsByUserCode(String userCode) {
@@ -126,10 +143,9 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Tìm người dùng theo mã người dùng.
-     * 
+     *
      * @param userCode Mã người dùng cần tìm.
-     * @return {@link Optional<User>} đối tượng người dùng nếu tồn tại,
-     *         {@link Optional.empty()} nếu không.
+     * @return Optional chứa người dùng tìm thấy, hoặc empty nếu không tìm thấy.
      */
     @Override
     public Optional<User> findByUserCode(String userCode) {
@@ -138,7 +154,7 @@ public class UserServiceImpl implements UserService {
 
     /**
      * Lưu người dùng vào cơ sở dữ liệu.
-     * 
+     *
      * @param user Người dùng cần lưu.
      */
     @Override
@@ -147,11 +163,11 @@ public class UserServiceImpl implements UserService {
     }
 
     /**
-     * Lấy thông tin người dùng trả về dạng DTO {@link UserResp} từ userCode.
-     * 
+     * Lấy thông tin người dùng theo mã người dùng.
+     *
      * @param userCode Mã người dùng cần tìm.
-     * @return Đối tượng {@link UserResp} nếu người dùng tồn tại, {@code null} nếu
-     *         không tìm thấy.
+     * @return Thông tin người dùng dưới dạng {@link UserResp}, hoặc null nếu không
+     *         tìm thấy.
      */
     @Override
     public UserResp getUserRespByCode(String userCode) {
@@ -170,6 +186,39 @@ public class UserServiceImpl implements UserService {
                         .certification(user.getCertification())
                         .build())
                 .orElse(null);
+    }
+
+    /**
+     * Tạo người dùng mới.
+     *
+     * @param req               Thông tin người dùng cần tạo.
+     * @param encryptedPassword Mật khẩu đã được mã hóa.
+     * @param publicKeyString   Khóa công khai của người dùng.
+     * @return Đối tượng người dùng mới được tạo.
+     * @throws RuntimeException Nếu có lỗi khi tạo người dùng.
+     */
+    @Override
+    @Transactional
+    public User createUser(UserRegisterReq req, String encryptedPassword, String publicKeyString) {
+
+        userRepository.createUser(
+                req.getUserCode(),
+                encryptedPassword,
+                req.getName(),
+                req.getEmail(),
+                req.getPhone(),
+                req.getAddress(),
+                req.getGender(),
+                req.getDateOfBirth().atStartOfDay(),
+                req.getRoleId(),
+                req.getStatusCode(),
+                req.getExperience(),
+                req.getCertification(),
+                req.getCreatedBy(),
+                publicKeyString);
+
+        return userRepository.findByUserCode(req.getUserCode())
+                .orElseThrow(() -> new RuntimeException("User creation failed."));
     }
 
 }

@@ -4,12 +4,9 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotBlank;
-
-import org.springframework.format.annotation.DateTimeFormat;
+import com.example.backend.common.util.DateTimeUtil;
 
 import java.time.LocalDate;
-import com.example.backend.common.util.DateTimeUtil;
 
 @Getter
 @Setter
@@ -45,10 +42,8 @@ public class UserRegisterReq {
     private Integer experience;
     private String certification;
 
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate dateOfBirth;
 
-    @NotBlank(message = "Trường 'createdBy' là bắt buộc.")
     private String createdBy;
 
     /**

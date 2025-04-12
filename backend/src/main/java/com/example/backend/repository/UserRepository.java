@@ -4,6 +4,7 @@ import com.example.backend.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.lang.NonNull;
@@ -23,11 +24,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
         /**
          * Tìm kiếm người dùng theo các tiêu chí như tên, ngày sinh, vai trò và trạng
          * thái.
-         * <p>
-         * Phương thức này cho phép tìm kiếm người dùng thông qua các tiêu chí, bao gồm
-         * tên, ngày sinh, vai trò
-         * và trạng thái.
-         * </p>
          * 
          * @param name        Tên người dùng (có thể null)
          * @param dateOfBirth Ngày sinh của người dùng (có thể null)
@@ -49,9 +45,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
         /**
          * Tìm kiếm người dùng theo mã người dùng (userCode), hỗ trợ cập nhật.
-         * <p>
-         * Phương thức này tìm kiếm một người dùng thông qua mã người dùng (userCode).
-         * </p>
          * 
          * @param userCode Mã người dùng cần tìm
          * @return Optional chứa người dùng nếu tìm thấy, hoặc Optional.empty() nếu
@@ -61,9 +54,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
         /**
          * Kiểm tra sự tồn tại của email, hỗ trợ đăng ký người dùng.
-         * <p>
-         * Phương thức này kiểm tra xem email đã tồn tại trong cơ sở dữ liệu hay chưa.
-         * </p>
          * 
          * @param email Địa chỉ email cần kiểm tra
          * @return true nếu email đã tồn tại, false nếu chưa tồn tại
@@ -72,13 +62,56 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
         /**
          * Kiểm tra sự tồn tại của userCode, hỗ trợ đăng ký người dùng.
-         * <p>
-         * Phương thức này kiểm tra xem userCode đã tồn tại trong cơ sở dữ liệu hay
-         * chưa.
-         * </p>
          * 
          * @param userCode Mã người dùng cần kiểm tra
          * @return true nếu userCode đã tồn tại, false nếu chưa tồn tại
          */
         boolean existsByUserCode(String userCode);
+
+        /**
+         * Phương thức tạo người dùng mới bằng cách sử dụng JpaRepository để lưu vào cơ
+         * sở dữ liệu.
+         * 
+         * @param user Đối tượng người dùng cần lưu
+         * @return Đối tượng người dùng sau khi đã lưu
+         */
+
+        /**
+         * Tạo người dùng mới bằng cách sử dụng query tùy chỉnh.
+         * 
+         * @param userCode      Mã người dùng
+         * @param password      Mật khẩu đã mã hóa
+         * @param name          Tên người dùng
+         * @param email         Email người dùng
+         * @param phone         Số điện thoại
+         * @param address       Địa chỉ
+         * @param gender        Giới tính
+         * @param dateOfBirth   Ngày sinh
+         * @param roleId        Vai trò
+         * @param statusCode    Trạng thái
+         * @param experience    Kinh nghiệm
+         * @param certification Chứng chỉ
+         * @param createdBy     Người tạo
+         * @param encryptionKey Khóa mã hóa
+         * @return Đối tượng User sau khi đã tạo và lưu
+         */
+        @Modifying
+        @Query("INSERT INTO User (userCode, password, name, email, phone, address, gender, dateOfBirth, roleId, statusCode, experience, certification, createdBy, encryptionKey) "
+                        +
+                        "VALUES (:userCode, :password, :name, :email, :phone, :address, :gender, :dateOfBirth, :roleId, :statusCode, :experience, :certification, :createdBy, :encryptionKey)")
+        void createUser(@Param("userCode") String userCode,
+                        @Param("password") String password,
+                        @Param("name") String name,
+                        @Param("email") String email,
+                        @Param("phone") String phone,
+                        @Param("address") String address,
+                        @Param("gender") Integer gender,
+                        @Param("dateOfBirth") LocalDateTime dateOfBirth,
+                        @Param("roleId") Integer roleId,
+                        @Param("statusCode") String statusCode,
+                        @Param("experience") Integer experience,
+                        @Param("certification") String certification,
+                        @Param("createdBy") String createdBy,
+                        @Param("encryptionKey") String encryptionKey);
+
 }
