@@ -9,8 +9,6 @@ import lombok.Setter;
 
 import java.io.Serializable;
 
-// Khóa chính tổng hợp cho bảng ROLE_FUNCTION.
-
 @Getter
 @Setter
 @NoArgsConstructor
