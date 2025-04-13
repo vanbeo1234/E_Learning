@@ -5,6 +5,10 @@ import lombok.*;
 
 import java.time.LocalDate;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 @Entity
 @Table(name = "COURSE")
 @Getter
@@ -29,9 +33,13 @@ public class Course {
     @Column(name = "LESSON_COUNT")
     private int lessonCount;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "START_DATE")
     private LocalDate startDate;
 
+    @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "END_DATE")
     private LocalDate endDate;
 
@@ -46,5 +54,8 @@ public class Course {
 
     @Column(name = "CREATED_BY")
     private String createdBy;
+
+    @Column(name = "UPDATED_BY")
+    private String updatedBy;
 
 }

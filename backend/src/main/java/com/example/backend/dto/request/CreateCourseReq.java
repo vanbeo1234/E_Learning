@@ -1,4 +1,4 @@
-// Đức thêm file này
+
 package com.example.backend.dto.request;
 
 import lombok.Getter;
@@ -7,6 +7,9 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
+/**
+ * CreateCourseReq: Yêu cầu tạo mới khóa học, có kèm danh sách giảng viên.
+ */
 @Getter
 @Setter
 public class CreateCourseReq {

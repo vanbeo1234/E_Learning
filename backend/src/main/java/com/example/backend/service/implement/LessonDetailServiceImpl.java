@@ -59,7 +59,6 @@ public class LessonDetailServiceImpl implements LessonDetailService {
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
-        // Tự động gán lessonOrder nếu null
         Integer lessonOrder = request.getLessonOrder();
         if (lessonOrder == null) {
             List<LessonDetail> existingLessons = lessonDetailRepository.findByCourseOrderByLessonOrderAsc(course);
@@ -67,7 +66,6 @@ public class LessonDetailServiceImpl implements LessonDetailService {
                     : existingLessons.get(existingLessons.size() - 1).getLessonOrder() + 1;
         }
 
-        // Tự động gán lessonCode nếu không nhập
         String lessonCode = request.getLessonCode();
         if (lessonCode == null || lessonCode.trim().isEmpty()) {
             lessonCode = "COURSE_" + course.getId() + "_L" + lessonOrder;
@@ -96,7 +94,7 @@ public class LessonDetailServiceImpl implements LessonDetailService {
         List<Long> ids = request.getLessonIds();
 
         List<LessonDetail> lessons = lessonDetailRepository.findAllById(ids);
-        // Chuyển danh sách thành Map để tra cứu nhanh
+
         Map<Long, LessonDetail> lessonMap = lessons.stream()
                 .collect(Collectors.toMap(LessonDetail::getId, l -> l));
 
@@ -109,7 +107,7 @@ public class LessonDetailServiceImpl implements LessonDetailService {
                 reordered.add(lesson);
             }
         }
-        // Lưu lại danh sách bài học đã cập nhật thứ tự
+
         lessonDetailRepository.saveAll(reordered);
     }
 

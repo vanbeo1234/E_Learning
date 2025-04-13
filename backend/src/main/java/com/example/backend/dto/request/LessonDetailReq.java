@@ -3,6 +3,9 @@ package com.example.backend.dto.request;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * LessonDetailReq: DTO chứa thông tin bài học cần thêm hoặc cập nhật.
+ */
 @Getter
 @Setter
 public class LessonDetailReq {

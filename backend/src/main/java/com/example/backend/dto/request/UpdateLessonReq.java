@@ -1,11 +1,11 @@
-package com.example.backend.dto.response;
+package com.example.backend.dto.request;
 
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
-public class LessonSimpleResp {
+public class UpdateLessonReq {
     private Long lessonId;
     private String lessonName;
     private String videoLink;

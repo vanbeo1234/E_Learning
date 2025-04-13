@@ -6,7 +6,10 @@ import lombok.Setter;
 import java.time.LocalDate;
 import java.util.List;
 
-// Đức thêm file này
+/**
+ * CourseDetailResp: Response chứa thông tin chi tiết khóa học, giảng viên chính
+ * và danh sách bài học.
+ */
 @Getter
 @Setter
 public class CourseDetailResp {

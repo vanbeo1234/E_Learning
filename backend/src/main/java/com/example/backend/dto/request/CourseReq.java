@@ -5,6 +5,10 @@ import lombok.Setter;
 
 import java.time.LocalDate;
 
+/**
+ * CourseReq: DTO dùng để tạo hoặc cập nhật khóa học nội bộ (nếu không cần
+ * instructor).
+ */
 @Getter
 @Setter
 public class CourseReq {
