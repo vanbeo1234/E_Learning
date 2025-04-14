@@ -16,7 +16,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
-@CrossOrigin(origins = "http://localhost:30011")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/v1/api/users")
 public class UserController {
@@ -31,7 +31,7 @@ public class UserController {
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "2") int size) {
+            @RequestParam(defaultValue = "8") int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<UserResp> resultPage = userService.getAllUsers(pageable);
 
@@ -55,7 +55,7 @@ public class UserController {
             @RequestParam(defaultValue = "0") Integer roleId,
             @RequestParam(required = false) String statusCode,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "2") int size) {
+            @RequestParam(defaultValue = "8") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
         Page<UserResp> resultPage = userService.searchUsers(name, dateOfBirth, roleId, statusCode, pageable);
