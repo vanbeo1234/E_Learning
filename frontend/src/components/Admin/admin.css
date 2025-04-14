@@ -826,3 +826,254 @@ th:first-child, td:first-child {
 .pagination-buttons button:last-child {
     border-radius: 0 0.25rem 0.25rem 0;
 }
+/* Course Form */
+.course-details {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding-top: 40px;
+    padding-bottom: 20px;
+    margin-left: 20px;
+  }
+  
+  .section {
+    margin-bottom: 20px;
+  }
+  
+  .section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+  }
+  
+  .section .input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .section .input-group label {
+    width: 150px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .section .input-group input,
+  .section .input-group textarea {
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .section .input-group textarea {
+    resize: none;
+    height: 100px;
+  }
+  
+  .section .input-group .edit-icon {
+    margin-left: 10px;
+    color: #f0ad4e;
+    cursor: pointer;
+  }
+  
+  .section .add-new {
+    color: #28a745;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .section .add-new i {
+    margin-right: 5px;
+  }
+  
+  .cover-image {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+  }
+  
+  .cover-image i {
+    font-size: 24px;
+    color: #28a745;
+  }
+  
+  .course-content {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+  }
+  
+  .course-content .input-group label {
+    width: 100px;
+  }
+  
+  .course-content .input-group .upload-icon {
+    margin-left: 10px;
+    color: #6c757d;
+    cursor: pointer;
+  }
+  
+  .course-content .buttons {
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .course-content .buttons button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .course-content .buttons .save-btn {
+    background-color: #28a745;
+    color: white;
+  }
+  
+  .course-content .buttons .cancel-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  .footer-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+  }
+  
+  .footer-buttons button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+  
+  .footer-buttons .create-btn {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .footer-buttons .cancel-btn {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+  }
+  
+  .modal form {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    width: 100%;
+  }
+  
+  .modal h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .modal label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .modal input,
+  .modal textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+  
+  .modal textarea {
+    resize: none;
+    height: 100px;
+  }
+  
+  .modal button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+  }
+  
+  .modal button[type="button"] {
+    background-color: #007bff;
+    color: white;
+  }
+  
+  .modal button[type="button"]:last-child {
+    background-color: #dc3545;
+    color: white;
+  }
+  
+  /* Notification Box */
+  .notification-box {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+  }
+  
+  .notification-box h1 {
+    font-size: 18px;
+    margin: 0 0 20px;
+    font-weight: bold;
+  }
+  
+  .button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .button-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+  }
+  
+  .button-container .confirm {
+    background-color: #007bff;
+  }
+  
+  .button-container .cancel {
+    background-color: #dc3545;
+  }
+  
+ 

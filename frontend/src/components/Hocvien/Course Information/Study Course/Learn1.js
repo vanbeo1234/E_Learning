@@ -24,43 +24,47 @@ const Learn1 = () => {
           </video>
         </div>
         <div className="learn1-info-section">
-          <div className="learn1-progress">
-            <p>Hoàn thành: {progressPercentage}% ({completedLessons}/{totalLessons} bài học)</p>
-            <div className="progress-circle">
-              <svg viewBox="0 0 36 36" className="circular-chart">
-                <path
-                  className="circle-bg"
-                  d="M18 2.0845
-                     a 15.9155 15.9155 0 0 1 0 31.831
-                     a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <path
-                  className="circle"
-                  strokeDasharray={`${progressPercentage}, 100`}
-                  d="M18 2.0845
-                     a 15.9155 15.9155 0 0 1 0 31.831
-                     a 15.9155 15.9155 0 0 1 0 -31.831"
-                />
-                <text x="18" y="20.35" className="percentage">{`${Math.round(progressPercentage)}%`}</text> {/* Corrected this line */}
-              </svg>
+          <div className="learn1-progress-notes">
+            <div className="learn1-progress">
+              <p>Hoàn thành: {progressPercentage}% ({completedLessons}/{totalLessons} bài học)</p>
+              <div className="progress-circle">
+                <svg viewBox="0 0 36 36" className="circular-chart">
+                  <path
+                    className="circle-bg"
+                    d="M18 2.0845
+                       a 15.9155 15.9155 0 0 1 0 31.831
+                       a 15.9155 15.9155 0 0 1 0 -31.831"
+                  />
+                  <path
+                    className="circle"
+                    strokeDasharray={`${progressPercentage}, 100`}
+                    d="M18 2.0845
+                       a 15.9155 15.9155 0 0 1 0 31.831
+                       a 15.9155 15.9155 0 0 1 0 -31.831"
+                  />
+                  <text x="18" y="20.35" className="percentage">{`${Math.round(progressPercentage)}%`}</text>
+                </svg>
+              </div>
             </div>
+            <button onClick={toggleNotes}>
+              <i className="fas fa-sticky-note"></i> Ghi chú
+            </button>
+            {showNotes && (
+              <div className="notes-popup">
+                <h3>Ghi chú</h3>
+                <p>Đây là ghi chú của bạn...</p>
+                <button onClick={toggleNotes}>Đóng</button>
+              </div>
+            )}
           </div>
-          <button onClick={toggleNotes}>
-            <i className="fas fa-sticky-note"></i> Ghi chú
-          </button>
-          {showNotes && (
-            <div className="notes-popup">
-              <h3>Ghi chú</h3>
-              <p>Đây là ghi chú của bạn...</p>
-              <button onClick={toggleNotes}>Đóng</button>
-            </div>
-          )}
-          <button className="qa-button">
-            <i className="fas fa-question-circle"></i> Hỏi đáp
-          </button>
-          <button className="rate-button">
-            <i className="fas fa-star"></i> Đánh giá khóa học
-          </button>
+          <div className="learn1-qa-rate">
+            <button className="qa-button">
+              <i className="fas fa-question-circle"></i> Hỏi đáp
+            </button>
+            <button className="rate-button">
+              <i className="fas fa-star"></i> Đánh giá khóa học
+            </button>
+          </div>
         </div>
         <div className="learn1-navigation">
           <Link to="/previous-lesson">

@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AddCourseModal from './AddCourse';
 
 const CourseManagement = () => {
   const [isAddModalOpen, setAddModalOpen] = useState(false);
@@ -6,7 +8,7 @@ const CourseManagement = () => {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [currentAction, setCurrentAction] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Default to 25 items per page
+  const [itemsPerPage, setItemsPerPage] = useState(10); // Default to 10 items per page
   const [selectAll, setSelectAll] = useState(false);
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState({
@@ -49,6 +51,8 @@ const CourseManagement = () => {
     }
   ]);
 
+  const navigate = useNavigate();
+
   const toggleSelectAll = () => {
     if (!selectAll) {
       setSelectedCourses(courses.map(course => course.id));
@@ -62,13 +66,6 @@ const CourseManagement = () => {
     setSelectedCourses(prev =>
       prev.includes(id) ? prev.filter(courseId => courseId !== id) : [...prev, id]
     );
-  };
-
-  const handleAddCourse = () => {
-    const newCourse = { ...formData, id: courses.length + 1 };
-    setCourses(prevCourses => [...prevCourses, newCourse]);
-    setAddModalOpen(false);
-    resetForm();
   };
 
   const handleEditCourse = (course) => {
@@ -126,6 +123,13 @@ const CourseManagement = () => {
     });
   };
 
+  const handleAddCourse = () => {
+    const newCourse = { ...formData, id: courses.length + 1 };
+    setCourses(prevCourses => [...prevCourses, newCourse]);
+    setAddModalOpen(false);
+    resetForm();
+  };
+
   const totalPages = Math.ceil(courses.length / itemsPerPage);
   const currentCourses = courses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -157,11 +161,11 @@ const CourseManagement = () => {
             <div>
               <label htmlFor="itemsPerPage" style={{ padding: '5px' }}>Hiển thị</label>
               <select id="itemsPerPage" value={itemsPerPage} onChange={handleItemsPerPageChange}>
-              <option value="10">10</option>
-                  <option value="15">15</option>
-                  <option value="20">20</option>
-                  <option value="25">25</option>
-                  <option value="30">30</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
               </select>
               <span style={{ padding: '5px' }}>danh mục</span>
             </div>

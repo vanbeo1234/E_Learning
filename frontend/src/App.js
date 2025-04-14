@@ -13,42 +13,57 @@ import CourseReactJS from './components/Hocvien/Course Information/CourseReactJS
 import Learn1 from './components/Hocvien/Course Information/Study Course/Learn1';
 import UserManagement from './components/Admin/UserManagement';
 import CourseManagement from './components/Admin/CourseManagement';
-import Headersa from './components/Admin/Headera';
+import Headera from './components/Admin/Headera';
 import Sidebara from './components/Admin/Sidebara';
+import Modala from './components/Admin/Modala';
+import AddCourseModal from './components/Admin/AddCourse';
+import CourseForm from './components/Giangvien/CourseForm';
+import FeedbackList from './components/Giangvien/FeedbackList';
+import CourseTable from './components/Giangvien/CourseTable';
+import CourseList from './components/Giangvien/CourseList';
+import CourseInfo from './components/Giangvien/CourseInfo';
+import Sidebars from './components/Giangvien/Sidebar';
+import Headers from './components/Hocvien/Header';
+
+
 
 const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+    const [isAuthenticated, setIsAuthenticated] = useState(true); // Change to false to test un-authenticated view
+    const [isAdmin, setIsAdmin] = useState(true); // Admin flag
   const courses = [
-    {
-      image: '/logo512.png',
-      category: "Java",
-      duration: "3 Month",
-      title: "Java Core",
-      description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
-    },
-  ];
-
-  return (
-    <Router>
-      <div className="app-container">
-        <Headersa />
-        <div className="app-content">
-          <Sidebara />
-          <div className="main-content">
-            <Routes>
-              <Route path="/user-management" element={<UserManagement />} />
-              <Route path="/course-management" element={<CourseManagement />} />
-              <Route path="*" element={<Navigate to="/user-management" />} />
-            </Routes>
-          </div>
+    { id: 1, title: "Khóa học ReactJS" },
+    { id: 2, title: "Khóa học NodeJS" },
+    // Thêm các khóa học khác nếu cần
+];
+  
+    return (
+       <Router>
+ <div className="container">
+        <Sidebar />
+        <div className="content">
+          <Routes>
+            <Route path="/home" element={<><Header title="Trang chủ" isSearch={true} /><Home /></>} />
+            <Route path="/my-course" element={<><Header title="Khóa học của tôi" /><MyCourse /></>} />
+            <Route path="/progress" element={<><Header title="Tiến độ học tập" /><LearningProgress /></>} />
+            <Route path="/article" element={<><Header title="Bài viết" /><Article /></>} />
+            <Route path="/course/:courseId" element={<><Header title="Thông tin khóa học" /><CourseReactJS courses={courses} /></>} />
+            <Route path="/learn1" element={<><Header title="Học ReactJS" /><Learn1 /></>} />
+            <Route path="*" element={<Navigate to="/home" />} />
+          </Routes>
         </div>
       </div>
-    </Router>
-  );
-};
-
-export default App;
+  </Router>
+    );
+  };
+  
+  export default App;
+  
+  
+  
+  
+/**            <Route path="/user-management" element={<UserManagement />} />
+            <Route path="/course-management" element={<CourseManagement />} />
+            <Route path="*" element={<Navigate to="/user-management" />} />
 
 /**      <div className="container">
         <Sidebar />
@@ -93,3 +108,14 @@ export default App;
         )} />
         <Route path="/" element={<Navigate to="/login" />} />
       </Routes> */
+
+
+      /*giangvien
+          <Routes>
+            <Route path="/home" element={isAuthenticated ? <><Header title="Trang chủ" isSearch={true} /><CourseList /></> : <Navigate to="/login" />} />
+            <Route path="/feedback" element={isAuthenticated ? <><Header title="Danh sách phản hồi" /><FeedbackList /></> : <Navigate to="/login" />} />
+            <Route path="/create-course" element={isAuthenticated ? <><Header title="Danh sách khóa học được tạo" /><CourseTable /></> : <Navigate to="/login" />} />
+            <Route path="/add-course" element={isAuthenticated ? <><Header title="Tạo khóa học mới" /><CourseForm isEdit={false} /></> : <Navigate to="/login" />} />
+            <Route path="/edit-course" element={isAuthenticated ? <><Header title="Chỉnh sửa khóa học" /><CourseForm isEdit={true} /></> : <Navigate to="/login" />} />
+            <Route path="/course-info" element={isAuthenticated ? <><Header title="Thông tin khóa học đã tạo" /><CourseInfo /></> : <Navigate to="/login" />} />
+          </Routes>*/

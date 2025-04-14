@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './admin.css';
-const Headersa = ({ title, isSearch = false }) => {
+const Headera  = ({ title, isSearch = false }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => {
@@ -27,4 +27,4 @@ const Headersa = ({ title, isSearch = false }) => {
   );
 };
 
-export default Headersa;
+export default Headera;
