@@ -56,6 +56,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/v1/api/auth/**").permitAll()
                         .requestMatchers("/v1/api/users/**").hasRole("ADMIN")
+                        .requestMatchers("/v1/api/courses/**").hasAnyRole("ADMIN", "INSTRUCTOR", "STUDENT")
+                        .requestMatchers("/v1/api/lessons/**").hasAnyRole("ADMIN", "INSTRUCTOR")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedEntryPoint()));
 

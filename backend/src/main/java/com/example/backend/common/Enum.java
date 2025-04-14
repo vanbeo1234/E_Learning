@@ -15,10 +15,12 @@ public class Enum {
             this.text = text;
         }
 
+        // Getter cho giá trị của Gender
         public int getValue() {
             return value;
         }
 
+        // Getter cho tên của Gender
         public String getText() {
             return text;
         }
@@ -38,14 +40,17 @@ public class Enum {
             this.text = text;
         }
 
+        // Getter cho giá trị của Role
         public int getValue() {
             return value;
         }
 
+        // Getter cho tên của Role
         public String getText() {
             return text;
         }
 
+        // Phương thức để chuyển đổi giá trị int thành Role
         public static Role fromInt(int i) {
             for (Role role : Role.values()) {
                 if (role.getValue() == i) {
@@ -67,6 +72,7 @@ public class Enum {
             this.value = value;
         }
 
+        // Getter cho giá trị của Status
         public String getValue() {
             return value;
         }
