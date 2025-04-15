@@ -23,40 +23,40 @@ import CourseTable from './components/Giangvien/CourseTable';
 import CourseList from './components/Giangvien/CourseList';
 import CourseInfo from './components/Giangvien/CourseInfo';
 import Sidebars from './components/Giangvien/Sidebar';
-import Headers from './components/Hocvien/Header';
-
-
+import Headers from './components/Giangvien/Header';
 
 const App = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(true); // Change to false to test un-authenticated view
-    const [isAdmin, setIsAdmin] = useState(true); // Admin flag
+  const [isAuthenticated, setIsAuthenticated] = useState(true); // Change to false to test un-authenticated view
+  const [isAdmin, setIsAdmin] = useState(false); // Admin flag
+  const [isInstructor, setIsInstructor] = useState(true); // Instructor flag
+
   const courses = [
     { id: 1, title: "Khóa học ReactJS" },
     { id: 2, title: "Khóa học NodeJS" },
     // Thêm các khóa học khác nếu cần
-];
-  
-    return (
-       <Router>
- <div className="container">
-        <Sidebar />
+  ];
+
+  return (
+    <Router>
+      <div className="container">
+        {isInstructor ? <Sidebars /> : <Sidebar />}
         <div className="content">
           <Routes>
-            <Route path="/home" element={<><Header title="Trang chủ" isSearch={true} /><Home /></>} />
-            <Route path="/my-course" element={<><Header title="Khóa học của tôi" /><MyCourse /></>} />
-            <Route path="/progress" element={<><Header title="Tiến độ học tập" /><LearningProgress /></>} />
-            <Route path="/article" element={<><Header title="Bài viết" /><Article /></>} />
-            <Route path="/course/:courseId" element={<><Header title="Thông tin khóa học" /><CourseReactJS courses={courses} /></>} />
-            <Route path="/learn1" element={<><Header title="Học ReactJS" /><Learn1 /></>} />
-            <Route path="*" element={<Navigate to="/home" />} />
+            <Route path="/home" element={isAuthenticated ? <><Headers title="Trang chủ" isSearch={true} /><CourseList /></> : <Navigate to="/login" />} />
+            <Route path="/feedback" element={isAuthenticated ? <><Headers title="Danh sách phản hồi" /><FeedbackList /></> : <Navigate to="/login" />} />
+            <Route path="/create-course" element={isAuthenticated ? <><Headers title="Danh sách khóa học được tạo" /><CourseTable /></> : <Navigate to="/login" />} />
+            <Route path="/add-course" element={isAuthenticated ? <><Headers title="Tạo khóa học mới" /><CourseForm isEdit={false} /></> : <Navigate to="/login" />} />
+            <Route path="/edit-course" element={isAuthenticated ? <><Headers title="Chỉnh sửa khóa học" /><CourseForm isEdit={true} /></> : <Navigate to="/login" />} />
+            <Route path="/course-info" element={isAuthenticated ? <><Headers title="Thông tin khóa học đã tạo" /><CourseInfo /></> : <Navigate to="/login" />} />
           </Routes>
         </div>
       </div>
-  </Router>
-    );
-  };
-  
-  export default App;
+    </Router>
+  );
+};
+
+export default App;
+
   
   
   
