@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Repository thao tác với bảng COURSE trong database.
@@ -18,12 +19,12 @@ import java.util.List;
 public interface CourseRepository extends JpaRepository<Course, Long> {
 
   /**
-   * Tìm khóa học theo mã khóa học.
+   * Tìm khóa học theo mã khóa học (courseCode) và trả về Optional.
    */
-  Course findByCourseCode(String courseCode);
+  Optional<Course> findByCourseCode(String courseCode);
 
   @Query("SELECT c FROM Course c WHERE LOWER(c.courseCode) = LOWER(:courseCode)")
-  Course findByCourseCodeIgnoreCase(@Param("courseCode") String courseCode);
+  Optional<Course> findByCourseCodeIgnoreCase(@Param("courseCode") String courseCode);
 
   /**
    * Tìm kiếm khóa học theo nhiều tiêu chí (không phân trang).
@@ -73,15 +74,3 @@ public interface CourseRepository extends JpaRepository<Course, Long> {
       @Param("createdBy") String createdBy,
       Pageable pageable);
 }
-/*
- * public interface CourseRepository extends JpaRepository<Course, Long> {
-    /**
-     * Tìm khóa học theo mã khóa học (courseCode).
-     *
-     * @param courseCode mã định danh của khóa học (ví dụ: "C001")
-     * @return Trả về một Optional chứa thông tin khóa học nếu tìm thấy,
-     *         hoặc Optional rỗng nếu không có khóa học nào khớp.
-     */
-  //  Optional<Course> findByCourseCode(String courseCode);
-
-//}

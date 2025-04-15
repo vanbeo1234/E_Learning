@@ -1,8 +1,11 @@
 package com.example.backend.model;
 
-import com.example.backend.common.Enum.Role; // Import enum Role từ Enum class
 import jakarta.persistence.*;
 import lombok.*;
+import com.example.backend.common.Enum;
+
+import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "USER")
@@ -12,13 +15,15 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class User {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "USER_CODE", nullable = false, unique = true)
     private String userCode;
+
+    @Column(name = "ENCRYPTION_KEY")
+    private String encryptionKey;
 
     @Column(name = "NAME", nullable = false)
     private String name;
@@ -29,24 +34,49 @@ public class User {
     @Column(name = "PASSWORD", nullable = false)
     private String password;
 
+    @Column(name = "PHONE")
+    private String phone;
+
+    @Column(name = "ADDRESS")
+    private String address;
+
+    @Column(name = "GENDER", nullable = false)
+    private Integer gender;
+
+    @Column(name = "DATE_OF_BIRTH")
+    private LocalDateTime dateOfBirth;
+
     @Column(name = "ROLE_ID", nullable = false)
-    private int roleId;
+    private int roleId; // Giữ nguyên roleId là int
 
     @Column(name = "STATUS_CODE", nullable = false)
     private String statusCode;
 
-    @Enumerated(EnumType.STRING) // Chỉ rõ Hibernate lưu giá trị enum dưới dạng chuỗi
-    @Column(name = "ROLE")
-    private Role role;
+    @Column(name = "EXPERIENCE")
+    private Integer experience;
 
-    // Phương thức getter cho roleId, giúp chuyển đổi roleId thành Role
-    public Role getRole() {
-        return Role.fromInt(this.roleId); // Chuyển roleId thành Role enum
+    @Column(name = "CERTIFICATION")
+    private String certification;
+
+    @Column(name = "CREATED_BY")
+    private String createdBy;
+
+    @Column(name = "UPDATED_BY")
+    private String updatedBy;
+
+    @Column(name = "CREATED_AT", updatable = false)
+    private Timestamp createdAt;
+
+    @Column(name = "UPDATED_AT")
+    private Timestamp updatedAt;
+
+    // Getter cho Role
+    public Enum.Role getRole() {
+        return Enum.Role.fromInt(this.roleId); // Chuyển từ roleId sang Enum Role
     }
 
-    // Phương thức setter cho roleId, giúp chuyển đổi Role thành roleId
-    public void setRole(Role role) {
-        this.role = role;
-        this.roleId = role.getValue(); // Lưu giá trị của role dưới dạng roleId (int)
+    // Setter cho Role
+    public void setRole(Enum.Role role) {
+        this.roleId = role.getValue(); // Chuyển từ Enum Role sang roleId
     }
 }
