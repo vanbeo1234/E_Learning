@@ -36,7 +36,10 @@ CREATE TABLE USER (
     UPDATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (ROLE_ID) REFERENCES ROLE(ID) ON DELETE CASCADE
 );
+DESCRIBE user;
 
+ALTER TABLE USER
+MODIFY COLUMN ENCRYPTION_KEY NVARCHAR(1000);
 CREATE TABLE SYSTEM_FUNCTION (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     FUNCTION_NAME NVARCHAR(255) NOT NULL,
@@ -84,8 +87,8 @@ CREATE TABLE LESSON_DETAIL (
 -- BẢNG CHAT_MESSAGE
 CREATE TABLE LESSON_COMMENT (
     ID INT PRIMARY KEY AUTO_INCREMENT,
-    COURSE_CODE INT NOT NULL,
-    LESSON_ID INT NOT NULL,
+    COURSE_CODE NVARCHAR(20) NOT NULL,
+    LESSON_ID INT NULL,
     SEND_USER_ID NVARCHAR(50) NOT NULL,
     MESSAGE NVARCHAR(300) NOT NULL,
     COMMENT_TIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -120,33 +123,7 @@ CREATE TABLE NOTIFICATION (
     FOREIGN KEY (COURSE_ID) REFERENCES COURSE(ID) ON DELETE CASCADE 
 );
 
--- THÊM DỮ LIỆU VÀO BẢNG ROLE
-INSERT INTO ROLE (ROLE_NAME) VALUES ('ADMIN'), ('INSTRUCTOR'), ('STUDENT');
-
--- TRIGGER TẠO MÃ NGƯỜI DÙNG
-DELIMITER $$
-
-CREATE TRIGGER TRG_BEFORE_INSERT_USER
-BEFORE INSERT ON USER
-FOR EACH ROW
-BEGIN
-    DECLARE MAX_CODE VARCHAR(10);
-    DECLARE NEXT_NUMBER INT;
-
-    SELECT RIGHT(USER_CODE, 4) INTO MAX_CODE FROM USER ORDER BY USER_CODE DESC LIMIT 1;
-
-    IF MAX_CODE IS NULL THEN
-        SET NEXT_NUMBER = 1;
-    ELSE
-        SET NEXT_NUMBER = MAX_CODE + 1;
-    END IF;
-
-    SET NEW.USER_CODE = CONCAT('US', LPAD(NEXT_NUMBER, 4, '0'));
-END$$
-
-DELIMITER ;
--- --------------------------------------
--- CHÈN DỮ LIỆU
+-- ------------------------------------------------------------------------------------------------------------------
 -- Thêm dữ liệu vào bảng Role
 INSERT INTO Role (Role_Name) VALUES ('Admin'), ('Instructor'), ('Student');
 
@@ -157,32 +134,109 @@ INSERT INTO Status_Management (Status_Code, Type, Description) VALUES
 ('ACTIVE', 'Course', 'Khóa học đang mở'),
 ('INACTIVE', 'Course', 'Khóa học bị đóng');
 
-INSERT INTO User (Name, Email, Password, Phone, Address, Gender, Date_Of_Birth, Role_ID, Status_Code, Experience, Certification, Created_By) 
+-- ------------------------------------------------------------------------------------------------------------------
+-- Admin
+INSERT INTO USER (USER_CODE, NAME, EMAIL, PASSWORD, PHONE, ADDRESS, GENDER, DATE_OF_BIRTH, ROLE_ID, STATUS_CODE)
 VALUES 
-('Nguyễn Văn A', 'a@example.com', '123456', '0123456789', 'Hà Nội', 1, '1990-01-01', 1, 'ACTIVE', 5, 'Java Cert', 'Admin'),
-('Trần Thị B', 'b@example.com', '123456', '0987654321', 'TP HCM', 0, '1995-05-15', 2, 'ACTIVE', 3, 'Python Cert', 'Admin'),
-('Lê Văn C', 'c@example.com', '123456', '0365478921', 'Đà Nẵng', 1, '2000-07-20', 3, 'INACTIVE', NULL, NULL, 'Admin');
+('ADMIN001', 'Nguyễn Văn Admin', 'admin@edu.vn', 'admin123', '0909123456', 'Hà Nội', 1, '1985-01-01', 1, 'ACTIVE');
+
+INSERT INTO USER (USER_CODE,NAME,EMAIL,PASSWORD,PHONE,ADDRESS,GENDER,DATE_OF_BIRTH,ROLE_ID,STATUS_CODE,CREATED_BY) 
+VALUES ('admin002','Second Admin','admin2@example.com','$2a$10$SEHzzyRjaQGLHZa2c9mWce9ubebMIBzG2GCn2h2tYPv8pR9tTeMqy','0987654321','Admin HQ',1,'1995-02-20',1,'ACTIVE','SYSTEM');
+
+-- Instructor
+INSERT INTO USER (USER_CODE, NAME, EMAIL, PASSWORD, PHONE, ADDRESS, GENDER, DATE_OF_BIRTH, ROLE_ID, STATUS_CODE, EXPERIENCE, CERTIFICATION)
+VALUES 
+('GV001', 'Trần Thị Giảng Viên', 'instructor1@edu.vn', 'gv123', '0911222333', 'TP.HCM', 0, '1990-03-05', 2, 'ACTIVE', 5, 'Giảng viên CNTT');
+
+INSERT INTO USER (USER_CODE, NAME, EMAIL, PASSWORD, PHONE, ADDRESS, GENDER, DATE_OF_BIRTH, ROLE_ID, STATUS_CODE, EXPERIENCE, CERTIFICATION)
+VALUES 
+('GV002', 'Phạm Minh Khoa', 'khoa.pham@edu.vn', 'gv456', '0911333444', 'Bình Dương', 1, '1988-07-15', 2, 'ACTIVE', 8, 'Thạc sĩ Khoa học máy tính');
+
+-- Student
+INSERT INTO USER (USER_CODE, NAME, EMAIL, PASSWORD, PHONE, ADDRESS, GENDER, DATE_OF_BIRTH, ROLE_ID, STATUS_CODE)
+VALUES 
+('SV001', 'Lê Văn Học Viên', 'student1@edu.vn', 'sv123', '0988777666', 'Đà Nẵng', 1, '2002-09-10', 3, 'ACTIVE'),
+('SV002', 'Nguyễn Thị Sinh Viên', 'student2@edu.vn', 'sv456', '0977333444', 'Cần Thơ', 0, '2003-06-20', 3, 'ACTIVE');
+
+-- ----------------------------------------------------------
+-- Khóa học: Lập trình C#
+INSERT INTO COURSE (COURSE_CODE, COURSE_NAME, DESCRIPTION, LEARNING_OUTCOME, BACKGROUND_IMG, START_DATE, END_DATE, LESSON_COUNT, STATUS_CODE, CREATED_BY)
+VALUES 
+('C001', 'Lập trình C# cơ bản', 'Học C# từ đầu đến hướng đối tượng', 'Nắm được cú pháp, lập trình hướng đối tượng trong C#', NULL, '2025-05-01', '2025-06-30', 3, 'ACTIVE', 'GV001');
+
+INSERT INTO COURSE (COURSE_CODE, COURSE_NAME, DESCRIPTION, LEARNING_OUTCOME, BACKGROUND_IMG, START_DATE, END_DATE, LESSON_COUNT, STATUS_CODE, CREATED_BY)
+VALUES 
+('C002', 'Lập trình Python cho người mới bắt đầu', 'Khóa học nhập môn lập trình với Python', 
+'Hiểu được cú pháp cơ bản, làm quen với biến, hàm, và xử lý tệp trong Python', NULL, 
+'2025-07-01', '2025-08-15', 2, 'ACTIVE', 'GV002');
+
+-- ----------------------------------------------------------
+-- Gán giảng viên cho khóa học
+INSERT INTO INSTRUCTOR_ENROLLMENT (INSTRUCTOR_ID, COURSE_ID)
+SELECT ID, 1 FROM USER WHERE USER_CODE = 'GV001';
+
+INSERT INTO INSTRUCTOR_ENROLLMENT (INSTRUCTOR_ID, COURSE_ID)
+SELECT ID, (SELECT ID FROM COURSE WHERE COURSE_CODE = 'C002')
+FROM USER WHERE USER_CODE = 'GV002';
 
 -- ------------------------------------------------------------
--- ĐỔI DỮ LIỆU
--- Vì dữ kiểu dữ liệu giữa cột Send_User_ID trong bảng lesson_comment và cột user_code trong bảng user không tương thích => chạy câu lệnh này để thực hiện API tìm kiếm
--- 1. Xóa ràng buộc khóa ngoại (thay 'lesson_comment_ibfk_2' bằng đúng tên khóa ngoại của bạn)
-ALTER TABLE lesson_comment DROP FOREIGN KEY lesson_comment_ibfk_2;
+-- Thêm bài giảng cho khóa học Lập trình C#
+INSERT INTO LESSON_DETAIL (LESSON_CODE, COURSE_ID, LESSON_ORDER, LESSON_NAME, VIDEO_LINK)
+VALUES 
+('LS001', 1, 1, 'Giới thiệu về C#', 'https://youtube.com/video1'),
+('LS002', 1, 2, 'Biến, kiểu dữ liệu và toán tử', 'https://youtube.com/video2'),
+('LS003', 1, 3, 'Lập trình hướng đối tượng', 'https://youtube.com/video3');
 
--- 2. Chỉnh sửa kiểu dữ liệu cột user_code trong bảng user
-ALTER TABLE user MODIFY COLUMN user_code VARCHAR(255) NOT NULL;
+INSERT INTO LESSON_DETAIL (LESSON_CODE, COURSE_ID, LESSON_ORDER, LESSON_NAME, VIDEO_LINK)
+VALUES 
+('PY001', (SELECT ID FROM COURSE WHERE COURSE_CODE = 'C002'), 1, 'Giới thiệu về Python', 'https://youtube.com/python1'),
+('PY002', (SELECT ID FROM COURSE WHERE COURSE_CODE = 'C002'), 2, 'Cấu trúc điều khiển', 'https://youtube.com/python2');
 
--- 3. Đảm bảo cột Send_User_ID có cùng kiểu dữ liệu với user_code
-ALTER TABLE lesson_comment MODIFY COLUMN Send_User_ID VARCHAR(255);
+-- ----------------------------------------------------------------
+INSERT INTO STUDENT_ENROLLMENT (STUDENT_ID, COURSE_ID)
+SELECT ID, 1 FROM USER WHERE USER_CODE = 'SV001';
 
--- 4. Tạo lại khóa ngoại
-ALTER TABLE lesson_comment ADD CONSTRAINT lesson_comment_ibfk_2 
-FOREIGN KEY (Send_User_ID) REFERENCES user(user_code) ON DELETE CASCADE ON UPDATE CASCADE;
+INSERT INTO STUDENT_ENROLLMENT (STUDENT_ID, COURSE_ID)
+SELECT ID, 1 FROM USER WHERE USER_CODE = 'SV002';
 
--- 5. Kiểm tra
-SELECT column_name, character_set_name, collation_name
-FROM information_schema.columns
-WHERE table_name IN ('lesson_comment', 'user') AND column_name IN ('Send_User_ID', 'user_code');
--- -------------------------------------------------------------
+INSERT INTO STUDENT_ENROLLMENT (STUDENT_ID, COURSE_ID)
+SELECT ID, (SELECT ID FROM COURSE WHERE COURSE_CODE = 'C002')
+FROM USER WHERE USER_CODE IN ('SV001', 'SV002');
 
-SELECT * FROM user;
+-- -----------------------------------------------------------------
+-- Kiểm tra số lượng bài giảng đúng trong khóa học
+SELECT COURSE_NAME, LESSON_COUNT, COUNT(L.ID) AS LESSON_REAL_COUNT
+FROM COURSE C
+LEFT JOIN LESSON_DETAIL L ON C.ID = L.COURSE_ID
+GROUP BY C.ID;
+
+-- Kiểm tra danh sách học viên đã ghi danh
+SELECT U.NAME AS STUDENT_NAME, C.COURSE_NAME
+FROM STUDENT_ENROLLMENT S
+JOIN USER U ON S.STUDENT_ID = U.ID
+JOIN COURSE C ON S.COURSE_ID = C.ID;
+
+-- ------------------------------------------------------------------------------------------------------------------------
+-- SV001 bình luận vào khóa học C001
+INSERT INTO LESSON_COMMENT (COURSE_CODE, LESSON_ID, SEND_USER_ID, MESSAGE)
+VALUES 
+('C001', 1, 'SV001', 'Bài học rất dễ hiểu, cảm ơn thầy cô!');
+
+-- SV002 bình luận vào bài học 2
+INSERT INTO LESSON_COMMENT (COURSE_CODE, LESSON_ID, SEND_USER_ID, MESSAGE)
+VALUES 
+('C001', 2, 'SV002', 'Phần ví dụ thực tế rất hay ạ.');
+
+-- SV001 bình luận vào bài học 3
+INSERT INTO LESSON_COMMENT (COURSE_CODE, LESSON_ID, SEND_USER_ID, MESSAGE)
+VALUES 
+('C001', 3, 'SV001', 'Em chưa hiểu rõ phần class và object.');
+
+-- SV002 bình luận vào bài học 1
+INSERT INTO LESSON_COMMENT (COURSE_CODE, LESSON_ID, SEND_USER_ID, MESSAGE)
+VALUES 
+('C001', 1, 'SV002', 'C# có khó hơn JavaScript không thầy?');
+
+
+select * from user
+select * from course
