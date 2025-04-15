@@ -9,10 +9,9 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Builder
 public class LessonCommentResp {
-    private Integer lessonId;
+    private String courseName;
     private String senderCode;
     private String senderName;
     private String message;
     private LocalDateTime commentTime;
-    private String courseName;
 }

@@ -9,16 +9,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
+import java.util.HashMap;
+import java.util.Map;
 /**
  * Controller xử lý các yêu cầu liên quan đến bình luận trong bài học.
  * Bao gồm: lấy danh sách bình luận theo khóa học, lấy bình luận mới nhất,
  * và tạo mới bình luận.
  */
 
-@CrossOrigin(origins = "http://127.0.0.1:5500")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
-@RequestMapping("/api/comments")
+@RequestMapping("/v1/api/comment")
 @RequiredArgsConstructor
 public class LessonCommentController {
 
@@ -31,9 +32,37 @@ public class LessonCommentController {
      * @return Danh sách các bình luận thuộc khóa học đó
      */
     @GetMapping("/course/{courseCode}")
-    public List<LessonCommentResp> getCommentsByCourse(@PathVariable String courseCode) {
-        return commentService.getCommentsByCourseId(courseCode);
+    public ResponseEntity<?> getCommentsByCourse(@PathVariable String courseCode) {
+        try {
+            List<LessonCommentResp> comments = commentService.getCommentsByCourseId(courseCode);
+
+            if (comments.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    Map.of(
+                        "errorStatus", 902,
+                        "message", "Dữ liệu đầu vào không hợp lệ hoặc khóa học không tồn tại"
+                    )
+                );
+            }
+
+            return ResponseEntity.ok().body(
+                Map.of(
+                    "errorStatus", 901,
+                    "message", "Lấy danh sách tin nhắn thành công",
+                    "data", comments
+                )
+            );
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                Map.of(
+                    "errorStatus", 903,
+                    "message", "Lỗi hệ thống, vui lòng thử lại sau"
+                )
+            );
+        }
     }
+
+
 
     /**
      * Lấy bình luận mới nhất của mỗi khóa học, có thể lọc theo tên người gửi, tên khóa học hoặc ngày bình luận.
@@ -44,15 +73,40 @@ public class LessonCommentController {
      * @return Danh sách bình luận mới nhất theo từng khóa học (áp dụng các bộ lọc nếu có)
      */
     @GetMapping("/latest-by-course")
-    public ResponseEntity<List<LessonCommentResp>> getLastCommentsEachCourse(
+    public ResponseEntity<?> getLastCommentsEachCourse(
             @RequestParam(required = false) String senderName,
             @RequestParam(required = false) String courseName,
             @RequestParam(required = false) String commentDate
     ) {
-        return ResponseEntity.ok(
-                commentService.getLastCommentsEachCourse(senderName, courseName, commentDate)
-        );
+        try {
+            List<LessonCommentResp> comments = commentService.getLastCommentsEachCourse(senderName, courseName, commentDate);
+
+            if (comments.isEmpty()) {
+                return ResponseEntity.badRequest().body(
+                    Map.of(
+                        "errorStatus", 902,
+                        "message", "Không tìm thấy dữ liệu"
+                    )
+                );
+            }
+
+            Map<String, Object> response = new HashMap<>();
+            response.put("errorStatus", 901);
+            response.put("message", "Lấy danh sách thành công");
+            response.put("data", comments);
+
+            return ResponseEntity.ok().body(response);
+            
+        } catch (Exception e) {
+            return ResponseEntity.internalServerError().body(
+                    Map.of(
+                        "errorStatus", 903,
+                        "message", "Lỗi hệ thống, vui lòng thử lại sau"
+                    )
+            );
+        }
     }
+
 
     /**
      * API tạo một bình luận mới
@@ -61,9 +115,27 @@ public class LessonCommentController {
      * @return Bình luận đã được lưu và phản hồi lại dưới dạng LessonCommentResp
      */
     @PostMapping
-    public ResponseEntity<LessonCommentResp> createComment(@RequestBody CreateCommentReq request) {
-        LessonCommentResp savedComment = commentService.addComment(request);
-        return ResponseEntity.ok(savedComment);
-    }
+    public ResponseEntity<?> createComment(@RequestBody CreateCommentReq request) {
+        try {
+            // Thêm bình luận mới vào cơ sở dữ liệu
+            LessonCommentResp savedComment = commentService.addComment(request);
+    
+            // Trả về phản hồi thành công với cấu trúc theo yêu cầu
+            Map<String, Object> response = new HashMap<>();
+            response.put("errorStatus", 901);
+            response.put("message", "Tin nhắn đã được gửi");
+            response.put("data", savedComment);
+    
+            return ResponseEntity.ok().body(response);
 
+        } catch (Exception e) {
+            // Trường hợp lỗi hệ thống
+            return ResponseEntity.internalServerError().body(
+                Map.of(
+                    "errorStatus", 903,
+                    "message", "Lỗi hệ thống, vui lòng thử lại sau"
+                )
+            );
+        }
+    }
 }

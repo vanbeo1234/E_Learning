@@ -42,7 +42,6 @@ public class LessonCommentServiceImpl implements LessonCommentService {
                     .orElse("Unknown");
 
             return LessonCommentResp.builder()
-                    .lessonId(comment.getLessonId())
                     .senderCode(comment.getSendUserId())
                     .senderName(senderName)
                     .message(comment.getMessage())
@@ -98,7 +97,7 @@ public class LessonCommentServiceImpl implements LessonCommentService {
                             .orElse("Unknown");
 
                     return LessonCommentResp.builder()
-                            .lessonId(comment.getLessonId())
+                            /* .lessonId(comment.getLessonId())*/
                             .senderCode(comment.getSendUserId())
                             .senderName(sender)
                             .message(comment.getMessage())
@@ -118,7 +117,6 @@ public class LessonCommentServiceImpl implements LessonCommentService {
     public LessonCommentResp addComment(CreateCommentReq request) {
         LessonComment comment = LessonComment.builder()
                 .courseCode(request.getCourseCode())
-                .lessonId(request.getLessonId())
                 .sendUserId(request.getSendUserId())
                 .message(request.getMessage())
                 .commentTime(LocalDateTime.now())
@@ -139,7 +137,6 @@ public class LessonCommentServiceImpl implements LessonCommentService {
 
         // Trả về thông tin bình luận dưới dạng DTO
         return LessonCommentResp.builder()
-                .lessonId(saved.getLessonId())
                 .senderCode(saved.getSendUserId())
                 .senderName(senderName)
                 .message(saved.getMessage())
