@@ -12,4 +12,19 @@ public class LessonResp {
     private String lessonName;
     private String videoLink;
     private String resourceLink;
+
+    // Constructor nhận các tham số
+    public LessonResp(Long id, String lessonCode, int lessonOrder, String lessonName, String videoLink,
+            String resourceLink) {
+        this.id = id;
+        this.lessonCode = lessonCode;
+        this.lessonOrder = lessonOrder;
+        this.lessonName = lessonName;
+        this.videoLink = videoLink;
+        this.resourceLink = resourceLink;
+    }
+
+    // Constructor không tham số - cần thiết cho Hibernate/JPA
+    public LessonResp() {
+    }
 }

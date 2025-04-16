@@ -12,6 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+/**
+ * Controller cho các yêu cầu đăng ký và đăng nhập người dùng.
+ * Bao gồm các API để người dùng đăng ký tài khoản và đăng nhập.
+ */
 @RestController
 @CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/v1/api/auth")
@@ -31,9 +35,15 @@ public class AuthController {
     /**
      * API đăng ký tài khoản người dùng.
      * 
-     * @param req        Đối tượng yêu cầu đăng ký người dùng.
-     * @param authHeader Token JWT của người gọi API (nếu có)
-     * @return ResponseEntity chứa phản hồi về kết quả đăng ký
+     * Phương thức này nhận yêu cầu đăng ký từ người dùng và gọi dịch vụ để xử lý
+     * việc tạo tài khoản. Nếu thành công, trả về thông tin đăng ký, nếu không trả
+     * về lỗi.
+     * 
+     * @param req        Đối tượng yêu cầu đăng ký người dùng, chứa các thông tin
+     *                   cần thiết
+     * @param authHeader Token JWT của người gọi API (nếu có) để xác thực người dùng
+     *                   đã đăng nhập
+     * @return ResponseEntity chứa phản hồi về kết quả đăng ký (thành công hoặc lỗi)
      */
     @PostMapping("/register")
     public ResponseEntity<?> register(@Valid @RequestBody UserRegisterReq req,
@@ -62,8 +72,13 @@ public class AuthController {
     /**
      * API đăng nhập tài khoản.
      * 
-     * @param req Đối tượng yêu cầu đăng nhập của người dùng.
-     * @return ResponseEntity chứa token JWT nếu đăng nhập thành công
+     * Phương thức này nhận yêu cầu đăng nhập từ người dùng và gọi dịch vụ để xử lý
+     * việc xác thực tài khoản. Nếu đăng nhập thành công, trả về token JWT.
+     * 
+     * @param req Đối tượng yêu cầu đăng nhập của người dùng, chứa tên đăng nhập và
+     *            mật khẩu
+     * @return ResponseEntity chứa token JWT nếu đăng nhập thành công, hoặc thông
+     *         báo lỗi nếu không thành công
      */
     @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody UserReq req) {

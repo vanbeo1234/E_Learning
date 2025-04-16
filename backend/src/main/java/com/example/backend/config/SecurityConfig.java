@@ -59,6 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/v1/api/courses/**").hasAnyRole("ADMIN", "INSTRUCTOR", "STUDENT")
                         .requestMatchers("/v1/api/lessons/**").hasAnyRole("ADMIN", "INSTRUCTOR")
                         .requestMatchers("/v1/api/courses/filter").hasAnyRole("INSTRUCTOR")
+                        .requestMatchers("/v1/api/comment/**").hasAnyRole("INSTRUCTOR", "STUDENT")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedEntryPoint()));
 

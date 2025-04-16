@@ -30,7 +30,7 @@ public class LessonDetailServiceImpl implements LessonDetailService {
     private CourseRepository courseRepository;
 
     /**
-     * Đức thêm hàm nàynày
+     * 
      * Hàm dùng để chuyển đổi từ entity LessonDetail sang DTO LessonResp
      * phục vụ cho việc trả dữ liệu về frontend theo định dạng chuẩn.
      * 

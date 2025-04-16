@@ -7,6 +7,7 @@ import lombok.Setter;
 @Setter
 public class UpdateLessonReq {
     private Long lessonId;
+    private String lessonCode;
     private String lessonName;
     private String videoLink;
     private String resourceLink;

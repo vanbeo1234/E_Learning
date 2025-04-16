@@ -25,5 +25,25 @@ public class CourseResp {
     private String statusCode;
     private List<InstructorResp> instructors;
     private List<LessonResp> lessons;
+    private String createdBy;
 
+    // Constructor dùng trong JPQL khi không lấy instructors và lessons
+    public CourseResp(Long id, String courseCode, String courseName, String description,
+            String learningOutcome, int lessonCount, LocalDate startDate,
+            LocalDate endDate, String statusCode, String backgroundImg) {
+        this.id = id;
+        this.courseCode = courseCode;
+        this.courseName = courseName;
+        this.description = description;
+        this.learningOutcome = learningOutcome;
+        this.lessonCount = lessonCount;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.statusCode = statusCode;
+        this.backgroundImg = backgroundImg;
+    }
+
+    // Constructor mặc định (nếu cần dùng khi không qua JPQL)
+    public CourseResp() {
+    }
 }

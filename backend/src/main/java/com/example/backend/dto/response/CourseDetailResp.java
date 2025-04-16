@@ -25,4 +25,23 @@ public class CourseDetailResp {
     private String statusCode;
     private InstructorSimpleResp instructor;
     private List<LessonSimpleResp> lessons;
+
+    public CourseDetailResp(Long id, String courseCode, String courseName, String description,
+            String learningOutcome, String backgroundImg, LocalDate startDate,
+            LocalDate endDate, int lessonCount, String statusCode,
+            InstructorSimpleResp instructor, List<LessonSimpleResp> lessons) {
+        this.id = id;
+        this.courseCode = courseCode;
+        this.courseName = courseName;
+        this.description = description;
+        this.learningOutcome = learningOutcome;
+        this.backgroundImg = backgroundImg;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.lessonCount = lessonCount;
+        this.statusCode = statusCode;
+        this.instructor = instructor;
+        this.lessons = lessons;
+    }
+
 }

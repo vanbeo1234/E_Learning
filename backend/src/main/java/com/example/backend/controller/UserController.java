@@ -16,18 +16,33 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 
+/**
+ * Controller cho các yêu cầu liên quan đến người dùng.
+ * Bao gồm các API để lấy danh sách người dùng, tìm kiếm người dùng và cập nhật
+ * thông tin người dùng.
+ */
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/v1/api/user")
 public class UserController {
     private final UserService userService;
 
-    // Constructor cho UserController.
+    /**
+     * Constructor của UserController.
+     * 
+     * @param userService Dịch vụ để xử lý các hoạt động liên quan đến người dùng.
+     */
     public UserController(UserService userService) {
         this.userService = userService;
     }
 
-    // API Lấy danh sách người dùng với phân trang.
+    /**
+     * API Lấy danh sách người dùng với phân trang.
+     * 
+     * @param page Số trang cần lấy (mặc định là 0).
+     * @param size Kích thước mỗi trang (mặc định là 10).
+     * @return ResponseEntity chứa danh sách người dùng và thông tin phân trang.
+     */
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
@@ -47,7 +62,18 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-    // API Tìm kiếm người dùng theo các tiêu chí.
+    /**
+     * API Tìm kiếm người dùng theo các tiêu chí.
+     * 
+     * @param name        Tên người dùng cần tìm kiếm (tùy chọn).
+     * @param dateOfBirth Ngày sinh người dùng (tùy chọn).
+     * @param roleId      Vai trò người dùng (tùy chọn).
+     * @param statusCode  Mã trạng thái người dùng (tùy chọn).
+     * @param page        Số trang cần lấy (mặc định là 0).
+     * @param size        Kích thước mỗi trang (mặc định là 10).
+     * @return ResponseEntity chứa danh sách người dùng tìm được và thông tin phân
+     *         trang.
+     */
     @GetMapping("/search")
     public ResponseEntity<Map<String, Object>> searchUsers(
             @RequestParam(required = false) String name,
@@ -74,9 +100,12 @@ public class UserController {
 
     /**
      * API Cập nhật thông tin người dùng theo mã người dùng.
-     *
+     * 
      * @param request Đối tượng yêu cầu cập nhật thông tin người dùng.
-     * @return Kết quả cập nhật người dùng.
+     * @return ResponseEntity chứa kết quả cập nhật thông tin người dùng.
+     * @throws IllegalArgumentException nếu người dùng không tồn tại.
+     * @throws Exception                nếu có lỗi hệ thống trong quá trình cập
+     *                                  nhật.
      */
     @PutMapping("/update")
     public ResponseEntity<Map<String, Object>> updateUser(@RequestBody UserReq request) {

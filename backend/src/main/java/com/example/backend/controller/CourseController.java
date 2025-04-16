@@ -17,6 +17,11 @@ import org.springframework.data.domain.Page;
 
 import java.util.Map;
 
+/**
+ * Lớp điều khiển (controller) cho các yêu cầu liên quan đến khóa học.
+ * Bao gồm các API để lọc, tìm kiếm, tạo mới, cập nhật và lấy thông tin chi tiết
+ * khóa học.
+ */
 @CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/v1/api/courses")
@@ -27,14 +32,20 @@ public class CourseController {
 
     /**
      * Lọc danh sách khóa học theo nhiều tiêu chí, hỗ trợ phân trang.
-     *
+     * 
+     * Phương thức này cho phép người dùng lọc danh sách khóa học dựa trên các tiêu
+     * chí như tên khóa học,
+     * tên giảng viên, trạng thái, và người tạo. Đồng thời, phương thức cũng hỗ trợ
+     * phân trang kết quả.
+     * 
      * @param courseName     tên khóa học (tùy chọn)
      * @param instructorName tên giảng viên (tùy chọn)
      * @param statusCode     mã trạng thái (tùy chọn)
      * @param createdBy      người tạo (tùy chọn)
-     * @param pageNumber     trang hiện tại (mặc định 0)
-     * @param pageSize       kích thước trang (mặc định 5)
-     * @return danh sách khóa học phù hợp kèm thông tin phân trang
+     * @param pageNumber     trang hiện tại (mặc định là 0)
+     * @param pageSize       kích thước trang (mặc định là 5)
+     * @return ResponseEntity chứa danh sách khóa học phù hợp kèm thông tin phân
+     *         trang
      */
     @GetMapping
     public ResponseEntity<?> filterCourses(
@@ -77,9 +88,12 @@ public class CourseController {
     }
 
     /**
-     * API hiển thị chi tiết khoá học theo ID
-     *
-     * @param courseId ID của khóa học
+     * API hiển thị chi tiết khoá học theo ID.
+     * 
+     * Phương thức này trả về thông tin chi tiết về một khóa học cụ thể dựa trên ID
+     * khóa học.
+     * 
+     * @param courseId ID của khóa học cần lấy thông tin
      * @return ResponseEntity chứa thông tin chi tiết khóa học
      */
     @GetMapping("/detail")
@@ -107,9 +121,13 @@ public class CourseController {
     }
 
     /**
-     * Tạo mới một khóa học
+     * Tạo mới một khóa học.
      * 
-     * @param req thông tin khóa học (CreateCourseReq)
+     * Phương thức này cho phép người dùng tạo mới một khóa học với các thông tin
+     * như tên khóa học,
+     * mô tả, giảng viên, và các thông tin liên quan khác.
+     * 
+     * @param req Thông tin khóa học cần tạo
      * @return ResponseEntity chứa thông tin khóa học đã tạo
      */
     @PostMapping
@@ -138,16 +156,14 @@ public class CourseController {
 
     /**
      * API cập nhật thông tin khóa học.
-     *
-     * <p>
-     * Cho phép chỉnh sửa thông tin khóa học đã tồn tại, bao gồm: tên, mô tả, mục
-     * tiêu,
-     * ảnh bìa, ngày bắt đầu/kết thúc, số lượng bài giảng, trạng thái và danh sách
-     * bài học.
-     * </p>
-     *
+     * 
+     * Phương thức này cho phép chỉnh sửa thông tin của một khóa học đã tồn tại, bao
+     * gồm tên, mô tả,
+     * mục tiêu, ảnh bìa, ngày bắt đầu/kết thúc, số lượng bài giảng, trạng thái và
+     * danh sách bài học.
+     * 
      * @param req đối tượng {@link UpdateCourseReq} chứa dữ liệu cần cập nhật
-     * @return {@link ResponseEntity}
+     * @return ResponseEntity chứa thông tin phản hồi về kết quả cập nhật
      */
     @PutMapping
     public ResponseEntity<?> updateCourse(@RequestBody UpdateCourseReq req) {

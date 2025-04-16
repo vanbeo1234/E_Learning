@@ -11,10 +11,11 @@ public class DateTimeUtil {
     /**
      * Xác thực và phân tích chuỗi ngày theo định dạng "yyyy-MM-dd" thành đối tượng
      * LocalDate.
-     *
+     * 
      * @param dateStr chuỗi ngày cần phân tích
      * @return đối tượng LocalDate đã phân tích
-     * @throws IllegalArgumentException nếu chuỗi ngày không hợp lệ
+     * @throws IllegalArgumentException nếu chuỗi ngày không hợp lệ hoặc không thể
+     *                                  phân tích được
      */
     public static LocalDate validateAndParseDate(String dateStr) {
         try {
@@ -26,9 +27,9 @@ public class DateTimeUtil {
 
     /**
      * Định dạng đối tượng LocalDate thành chuỗi ngày theo định dạng "yyyy-MM-dd".
-     *
+     * 
      * @param date đối tượng LocalDate cần định dạng
-     * @return chuỗi ngày đã được định dạng
+     * @return chuỗi ngày đã được định dạng theo định dạng "yyyy-MM-dd"
      */
     public static String formatDate(LocalDate date) {
         return date.format(ISO_DATE_FORMATTER);
@@ -38,9 +39,9 @@ public class DateTimeUtil {
      * Định dạng đối tượng LocalDateTime thành chuỗi ngày theo định dạng
      * "yyyy-MM-dd".
      * (Chỉ lấy phần ngày, bỏ qua giờ phút).
-     *
+     * 
      * @param dateTime đối tượng LocalDateTime cần định dạng
-     * @return chuỗi ngày đã được định dạng
+     * @return chuỗi ngày đã được định dạng theo định dạng "yyyy-MM-dd"
      */
     public static String formatDate(LocalDateTime dateTime) {
         return dateTime.toLocalDate().format(ISO_DATE_FORMATTER);
@@ -49,9 +50,10 @@ public class DateTimeUtil {
     /**
      * Định dạng đối tượng LocalDateTime thành chuỗi datetime theo định dạng ISO
      * "yyyy-MM-dd'T'HH:mm:ss".
-     *
+     * 
      * @param dateTime đối tượng LocalDateTime cần định dạng
-     * @return chuỗi datetime theo định dạng ISO
+     * @return chuỗi datetime đã được định dạng theo chuẩn ISO
+     *         "yyyy-MM-dd'T'HH:mm:ss"
      */
     public static String formatDateTime(LocalDateTime dateTime) {
         return dateTime.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);

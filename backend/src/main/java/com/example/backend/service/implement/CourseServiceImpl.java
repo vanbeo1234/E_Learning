@@ -1,17 +1,11 @@
 package com.example.backend.service.implement;
 
-import com.example.backend.common.Enum;
 import com.example.backend.dto.request.CourseFilterReq;
 import com.example.backend.dto.request.CreateCourseReq;
 import com.example.backend.dto.request.UpdateCourseReq;
-import com.example.backend.dto.request.UpdateLessonReq;
 import com.example.backend.dto.response.*;
-import com.example.backend.model.Course;
-import com.example.backend.model.Instructor;
-import com.example.backend.model.LessonDetail;
-import com.example.backend.model.User;
 import com.example.backend.repository.CourseRepository;
-import com.example.backend.repository.InstructorRepository;
+//import com.example.backend.repository.InstructorRepository;
 import com.example.backend.repository.LessonDetailRepository;
 import com.example.backend.repository.UserRepository;
 import com.example.backend.service.CourseService;
@@ -22,6 +16,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import com.example.backend.model.Course;
+import com.example.backend.model.User;
 import com.example.backend.common.Enum.Role;
 import java.util.List;
 import java.util.Collections;
@@ -33,8 +29,8 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private CourseRepository courseRepository;
 
-    @Autowired
-    private InstructorRepository instructorRepository;
+    // @Autowired
+    // private InstructorRepository instructorRepository;
 
     @Autowired
     private LessonDetailRepository lessonDetailRepository;
@@ -42,121 +38,83 @@ public class CourseServiceImpl implements CourseService {
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Lấy tất cả các khóa học từ repository và trả về danh sách khóa học
+     * với giảng viên và bài học (nếu có).
+     * 
+     * @return Danh sách khóa học với giảng viên và bài học.
+     */
     @Override
     public List<CourseResp> getAllCourses() {
-        List<Course> courses = courseRepository.findAll();
-        return courses.stream()
-                .map(this::buildCourseRespWithInstructorAndLessons)
+        return courseRepository.findAllCoursesWithInstructorsAndLessons().stream()
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Lấy thông tin khóa học theo ID.
+     * 
+     * @param id ID của khóa học.
+     * @return Thông tin khóa học.
+     */
     @Override
     public CourseResp getCourseById(Long id) {
-        Course course = courseRepository.findById(id)
+        return courseRepository.findCourseRespByCourseId(id)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
-        return buildCourseRespWithInstructorAndLessons(course);
     }
 
+    /**
+     * Lấy thông tin khóa học theo mã khóa học.
+     * 
+     * @param courseCode Mã khóa học.
+     * @return Thông tin khóa học.
+     */
     @Override
     public CourseResp getCourseByCode(String courseCode) {
-        Course course = courseRepository.findByCourseCode(courseCode)
+        return courseRepository.findCourseRespByCourseCode(courseCode)
                 .orElseThrow(() -> new RuntimeException("Course not found"));
-        return buildCourseRespWithInstructorAndLessons(course);
     }
 
-    private CourseResp buildCourseRespWithInstructorAndLessons(Course course) {
-        CourseResp responseDTO = new CourseResp();
-        responseDTO.setId(course.getId());
-        responseDTO.setCourseCode(course.getCourseCode());
-        responseDTO.setCourseName(course.getCourseName());
-        responseDTO.setDescription(course.getDescription());
-        responseDTO.setLearningOutcome(course.getLearningOutcome());
-        responseDTO.setLessonCount(course.getLessonCount());
-        responseDTO.setStartDate(course.getStartDate());
-        responseDTO.setEndDate(course.getEndDate());
-        responseDTO.setStatusCode(course.getStatusCode());
-        responseDTO.setBackgroundImg(course.getBackgroundImg());
-
-        var lessonEntities = lessonDetailRepository.findByCourse_IdOrderByLessonOrderAsc(course.getId());
-        var lessonDTOs = lessonEntities.stream().map(lesson -> {
-            LessonResp lessonResp = new LessonResp();
-            lessonResp.setId(lesson.getId());
-            lessonResp.setLessonCode(lesson.getLessonCode());
-            lessonResp.setLessonOrder(lesson.getLessonOrder());
-            lessonResp.setLessonName(lesson.getLessonName());
-            lessonResp.setVideoLink(lesson.getVideoLink());
-            lessonResp.setResourceLink(lesson.getResourceLink());
-            return lessonResp;
-        }).collect(Collectors.toList());
-        responseDTO.setLessons(lessonDTOs);
-
-        List<Instructor> instructorEnrollments = instructorRepository.findByCourseId(course.getId());
-        List<InstructorResp> instructors = instructorEnrollments.stream()
-                .map(enrollment -> {
-                    InstructorResp instructorResp = new InstructorResp();
-                    instructorResp.setId(enrollment.getInstructor().getId());
-                    instructorResp.setName(enrollment.getInstructor().getName());
-                    instructorResp.setUserCode(enrollment.getInstructor().getUserCode());
-                    return instructorResp;
-                }).collect(Collectors.toList());
-        responseDTO.setInstructors(instructors);
-
-        return responseDTO;
-    }
-
+    /**
+     * Tạo một khóa học mới và thêm giảng viên, bài học liên quan.
+     * 
+     * @param req Thông tin của khóa học cần tạo.
+     * @return Thông tin của khóa học mới tạo.
+     */
     @Override
     public CourseResp createCourse(CreateCourseReq req) {
         String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
         String imagePath = req.getBackgroundImg() != null ? "/image/" + req.getBackgroundImg() : null;
 
-        Course course = Course.builder()
-                .courseCode(generateCourseCode())
-                .courseName(req.getCourseName())
-                .description(req.getDescription())
-                .learningOutcome(req.getLearningOutcome())
-                .backgroundImg(imagePath)
-                .startDate(req.getStartDate())
-                .endDate(req.getEndDate())
-                .lessonCount(req.getLessonCount())
-                .statusCode(req.getStatusCode())
-                .createdBy(currentUser)
-                .build();
-
-        Course saved = courseRepository.save(course);
+        CourseResp courseResp = courseRepository.createCourse(req, currentUser, imagePath);
 
         List<User> allInstructors = userRepository.findByRole(Role.INSTRUCTOR.getValue());
         Collections.shuffle(allInstructors);
         List<User> selectedInstructors = allInstructors.stream().limit(2).collect(Collectors.toList());
 
-        for (User instructor : selectedInstructors) {
-            Instructor ins = Instructor.builder()
-                    .course(saved)
-                    .instructor(instructor)
-                    .build();
-            instructorRepository.save(ins);
-        }
+        selectedInstructors
+                .forEach(instructor -> courseRepository.addInstructorToCourse(courseResp.getCourseCode(), instructor));
 
         if (req.getLessons() != null && !req.getLessons().isEmpty()) {
-            List<LessonDetail> lessons = req.getLessons().stream().map(lessonReq -> LessonDetail.builder()
-                    .lessonCode(lessonReq.getLessonCode())
-                    .lessonOrder(lessonReq.getLessonOrder())
-                    .lessonName(lessonReq.getLessonName())
-                    .videoLink(lessonReq.getVideoLink())
-                    .resourceLink(lessonReq.getResourceLink())
-                    .course(saved)
-                    .build()).collect(Collectors.toList());
-
-            lessonDetailRepository.saveAll(lessons);
+            req.getLessons()
+                    .forEach(lessonReq -> courseRepository.addLessonToCourse(courseResp.getCourseCode(), lessonReq));
         }
 
-        return buildCourseRespWithInstructorAndLessons(saved);
+        return courseResp;
     }
 
-    private String generateCourseCode() {
-        long count = courseRepository.count() + 1;
-        return "KH" + String.format("%03d", count);
-    }
+    /*
+     * private String generateCourseCode() {
+     * long count = courseRepository.count() + 1;
+     * return "KH" + String.format("%03d", count);
+     * }
+     */
 
+    /**
+     * Lọc các khóa học theo các tiêu chí và phân trang.
+     * 
+     * @param req Các yêu cầu lọc (tên khóa học, giảng viên, ngày tạo, trạng thái).
+     * @return Danh sách khóa học sau khi lọc và phân trang.
+     */
     @Override
     public Page<CourseResp> filterCourses(CourseFilterReq req) {
         Pageable pageable = PageRequest.of(req.getPageNumber(), req.getPageSize());
@@ -180,93 +138,63 @@ public class CourseServiceImpl implements CourseService {
                 createdBy,
                 pageable);
 
-        return page.map(this::buildCourseRespWithInstructorAndLessons);
+        return page.map(course -> new CourseResp(
+                course.getId(),
+                course.getCourseCode(),
+                course.getCourseName(),
+                course.getDescription(),
+                course.getLearningOutcome(),
+                course.getLessonCount(),
+                course.getStartDate(),
+                course.getEndDate(),
+                course.getStatusCode(),
+                course.getBackgroundImg()));
     }
 
+    /**
+     * Cập nhật thông tin khóa học và bài giảng liên quan.
+     * 
+     * @param req Thông tin khóa học cần cập nhật.
+     * @return Thông tin khóa học chi tiết sau khi cập nhật.
+     */
     @Override
     public CourseDetailResp updateCourse(UpdateCourseReq req) {
-        String trimmedCode = req.getCourseCode().trim();
 
-        Course course = courseRepository.findByCourseCodeIgnoreCase(trimmedCode)
+        CourseResp courseResp = courseRepository.findCourseRespByCourseCode(req.getCourseCode().trim())
                 .orElseThrow(() -> new IllegalArgumentException("Khóa học không tồn tại"));
 
-        course.setCourseName(req.getCourseName());
-        course.setDescription(req.getDescription());
-        course.setLearningOutcome(req.getLearningOutcome());
-        course.setBackgroundImg(req.getBackgroundImg());
-        course.setStartDate(req.getStartDate());
-        course.setEndDate(req.getEndDate());
-        course.setLessonCount(req.getLessonCount());
-        course.setStatusCode(req.getStatusCode());
-
-        String updatedBy = SecurityContextHolder.getContext().getAuthentication().getName();
-        course.setUpdatedBy(updatedBy);
-
-        courseRepository.save(course);
+        courseRepository.updateCourse(req.getCourseName(), req.getDescription(), req.getLearningOutcome(),
+                req.getBackgroundImg(), req.getStartDate(), req.getEndDate(), req.getLessonCount(),
+                req.getStatusCode(), req.getCourseCode().trim());
 
         if (req.getLessons() != null) {
-            for (UpdateLessonReq lessonReq : req.getLessons()) {
-                LessonDetail lesson = lessonDetailRepository.findById(lessonReq.getLessonId())
-                        .orElseThrow(() -> new IllegalArgumentException("Bài giảng không tồn tại"));
-                lesson.setLessonName(lessonReq.getLessonName());
-                lesson.setVideoLink(lessonReq.getVideoLink());
-                lesson.setResourceLink(lessonReq.getResourceLink());
-                lessonDetailRepository.save(lesson);
-            }
+            req.getLessons()
+                    .forEach(lessonReq -> courseRepository.updateLessonInCourse(courseResp.getCourseCode(), lessonReq));
         }
 
-        return getCourseDetail(course.getId());
+        return getCourseDetail(courseResp.getId());
     }
 
+    /**
+     * Lấy thông tin chi tiết khóa học, giảng viên và bài học.
+     * 
+     * @param courseId ID của khóa học.
+     * @return Thông tin chi tiết khóa học bao gồm giảng viên và bài học.
+     */
     @Override
     public CourseDetailResp getCourseDetail(Long courseId) {
-        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
 
-        Course course = courseRepository.findById(courseId)
+        CourseResp courseResp = courseRepository.findCourseRespByCourseId(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid courseId"));
 
-        if (!course.getCreatedBy().equalsIgnoreCase(currentUser)) {
-            throw new IllegalArgumentException("Bạn không có quyền xem khóa học này");
-        }
+        List<LessonSimpleResp> lessonList = lessonDetailRepository.findLessonsByCourseId(courseId);
 
-        CourseDetailResp resp = new CourseDetailResp();
-        resp.setId(course.getId());
-        resp.setCourseCode(course.getCourseCode());
-        resp.setCourseName(course.getCourseName());
-        resp.setDescription(course.getDescription());
-        resp.setLearningOutcome(course.getLearningOutcome());
-        resp.setBackgroundImg(course.getBackgroundImg());
-        resp.setStartDate(course.getStartDate());
-        resp.setEndDate(course.getEndDate());
-        resp.setLessonCount(course.getLessonCount());
-        resp.setStatusCode(Enum.Status.valueOf(course.getStatusCode()).getValue());
+        InstructorSimpleResp instructorResp = new InstructorSimpleResp();
 
-        List<Instructor> instructors = instructorRepository.findByCourseId(courseId);
-        if (!instructors.isEmpty()) {
-            User u = instructors.get(0).getInstructor();
-            InstructorSimpleResp instructorResp = new InstructorSimpleResp();
-            instructorResp.setUserCode(u.getUserCode());
-            instructorResp.setName(u.getName());
-            instructorResp.setEmail(u.getEmail());
-            instructorResp.setPhone(u.getPhone());
-            instructorResp.setDateOfBirth(u.getDateOfBirth().toLocalDate().toString());
-            instructorResp.setExperience(u.getExperience());
-            instructorResp.setStatusCode(Enum.Status.valueOf(u.getStatusCode()).getValue());
-            instructorResp.setRoleId(Enum.Role.INSTRUCTOR.getText());
-            resp.setInstructor(instructorResp);
-        }
-
-        List<LessonDetail> lessons = lessonDetailRepository.findByCourse_IdOrderByLessonOrderAsc(courseId);
-        List<LessonSimpleResp> lessonList = lessons.stream().map(l -> {
-            LessonSimpleResp lessonResp = new LessonSimpleResp();
-            lessonResp.setLessonId(l.getId());
-            lessonResp.setLessonName(l.getLessonName());
-            lessonResp.setVideoLink(l.getVideoLink());
-            lessonResp.setResourceLink(l.getResourceLink());
-            return lessonResp;
-        }).collect(Collectors.toList());
-
-        resp.setLessons(lessonList);
-        return resp;
+        return new CourseDetailResp(courseResp.getId(), courseResp.getCourseCode(), courseResp.getCourseName(),
+                courseResp.getDescription(), courseResp.getLearningOutcome(), courseResp.getBackgroundImg(),
+                courseResp.getStartDate(), courseResp.getEndDate(), courseResp.getLessonCount(),
+                courseResp.getStatusCode(), instructorResp, lessonList);
     }
+
 }

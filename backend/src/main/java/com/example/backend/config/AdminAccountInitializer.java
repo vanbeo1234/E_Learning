@@ -11,7 +11,9 @@ import org.springframework.context.event.EventListener;
 /**
  * Lớp này chịu trách nhiệm khởi tạo tài khoản Admin gốc khi ứng dụng được khởi
  * động.
- * Tài khoản Admin gốc sẽ được tạo nếu chưa tồn tại trong cơ sở dữ liệu.
+ * Tài khoản Admin gốc sẽ được tạo tự động nếu chưa tồn tại trong cơ sở dữ liệu.
+ * Lớp này sử dụng ContextRefreshedEvent để kích hoạt việc kiểm tra và tạo tài
+ * khoản Admin.
  */
 @Component
 public class AdminAccountInitializer {
@@ -23,10 +25,10 @@ public class AdminAccountInitializer {
     private UserRepository userRepository;
 
     /**
-     * Được kích hoạt khi ứng dụng khởi động.
-     * Nếu tài khoản admin gốc chưa tồn tại, tài khoản sẽ được tạo tự động.
-     * 
-     * @param event sự kiện ContextRefreshedEvent
+     * Phương thức được kích hoạt khi ứng dụng khởi động
+     * Nó kiểm tra xem tài khoản admin gốc với mã "admin001" đã tồn tại trong cơ sở
+     * dữ liệu hay chưa.
+     * Nếu chưa tồn tại, tài khoản admin gốc sẽ được tạo tự động.
      */
     @EventListener(ContextRefreshedEvent.class)
     public void onApplicationEvent(ContextRefreshedEvent event) {

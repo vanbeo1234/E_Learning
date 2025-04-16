@@ -8,10 +8,12 @@ import lombok.Setter;
 public class InstructorResp {
     private Long id;
     private String name;
-    private String userCode; // Thêm thuộc tính userCode
-    private String email;
-    private String phone;
-    private String dateOfBirth;
-    private String statusCode;
-    private int experience;
+    private String userCode;
+
+    // Constructor nhận các tham số
+    public InstructorResp(Long id, String name, String userCode) {
+        this.id = id;
+        this.name = name;
+        this.userCode = userCode;
+    }
 }
