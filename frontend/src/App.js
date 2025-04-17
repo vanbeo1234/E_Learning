@@ -17,15 +17,16 @@ import Headera from './components/Admin/Headera';
 import Sidebara from './components/Admin/Sidebara';
 import Modala from './components/Admin/Modala';
 import AddCourseModal from './components/Admin/AddCourse';
-import CourseForm from './components/Giangvien/CourseForm';
-import FeedbackList from './components/Giangvien/FeedbackList';
-import CourseTable from './components/Giangvien/CourseTable';
-import CourseList from './components/Giangvien/CourseList';
-import CourseInfo from './components/Giangvien/CourseInfo';
-import Sidebars from './components/Giangvien/Sidebar';
-import Headers from './components/Giangvien/Header';
-import Homeg from './components/Giangvien/Homeg';
-import Feature from './components/Giangvien/Feature';
+import CourseForm from './components/giangvien/CourseForm';
+import FeedbackList from './components/giangvien/FeedbackList';
+import CourseTable from './components/giangvien/CourseTable';
+import CourseList from './components/giangvien/CourseList';
+import CourseInfo from './components/giangvien/CourseInfo';
+import Sidebars from './components/giangvien/Sidebar';
+import Headers from './components/giangvien/Header';
+import Homeg from './components/giangvien/Homeg';
+import Feature from './components/giangvien/Feature';
+
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(true); // Change to false to test un-authenticated view
