@@ -2,6 +2,7 @@ package com.example.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+import com.example.backend.common.Enum;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -13,7 +14,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User1 {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -46,7 +47,7 @@ public class User1 {
     private LocalDateTime dateOfBirth;
 
     @Column(name = "ROLE_ID", nullable = false)
-    private int roleId;
+    private int roleId; // Giữ nguyên roleId là int
 
     @Column(name = "STATUS_CODE", nullable = false)
     private String statusCode;
@@ -68,4 +69,14 @@ public class User1 {
 
     @Column(name = "UPDATED_AT")
     private Timestamp updatedAt;
+
+    // Getter cho Role
+    public Enum.Role getRole() {
+        return Enum.Role.fromInt(this.roleId); // Chuyển từ roleId sang Enum Role
+    }
+
+    // Setter cho Role
+    public void setRole(Enum.Role role) {
+        this.roleId = role.getValue(); // Chuyển từ Enum Role sang roleId
+    }
 }

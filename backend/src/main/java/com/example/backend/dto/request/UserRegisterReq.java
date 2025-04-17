@@ -4,13 +4,14 @@ import lombok.Getter;
 import lombok.Setter;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import com.example.backend.common.util.DateTimeUtil;
+
 import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 @Getter
 @Setter
-public class UserRegisterReq { // DTO dùng để đăng ký tài khoản người dùng
+public class UserRegisterReq {
+
     @NotEmpty(message = "User code is required")
     private String userCode;
 
@@ -36,18 +37,21 @@ public class UserRegisterReq { // DTO dùng để đăng ký tài khoản ngư�
     @NotEmpty(message = "Status is required")
     private String statusCode;
 
-    private LocalDate dateOfBirth;
     private Integer gender;
     private Integer roleId;
     private Integer experience;
     private String certification;
 
-    // Trường này giúp phân biệt ai tạo -> nếu có thì là Admin đang tạo
+    private LocalDate dateOfBirth;
+
     private String createdBy;
 
+    /**
+     * Set dateOfBirth from String using DateTimeUtil for validation and parsing.
+     * 
+     * @param dateStr Date string to be parsed.
+     */
     public void setDateOfBirth(String dateStr) {
-        this.dateOfBirth = LocalDateTime.parse(dateStr, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss"))
-                .toLocalDate();
+        this.dateOfBirth = DateTimeUtil.validateAndParseDate(dateStr);
     }
-
 }

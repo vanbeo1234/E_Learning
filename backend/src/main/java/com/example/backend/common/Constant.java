@@ -2,76 +2,9 @@ package com.example.backend.common;
 
 public class Constant {
 
-    // Enum Gender để xác định giới tính
-    public enum Gender {
-        MALE(0, "Male"),
-        FEMALE(1, "Female");
-
-        private final int value;
-        private final String text; // Thêm thuộc tính text
-
-        Gender(int value, String text) {
-            this.value = value;
-            this.text = text;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public String getText() { // Trả về text thay vì số
-            return text;
-        }
-    }
-
-    // Enum Role để xác định vai trò người dùng
-    public enum Role {
-        ADMIN(1, "Admin"),
-        INSTRUCTOR(2, "Instructor"),
-        STUDENT(3, "Student");
-
-        private final int value;
-        private final String text; // Thêm thuộc tính text
-
-        Role(int value, String text) {
-            this.value = value;
-            this.text = text;
-        }
-
-        public int getValue() {
-            return value;
-        }
-
-        public String getText() { // Trả về text thay vì số
-            return text;
-        }
-
-        public static Role fromInt(int i) {
-            for (Role role : Role.values()) {
-                if (role.getValue() == i) {
-                    return role;
-                }
-            }
-            throw new IllegalArgumentException("Không tìm thấy vai trò tương ứng với giá trị: " + i);
-        }
-    }
-
-    // Enum Status để xác định trạng thái
-    public enum Status {
-        ACTIVE("Active"), // Trạng thái hoạt động
-        INACTIVE("Inactive"); // Trạng thái vô hiệu hóahóa
-
-        private final String value;
-
-        Status(String value) {
-            this.value = value;
-        }
-
-        public String getValue() {
-            return value;
-        }
-    }
-
-    // Hằng số header JWT (giữ lại nếu cần, hoặc chuyển sang JwtProperties)
+    /**
+     * Hằng số cho tên header chứa JWT.
+     * Sử dụng giá trị này khi cần lấy JWT từ header trong các yêu cầu HTTP.
+     */
     public static final String JWT_HEADER = "Authorization";
 }

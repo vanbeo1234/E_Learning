@@ -27,32 +27,63 @@ import Headers from './components/giangvien/Header';
 import Homeg from './components/giangvien/Homeg';
 import Feature from './components/giangvien/Feature';
 
-
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(true); // Change to false to test un-authenticated view
-  const [isAdmin, setIsAdmin] = useState(false); // Admin flag
-  const [isInstructor, setIsInstructor] = useState(true); // Instructor flag
-
-  const courses = [
-    { id: 1, title: "Khóa học ReactJS" },
-    { id: 2, title: "Khóa học NodeJS" },
-    // Thêm các khóa học khác nếu cần
-  ];
+function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <Router>
-<div className="container">
-        <Sidebara />
-        <Routes>
-                    <Route path="/user-management" element={<><Headera title="Quản lý người dùng" /><UserManagement /></>} />
-                    <Route path="/course-management" element={<><Headera title="Quản lý khóa học" /><CourseManagement courses={courses} /></>} />
-                    <Route path="/add-course" element={<><Headera title="Thêm khóa học" /><AddCourseModal /></>} />
-                    <Route path="/" element={<Navigate to="/admin/course-management" />} />
-                  </Routes>
-        </div>
+      <Routes>
+        <Route path="/login" element={
+          isAuthenticated ? 
+            <Navigate to="/user-management" /> : 
+            <Login setIsAuthenticated={setIsAuthenticated} />
+        } />
+        <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+        
+        {/* Admin Routes */}
+        <Route
+          path="/user-management"
+          element={
+            isAuthenticated ? (
+              <div className="app-container">
+                <Sidebara />
+                <div className="app-content">
+                  <Headera />
+                  <div className="main-content">
+                    <UserManagement />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        
+        <Route
+          path="/course-management"
+          element={
+            isAuthenticated ? (
+              <div className="app-container">
+                <Sidebara />
+                <div className="app-content">
+                  <Headera />
+                  <div className="main-content">
+                    <CourseManagement />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
+      </Routes>
     </Router>
   );
-};
+}
 
 export default App;
 
