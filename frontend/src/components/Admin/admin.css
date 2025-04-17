@@ -19,164 +19,357 @@ body {
     font-family: 'Roboto', sans-serif;  
     background-color: #f5f5f5;  
 }  
-  
-.container {  
-    display: flex;  
-    height: 100vh; /* Đảm bảo chiều cao bao quát */  
-}  
-  
+
 /* Sidebar */  
-.sidebar {  
-    width: 250px; /* Width của sidebar */  
-    background-color: #d1e7ff;  
+.sidebar {
+    width: 250px;
+    background-color: #d1e7ff;
     padding: 20px;
-    position: fixed; /* Giữ sidebar cố định */  
-    top: 0; /* Đặt vị trí ở trên cùng */  
-    left: 0; /* Đặt vị trí ở bên trái */  
-    height: 100vh; /* Đảm bảo sidebar không bị ngắn */  
-    box-sizing: border-box;  
-}  
-  
-.sidebar h2 {  
-    color: #3399ff;  
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100vh;
+    box-sizing: border-box;
+    z-index: 1000; /* Ensure sidebar is above other content */
+}
+
+.sidebar h2 {
+    color: #3399ff;
     font-size: 30px;
-    margin-bottom: 20px;  
-}  
-  
-.sidebar ul {  
-    list-style: none;  
+    margin-bottom: 20px;
+}
+
+.sidebar ul {
+    list-style: none;
     padding: 10px;
-}  
-  
-.sidebar ul li {  
-    margin-bottom: 20px;  
+}
+
+.sidebar ul li {
+    margin-bottom: 20px;
     padding: 10px 0px;
     white-space: nowrap; /* Ensure items do not wrap to the next line */
-}  
-  
-.sidebar ul li a {  
-    text-decoration: none;  
-    color: #333;  
-    font-size: 18px;  
-    display: flex;  
-    align-items: center;  
-}  
-  
-.sidebar ul li a i {  
-    margin-right: 10px;  
-}  
-  
-.sidebar ul li a.active {  
-    color: #3399ff;  
-    font-weight: bold;  
-}  
-  
-.sidebar ul li a:hover {  
-    color: #3399ff;  
-}  
-  
-.sidebar ul li.logout {  
-    position: absolute;  
-    bottom: 20px;  
-}  
-  
-.content {  
-    flex-grow: 1; /* Cho phép content chiếm không gian còn lại */  
-    margin-left: 250px; /* Đảm bảo nội dung không chồng lên sidebar */  
-    padding: 20px;  
-    padding-top: 40px; /* Đảm bảo nội dung không bị che bởi header */  
-}  
-  
-/* Header */  
-.header {  
-    background-color: #d1e7ff;  
-    padding:14px 20px;
-    display: flex;  
-    justify-content: space-between;  
-    align-items: center;  
-    border-radius: 0;  
-    position: fixed; /* Tọa độ cố định chứng tỏ thanh header */  
-    top: 0; /* Đặt vị trí ở trên cùng */  
-    right: 0; /* Đảm bảo không có khoảng cách bên phải */  
-    left: 250px; /* Đặt từ vị trí bắt đầu x = 250px để tránh găp sidebar */  
-    width: calc(100% - 250px); /* Tính toán chiều rộng của header */  
-    z-index: 1000;  
 }
-  
-.header h1 {  
-    color: #3399ff;  
-    font-size: 24px;  
-}  
-  
-.header input {  
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: #333;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+}
+
+.sidebar ul li a i {
+    margin-right: 10px;
+}
+
+.sidebar ul li a.active {
+    color: #3399ff;
+    font-weight: bold;
+}
+
+.sidebar ul li a:hover {
+    color: #3399ff;
+}
+
+.sidebar ul li.logout {
+    position: absolute;
+    bottom: 20px;
+}
+
+/* Content area adjustment */
+.content {
+    margin-left: 250px; /* Ensure content is not overlapping the sidebar */
+    padding: 20px;
+    padding-top: 80px; /* Increased padding-top to accommodate header and content */
+    flex-grow: 1; /* Allow content to take up the remaining space */
+    position: relative;
+    z-index: 900; /* Ensure content is below the sidebar */
+}
+
+/* Header styling */
+.header {
+    background-color: #d1e7ff;
+    padding: 14px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 250px; /* Ensure header starts after the sidebar */
+    width: calc(100% - 250px); /* Ensure header spans the remaining space */
+    z-index: 1000; /* Ensure header is above other content */
+}
+
+.header h1 {
+    color: #3399ff;
+    font-size: 24px;
+}
+
+.header input {
     width: 60%;
     padding: 10px 20px;
     border: 1px solid #95bfff;
     border-radius: 9999px;
     box-sizing: border-box;
     margin: 0;
-}  
-  
-.header .user-info {  
-    display: flex;  
-    align-items: center;  
-    position: relative;  
-}  
-  
-.header .user-info i {  
-    margin-right: 10px;  
-    color: #0080ff;  
-    cursor: pointer; 
-    padding-right:30px;
-    font-size: 22px;
-}  
-  
-.header .user-info img {  
-    border-radius: 50%;  
-    width: 40px;  
-    height: 40px;  
-    margin-right: 10px;  
-    cursor: pointer;  
-}  
-  
-.header .user-info span {  
-    font-size: 16px;  
-    color: #3399ff;  
-}  
-  
-/* Dropdown menu */
-.header .dropdown-menu {  
-    position: absolute;  
-    top: 60px; /* Adjusted to appear below the avatar */
-    right: 12px;
-    background-color: #fff;  
-    border: 1px solid #ccc;  
-    border-radius: 4px;  
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);  
-    padding: 10px;  
-    display: flex;  
-    flex-direction: column;  
-    z-index: 1000; /* Ensure it appears above other elements */
-    width: 200px; /* Increase width */
-    border: #8cc5ff;
-}
-  
-.header .dropdown-menu button {  
-    background-color: #fffafa;  
-    color: #000000;  
-    border-color:  #8cc5ff;
-    padding: 10px;  
-    margin: 5px 0;  
-    border-radius: 8px;
-    cursor: pointer;  
-    text-align: left; /* Align text to the left */
-    width: 100%; /* Ensure buttons take full width */
-}  
-  
-.header .dropdown-menu button:hover {  
-    background-color: #daecff; 
 }
 
+.header .user-info {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.header .user-info i {
+    margin-right: 10px;
+    color: #0080ff;
+    cursor: pointer;
+    padding-right:30px;
+    font-size: 22px;
+}
+
+.header .user-info img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+    cursor: pointer;
+}
+
+.header .user-info span {
+    font-size: 16px;
+    color: #3399ff;
+}
+
+/* Dropdown menu */
+.header .dropdown-menu {
+    position: absolute;
+    top: 60px;
+    right: 12px;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    z-index: 1000;
+    width: 200px;
+    border: #8cc5ff;
+}
+
+.header .dropdown-menu button {
+    background-color: #fffafa;
+    color: #000000;
+    border-color:  #8cc5ff;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+}
+
+.header .dropdown-menu button:hover {
+    background-color: #daecff;
+}
+
+/* Add Course Form */
+.add-course-details {
+    max-width: 1200px;
+    padding: 100px 20px 20px; /* Tránh header */
+    margin: 0 auto; /* Căn giữa ngang */
+    margin-left: calc(250px + 20px); /* Dịch sang phải tránh sidebar */
+    box-sizing: border-box;
+    position: relative;
+    z-index: 1; 
+    padding-bottom: 40px;   
+}
+
+
+.add-course-section {
+    margin-bottom: 20px;
+}
+
+.add-course-section h2 {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.add-course-input-group {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+    flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
+}
+
+.add-course-input-group label {
+    width: 1200px; /* Có thể tăng nếu muốn để nhãn dài hơn */
+    flex-shrink: 0;
+    margin-right: 10px;
+}
+
+.add-course-input-group input,
+.add-course-input-group textarea,
+.add-course-input-group select {
+    flex-grow: 1;
+    width: calc(100% - 210px); /* 100% trừ đi chiều rộng label + margin */
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    min-width: 300px;
+    max-width: 100%;
+}
+
+.add-course-input-group textarea {
+    resize: none;
+    height: 100px;
+}
+
+.add-course-input-group .add-course-edit-icon {
+    margin-left: 10px;
+    color: #f0ad4e;
+    cursor: pointer;
+}
+
+.add-course-add-new {
+    color: #28a745;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.add-course-add-new i {
+    margin-right: 5px;
+}
+
+.add-course-cover-image {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    width: 100%;
+    height: 200px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.add-course-cover-image i {
+    font-size: 24px;
+    color: #28a745;
+}
+
+.add-course-content {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 20px;
+}
+
+.add-course-content .add-course-input-group label {
+    width: 100px;
+}
+
+.add-course-content .add-course-input-group .add-course-upload-icon {
+    margin-left: 10px;
+    color: #6c757d;
+    cursor: pointer;
+}
+
+.add-course-content .add-course-buttons {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.add-course-content .add-course-buttons button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-course-content .add-course-buttons .add-course-save-btn {
+    background-color: #28a745;
+    color: white;
+}
+
+.add-course-content .add-course-buttons .add-course-cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.add-course-footer-buttons {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.add-course-footer-buttons button {
+    margin-left: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.add-course-footer-buttons .add-course-create-btn {
+    background-color: #007bff;
+    color: white;
+}
+
+.add-course-footer-buttons .add-course-cancel-btn {
+    background-color: #dc3545;
+    color: white;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.notification-box {
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    text-align: center;
+    max-width: 400px;
+    width: 100%;
+    height: 150px;
+}
+
+.notification-box h1 {
+    font-size: 18px;
+    margin: 0 0 20px;
+    font-weight: bold;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.button-container button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    
+  }
 
 /* Thẻ chứa nội dung */
 .user-management-card {
@@ -1076,4 +1269,76 @@ th:first-child, td:first-child {
     background-color: #dc3545;
   }
   
- 
+/* Container cho mục chọn giảng viên */
+.student-selection {
+    margin: 20px 0;
+  }
+  
+  .student-selection label {
+    font-size: 1.1em;
+    font-weight: bold;
+    display: block;
+    margin-bottom: 10px;
+  }
+  
+  .student-selection select {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    transition: border-color 0.3s ease;
+  }
+  
+  .student-selection select:focus {
+    outline: none;
+    border-color: #388e3c; /* Màu xanh khi chọn */
+  }
+  
+  .student-selection select option {
+    padding: 10px;
+  }
+  
+  /* Đảm bảo rằng dropdown có chiều cao phù hợp */
+  .student-selection select[multiple] {
+    height: 150px; /* Tăng chiều cao khi có nhiều tùy chọn */
+  }
+  
+  /* Style cho khi người dùng chọn nhiều học viên */
+  .student-selection select[multiple] option:checked {
+    background-color: #f1f1f1; /* Màu nền khi chọn */
+    color: white;
+    
+  }
+  
+  .select-instructor-group {
+    margin-bottom: 20px;
+  }
+  
+  .select-instructor-group label {
+    font-weight: bold;
+    font-size: 1.1em;
+    color: #333;
+    padding: auto;
+    
+  }
+  
+  .instructor-select {
+    width: 30%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1em;
+    margin-top: 8px;
+    padding-left: 20px;
+  }
+
+  
+  
+  /* Thêm phần hiển thị nếu không có lựa chọn */
+  .student-selection select option:disabled {
+    color: #bbb;
+    background-color: #f1f1f1;
+  }
+  

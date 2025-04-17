@@ -53,6 +53,10 @@ const CourseManagement = () => {
 
   const navigate = useNavigate();
 
+  const handleAddCourse = () => {
+    // Chuyển hướng đến trang AddCourse
+    navigate('/add-course');
+  };
   const toggleSelectAll = () => {
     if (!selectAll) {
       setSelectedCourses(courses.map(course => course.id));
@@ -123,12 +127,6 @@ const CourseManagement = () => {
     });
   };
 
-  const handleAddCourse = () => {
-    const newCourse = { ...formData, id: courses.length + 1 };
-    setCourses(prevCourses => [...prevCourses, newCourse]);
-    setAddModalOpen(false);
-    resetForm();
-  };
 
   const totalPages = Math.ceil(courses.length / itemsPerPage);
   const currentCourses = courses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
@@ -150,8 +148,8 @@ const CourseManagement = () => {
           
           <div className="course-management-action-buttons">
             <div>
-              <button className="btn btn-green" onClick={() => setAddModalOpen(true)}>Thêm</button>
-              <button className="btn btn-red" onClick={() => showConfirmModal(handleDeleteCourse)}>Vô hiệu hóa</button>
+            <button className="btn btn-green" onClick={handleAddCourse}>Thêm</button> {/* Navigate to AddCourse page */}
+            <button className="btn btn-red" onClick={() => showConfirmModal(handleDeleteCourse)}>Vô hiệu hóa</button>
               <button className="btn btn-yellow" onClick={() => showConfirmModal(handleUpdateCourse)}>Kích hoạt</button>
               <button className="btn btn-blue" onClick={handleSearch}>Tìm kiếm</button>
             </div>

@@ -23,7 +23,7 @@
 
 /* Video Section Styles */
 .learn1-video-section {
-  width: 95; /* Adjust width to fit alongside content */
+  width: 100%; /* Adjust width to fit alongside content */
   margin-right: 40px; 
   margin-bottom: 20px;
 }
@@ -38,6 +38,7 @@
   height: auto;
   border: 2px solid #bceaff;
   border-radius: 8px;
+
 }
 
 .learn1-content-rating {
@@ -46,7 +47,7 @@
   border-radius: 5px;
   background-color: #fff;
   position: relative;
-  margin-left: 10px;
+  margin-left: 40px;
 }
 
 .learn1-content-list {
@@ -92,20 +93,149 @@
   transition: background-color 0.3s ease;
 }
 
-.rate-button {
+/* Navigation and Rating Buttons */
+.navigation-rating-buttons {
+  display: flex;
+  justify-content: center; /* Center the navigation buttons */
+  align-items: center;
+  margin-top: 20px;
+  padding: 20px 20px;
+  position: fixed;
+  bottom: 0;
   width: 100%;
-  padding: 15px 20px;
-  font-size: 16px;
-  background-color: #469fff;
-  color: white;
+
+
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 40px; /* Increased space between the buttons */
+}
+
+.previous-button {
+  padding: 20px 25px; /* Increased padding for larger button */
+  font-size: 18px; /* Increased font size */
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.5s ease;
+  transition: transform 0.3s ease;
+  background-color: #469fff; /* Changed background color */
+  color: white;
 }
 
-.rate-button:hover {
-  background-color: #0052ce;
+.previous-button:hover {
+  background-color: #0052ce; /* Darker shade on hover */
+  box-shadow: 0 0 10px rgba(0, 82, 206, 0.5);
+}
+
+.next-button {
+  padding: 20px 25px; /* Increased padding for larger button */
+  font-size: 18px; /* Increased font size */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  background-color: #469fff; /* Changed background color */
+  color: white;
+}
+
+.next-button:hover {
+  background-color: #0052ce; /* Darker shade on hover */
+  box-shadow: 0 0 10px rgba(0, 82, 206, 0.5);
+}
+
+.rate-button {  
+  position: fixed;  
+  bottom: 10px;  /* Khoảng cách từ mép dưới */  
+  right: 8%;   /* Khoảng cách từ mép phải */  
+  padding: 15px 20px;  
+  font-size: 18px;  
+  border: none;  
+  border-radius: 4px;  
+  cursor: pointer;  
+  transition: transform 0.3s ease;  
+  background-color: #47daff;  
+  color: white;  
+}  
+
+.rate-button:hover {  
+  background-color: #3cb9e0;  
+  transform: scale(1.1);  
+}  
+
+/* Rating Popup */
+.rating-popup {
+  position: fixed; /* Changed to fixed for centering */
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 40px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.rating-popup h3 {
+  margin-top: 0;
+  text-align: center;
+  font-size: 24px;
+}
+
+.rating-popup .stars {
+  display: flex;
+  justify-content: center;
+  padding: 20px;
+}
+
+.rating-popup .stars i {
+  font-size: 24px;
+  margin: 0 5px;
+  cursor: pointer;
+}
+
+.rating-popup .stars i.selected {
+  color: #ffd700;
+}
+
+.rating-popup .comment-input {
+  width: 100%;
+  height: 100px;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 20px;
+}
+
+.rating-popup .confirm-button,
+.rating-popup .close-rating-button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.rating-popup .confirm-button {  
+  background-color: #47daff;  
+  color: white;  
+  margin-right: 50%; /* Tăng khoảng cách bên phải */  
+}  
+
+.rating-popup .close-rating-button {  
+  background-color: #ddd;  
+  color: black;  
+}  
+
+.rating-popup .confirm-button:hover {
+  background-color: #3cb9e0;
+  
+}
+
+.rating-popup .close-rating-button:hover {
+  background-color: #bbb;
 }
 
 /* Progress, Notes, and Q&A Styles */
@@ -117,8 +247,8 @@
   display: flex;
   justify-content: space-around;
   align-items: center;
-  width: 80%;
-  padding: 0 20px; /* Add horizontal padding */
+  width:100%;
+  padding: 0px 10px; /* Add horizontal padding */
 }
 
 .learn1-progress {
@@ -127,6 +257,7 @@
 
 .notes-button {
   text-align: right;
+  margin-right: 65%;
   background-color: #d6d6d6;
   border: none;
   padding: 15px 20px;
@@ -144,13 +275,21 @@
   border: none;
   padding: 15px 20px;
   border-radius: 8px;
-  transition: background-color 0.3s ease;
+  transition: transform 0.3s ease;  
+  cursor: pointer;
 }
 
 .qa-button i {
   margin-right: 5px;
 }
 
+.qa-button:hover {
+background-color: #5699ff; /* Change background color on hover */
+color: #fff; /* Change text color on hover */
+box-shadow: 0 0 10px rgba(110, 209, 255, 0.5); /* Add shadow effect */
+cursor: pointer; /* Ensure cursor remains a pointer */
+}
+  
 .qa-popup {
   position: absolute;
   top: 50%;
@@ -235,6 +374,8 @@
 
 .qa-popup .send-comment-button:hover {
   background-color: #3cb9e0;
+  transform: scale(1.1);  
+  cursor: default; 
 }
 
 .close-qa-button {
@@ -315,7 +456,7 @@
 }
 
 .close-notes-button:hover {
-  background-color: #0056b3;
+  background-color: #48a0ff;
 }
 
 
@@ -345,35 +486,65 @@
 .learn1-left-section .navigation-buttons button:hover {
   background-color: #0056b3;
 }
+.rating-section {
+  margin-top: 20px;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  background-color: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
 
-/* Progress Circle Styles */
-.progress-circle {
-  width: 100px;
+.rating-section h3 {
+  font-size: 24px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.stars {
+  display: flex;
+  margin-bottom: 10px;
+}
+
+.stars .fa-star {
+  font-size: 24px;
+  margin-right: 5px;
+  cursor: pointer;
+  color: #ccc;
+}
+
+.stars .fa-star.selected {
+  color: #ffcc00;
+}
+
+.comment-input {
+  width: 100%;
   height: 100px;
-  position: relative;
-  margin: 20px auto; /* Center the circle */
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  resize: none;
+  transition: border-color 0.3s ease;
 }
 
-.circular-chart {
-  display: block;
-  max-width: 80%;
-  max-height: 250px;
+.comment-input:focus {
+  border-color: #007bff;
+  outline: none;
 }
 
-.circle-bg, .circle {
-  fill: none;
+.confirm-button {
+  padding: 10px 20px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-.circle-bg {
-  stroke: #eee;
-  stroke-width: 3.8;
-}
-
-.circle {
-  stroke: #4caf50;
-  stroke-width: 2.8;
-  stroke-linecap: round;
-  animation: progress 1s ease-out forwards;
+.confirm-button:hover {
+  background-color: #0056b3;
 }
 
 @keyframes progress {
@@ -386,15 +557,6 @@
   fill: #666;
   font-size: 0.5em;
   text-anchor: middle;
-}
-
-/* Hover Effects for Buttons */
-.learn1-navigation button:hover,
-.qa-button:hover,
-.rate-button:hover,
-.lesson-button:hover {
-  transform: scale(1.05);
-  padding: 20px 20px; /* Slight scaling effect on hover */
 }
 
 /* Transition Effects */

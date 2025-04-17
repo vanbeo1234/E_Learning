@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom';
 
 const Sidebars = () => {
   const location = useLocation();
@@ -13,19 +13,19 @@ const Sidebars = () => {
       <h2>E LEARNING</h2>
       <ul>
         <li>
-          <a href="/" className={getActivePage() === 'home' ? 'active' : ''}>
+          <Link to="/homeg" className={getActivePage() === 'homeg' ? 'active' : ''}>
             <i className="fas fa-home"></i> Trang chủ
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/feedback" className={getActivePage() === 'feedback' ? 'active' : ''}>
+          <Link to="/feedback" className={getActivePage() === 'feedback' ? 'active' : ''}>
             <i className="fas fa-comments"></i> Phản hồi từ học viên
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/create-course" className={getActivePage() === 'create-course' ? 'active' : ''}>
+          <Link to="/courses" className={getActivePage() === 'courses' ? 'active' : ''}>
             <i className="fas fa-book"></i> Tạo khóa học
-          </a>
+          </Link>
         </li>
         <li className="logout">
           <a href="#">

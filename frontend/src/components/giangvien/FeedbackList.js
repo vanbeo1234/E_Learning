@@ -1,39 +1,52 @@
 import React, { useState } from 'react';
 import "./giangvien.css";
+
 const FeedbackList = () => {
   const feedbacks = [
     { student: 'Nguyễn Văn A', course: 'Java core', content: 'XYZ', received: '10/3/2021', responded: '10/3/2021' },
     { student: 'Trần Thị B', course: '', content: 'ABC', received: '', responded: '20/3/2021' },
     // Add more feedbacks as needed
-    { student: 'Nguyễn Văn A', course: 'Java core', content: 'XYZ', received: '10/3/2021', responded: '10/3/2021' },
-    { student: 'Trần Thị B', course: '', content: 'ABC', received: '', responded: '20/3/2021' },
-    // Add more feedbacks as needed
-    { student: 'Nguyễn Văn A', course: 'Java core', content: 'XYZ', received: '10/3/2021', responded: '10/3/2021' },
-    { student: 'Trần Thị B', course: '', content: 'ABC', received: '', responded: '20/3/2021' },
-    // Add more feedbacks as needed
-    { student: 'Nguyễn Văn A', course: 'Java core', content: 'XYZ', received: '10/3/2021', responded: '10/3/2021' },
-    { student: 'Trần Thị B', course: '', content: 'ABC', received: '', responded: '20/3/2021' },
-    // Add more feedbacks as needed
-    { student: 'Nguyễn Văn A', course: 'Java core', content: 'XYZ', received: '10/3/2021', responded: '10/3/2021' },
-    { student: 'Trần Thị B', course: '', content: 'ABC', received: '', responded: '20/3/2021' },
-    // Add more feedbacks as needed
-    { student: 'Nguyễn Văn A', course: 'Java core', content: 'XYZ', received: '10/3/2021', responded: '10/3/2021' },
-    { student: 'Trần Thị B', course: '', content: 'ABC', received: '', responded: '20/3/2021' },
-    // Add more feedbacks as needed
-    { student: 'Nguyễn Văn A', course: 'Java core', content: 'XYZ', received: '10/3/2021', responded: '10/3/2021' },
-    { student: 'Trần Thị B', course: '', content: 'ABC', received: '', responded: '20/3/2021' },
-
   ];
 
   const [currentPage, setCurrentPage] = useState(1);
-  const feedbacksPerPage = 25; //djust the number of feedbacks per page as needed
+  const [selectedFeedbackIndex, setSelectedFeedbackIndex] = useState(null);
+  const [showQA, setShowQA] = useState(false);
+  const [comments, setComments] = useState([
+    { user: "Admin", avatar: "https://via.placeholder.com/40", content: "Cảm ơn bạn đã góp ý!", timestamp: "10/3/2021 14:35" },
+    { user: "Trần Thị B", avatar: "https://via.placeholder.com/40", content: "Mình thấy bài giảng hơi nhanh.", timestamp: "10/3/2021 15:00" },
+  ]);
+  const [newComment, setNewComment] = useState("");
 
+  const feedbacksPerPage = 10;
   const totalPages = Math.ceil(feedbacks.length / feedbacksPerPage);
   const currentFeedbacks = feedbacks.slice((currentPage - 1) * feedbacksPerPage, currentPage * feedbacksPerPage);
 
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+
+  const toggleQA = (index) => {
+    if (selectedFeedbackIndex === index && showQA) {
+      setShowQA(false);
+      setSelectedFeedbackIndex(null);
+    } else {
+      setSelectedFeedbackIndex(index);
+      setShowQA(true);
+    }
   };
+
+  const handleAddComment = () => {
+    if (newComment.trim() !== "") {
+      const newCommentObj = {
+        user: "Giảng viên",
+        avatar: "/images/teacher-avatar.png",
+        content: newComment,
+        timestamp: new Date().toLocaleString(),
+        isTeacher: true
+      };
+      setComments([...comments, newCommentObj]);
+      setNewComment("");
+    }
+  };
+  
 
   return (
     <div>
@@ -43,17 +56,8 @@ const FeedbackList = () => {
         <input placeholder="Ngày nhận" type="date" />
         <button>Tìm kiếm</button>
       </div>
+
       <div className="table-container">
-        <div className="table-controls">
-          <label htmlFor="entries">Hiện</label>
-          <select id="entries">
-            <option value="10">10</option>
-            <option value="25">25</option>
-            <option value="50">50</option>
-            <option value="100">100</option>
-          </select>
-          <span>danh mục</span>
-        </div>
         <table>
           <thead>
             <tr>
@@ -73,22 +77,65 @@ const FeedbackList = () => {
                 <td>{fb.content}</td>
                 <td>{fb.received}</td>
                 <td>{fb.responded}</td>
-                <td><button>Xem chi tiết</button></td>
+                <td>
+                  <button onClick={() => toggleQA(index)}>
+                    <i className="fas fa-comment-dots"></i> Xem chi tiết
+                  </button>
+                  {showQA && (
+  <div className="feedback-popup-overlay">
+    <div className="feedback-popup-slide">
+      <button onClick={() => setShowQA(false)} className="popup-close-button">✕</button>
+      <h3>Chi tiết bình luận</h3>
+      <div className="popup-comments-list">
+       {comments.map((comment, idx) => (
+  <div
+    key={idx}
+    className={`popup-comment ${comment.isTeacher ? 'teacher' : 'student'}`}
+  >
+    {!comment.isTeacher && (
+      <img src={comment.avatar} alt="Avatar" className="popup-comment-avatar" />
+    )}
+    <div className="popup-comment-details">
+      <div className="popup-comment-user">{comment.user}</div>
+      <div className="popup-comment-timestamp">{comment.timestamp}</div>
+      <div className="popup-comment-content">{comment.content}</div>
+    </div>
+    {comment.isTeacher && (
+      <img src={comment.avatar} alt="Avatar" className="popup-comment-avatar" />
+    )}
+  </div>
+))}
+      </div>
+      <div className="popup-new-comment">
+        <textarea
+          className="popup-new-comment-input"
+          placeholder="Nhập câu hỏi hoặc bình luận của bạn..."
+          value={newComment}
+          onChange={(e) => setNewComment(e.target.value)}
+        ></textarea>
+        <button onClick={handleAddComment} className="popup-send-button">
+          <i className="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div className="pagination-buttons">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index}
-              className={index + 1 === currentPage ? 'active' : ''}
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
+
+         {/* Nút phân trang */}
+         <div className="pagination-buttons">
+            <button onClick={() => handlePageChange(1)}>&laquo;</button>
+            {[...Array(totalPages).keys()].map((number) => (
+              <button key={number + 1} onClick={() => handlePageChange(number + 1)}>
+                {number + 1}
+              </button>
+            ))}
+            <button onClick={() => handlePageChange(totalPages)}>&raquo;</button>
+          </div>
       </div>
     </div>
   );

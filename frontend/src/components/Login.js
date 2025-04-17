@@ -1,45 +1,52 @@
 import React, { useState } from 'react';  
 import { Link, useNavigate } from "react-router-dom";  
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import FontAwesome icons
-
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+ 
 const Login = ({ setIsAuthenticated }) => {
-  const [username, setUsername] = useState('');
+  const [userCode, setUserCode] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
-
+ 
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
-
+ 
   const handleLogin = async () => {
     try {
-      const response = await fetch('https://your-api-url.com/login', {
+      console.log('Gửi yêu cầu đăng nhập với:', { userCode, password });
+      const response = await fetch('http://localhost:8081/v1/api/auth/login', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ username, password }),
+        body: JSON.stringify({ userCode, password }),
       });
-
+ 
+      console.log('Trạng thái phản hồi:', response.status);
       if (response.ok) {
         const data = await response.json();
-        // Assuming the API returns a token or user data
+        console.log('Đăng nhập thành công:', data);
         localStorage.setItem('token', data.token);
+        localStorage.setItem('userCode', data.userCode);
         setIsAuthenticated(true);
-        navigate('/admin');
+        toast.success('Đăng nhập thành công!'); // Thông báo thành công
+        navigate('/user-management'); // Chuyển hướng đến trang quản lý người dùng
       } else {
-        // Handle login failure
-        alert('Login failed. Please check your credentials and try again.');
+        console.error('Đăng nhập thất bại:', response.statusText);
+        toast.error('Đăng nhập thất bại. Vui lòng kiểm tra thông tin và thử lại.');
       }
     } catch (error) {
-      console.error('Error during login:', error);
-      alert('An error occurred. Please try again later.');
+      console.error('Lỗi trong quá trình đăng nhập:', error);
+      toast.error('Đã xảy ra lỗi. Vui lòng thử lại sau.');
     }
   };
-
+ 
   return (
     <div style={{ backgroundColor: 'white' }}>
+      <ToastContainer />
       <header style={styles.loginHeader}>
         <div style={styles.loginLogo}>E LEARNING</div>
         <div style={styles.loginNavContainer}>
@@ -63,15 +70,16 @@ const Login = ({ setIsAuthenticated }) => {
           </div>
           <div style={styles.loginInputFields}>
             <div>
-              <label htmlFor="username">Tên đăng nhập</label>
+              <label htmlFor="userCode">Tên đăng nhập</label>
               <input
                 type="text"
-                id="username"
+                id="userCode"
                 placeholder="Nhập Tên người dùng của bạn"
                 style={styles.loginInputField}
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                value={userCode}
+                onChange={(e) => setUserCode(e.target.value)}
                 required
+                aria-label="User Code"
               />
             </div>
             <div>
@@ -85,23 +93,25 @@ const Login = ({ setIsAuthenticated }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
+                  aria-label="Password"
                 />
                 <i
                   style={{ ...styles.loginPasswordIcon, ...(passwordVisible ? styles.loginPasswordIconActive : {}) }}
                   onClick={togglePasswordVisibility}
+                  aria-label="Toggle password visibility"
                 >
                   {passwordVisible ? <FaEyeSlash /> : <FaEye />}
                 </i>
               </div>
             </div>
-            <button style={styles.loginSubmitButton} onClick={handleLogin}>Đăng nhập</button>
+            <button style={ styles.loginSubmitButton} onClick={handleLogin}>Đăng nhập</button>
           </div>
         </div>
       </main>
     </div>
   );
 };
-
+ 
 const styles = {
   loginHeader: {  
     backgroundColor: 'rgb(128, 229, 255)',  
@@ -125,8 +135,8 @@ const styles = {
     display: 'flex',  
     justifyContent: 'space-between',  
     listStyleType: 'none',  
-    margin: '0',   
-    paddingRight: '150px',                 
+    margin: '0',  
+    paddingRight: '150px',                
   },  
   loginNavLink: {  
     textDecoration: 'none',  
@@ -146,7 +156,7 @@ const styles = {
   },  
   loginFormContainer: {  
     backgroundColor: '#ffffff',  
-    width: '550px',   
+    width: '550px',  
     maxHeight: '90vh',  
     padding: '50px',  
     border: '1px solid #88d5ff',  
@@ -221,5 +231,5 @@ const styles = {
     fontSize: '20px',
   },  
 };
-
+ 
 export default Login;

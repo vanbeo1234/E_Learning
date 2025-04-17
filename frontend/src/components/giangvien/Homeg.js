@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
 
-function Home() {
+function Homeg() {
   const courses = [
     {
       image: '/logo512.png',
@@ -37,14 +38,6 @@ function Home() {
   const [currentPage, setCurrentPage] = useState(1);
   const coursesPerPage = 8;
 
-  const bannerImages = ['/logo512.png', '/logo512.png', '/img/OIP (2).jpg'];
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setCurrentBannerIndex((prevIndex) => (prevIndex + 1) % bannerImages.length);
-    }, 3000);
-    return () => clearInterval(interval);
-  }, [bannerImages.length]);
 
   const totalPages = Math.ceil(courses.length / coursesPerPage);
   const currentCourses = courses.slice((currentPage - 1) * coursesPerPage, currentPage * coursesPerPage);
@@ -71,18 +64,9 @@ function Home() {
 
   return (
     <main className="homestudents-main-content">
-      <div className="homestudents-banner">
-        <img src={bannerImages[currentBannerIndex]} alt="Banner" className="homestudents-banner-image" />
-      </div>
-      <div className="homestudents-pagination">
-        {bannerImages.map((_, index) => (
-          <div key={index} className={index === currentBannerIndex ? 'homestudents-active' : ''}></div>
-        ))}
-      </div>
-
       <section className="homestudents-courses">
         <div className="homestudents-courses-header">
-          <h2>Khóa học</h2>
+          <h2>Danh mục khóa học</h2>
         </div>
         <div className="homestudents-course-grid">
           {currentCourses.map((course, index) => (
@@ -116,4 +100,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Homeg;

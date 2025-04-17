@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 import './giangvien.css';
-const CourseForm = ({ isEdit, courseId }) => {
+
+const Feature = ({ isEdit, courseId }) => {
   const [courseName, setCourseName] = useState('');
   const [courseContent, setCourseContent] = useState('');
   const [objectives, setObjectives] = useState([]);
@@ -69,7 +70,7 @@ const CourseForm = ({ isEdit, courseId }) => {
     updatedLectures[index].video = file; // Lưu file vào bài giảng
     setLectures(updatedLectures);
   };
-  
+
   // Hàm thay đổi ảnh bìa
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
@@ -130,6 +131,7 @@ const CourseForm = ({ isEdit, courseId }) => {
       setShowSuccessModal(true);
     }
   };  
+  
   // Hàm hủy bỏ và hiển thị modal xác nhận
   const handleCancel = () => {
     setShowCancelModal(true);
@@ -149,6 +151,7 @@ const CourseForm = ({ isEdit, courseId }) => {
   const handleCloseCancelModal = () => {
     setShowCancelModal(false);
   };
+
   return (
     <div className="course-details">
       <div className="section">
@@ -162,6 +165,7 @@ const CourseForm = ({ isEdit, courseId }) => {
             onChange={(e) => setCourseName(e.target.value)}
           />
           {errors.courseName && <span className="error">{errors.courseName}</span>}
+
         </div>
         <div className="input-group">
           <label htmlFor="course-content">Nội dung<span style={{ color: 'red' }}>*</span></label>
@@ -192,142 +196,72 @@ const CourseForm = ({ isEdit, courseId }) => {
             </button>
           </div>
         ))}
-<div className="section">
-  <h2>Nội dung khóa học</h2>
-  <div className="add-new" onClick={handleAddLecture}>
-    <i className="fas fa-plus"></i>
-    <span>Thêm mới</span>
-  </div>
-  {lectures.map((lecture, index) => (
-    <div className="course-content" key={index}>
-      <div className="input-group">
-        <label htmlFor={`order-${index}`}>Thứ tự</label>
-        <input
-          type="text"
-          id={`order-${index}`}
-          placeholder="Nhập thứ tự"
-          value={lecture.order}
-          onChange={(e) => handleLectureChange(index, 'order', e.target.value)}
-        />
       </div>
-      <div className="input-group">
-        <label htmlFor={`lecture-name-${index}`}>
-          Tên bài giảng<span style={{ color: 'red' }}>*</span>
-        </label>
-        <input
-          type="text"
-          id={`lecture-name-${index}`}
-          placeholder="Nhập tên bài giảng"
-          value={lecture.name}
-          onChange={(e) => handleLectureChange(index, 'name', e.target.value)}
-        />
-        {errors[`lectureName${index}`] && (
-          <span className="error">{errors[`lectureName${index}`]}</span>
-        )}
-      </div>
-      <div className="input-group">
-        <label htmlFor={`video-type-${index}`}>Chọn loại video</label>
-        <select
-          id={`video-type-${index}`}
-          value={lecture.videoType || 'url'}
-          onChange={(e) => handleLectureChange(index, 'videoType', e.target.value)}
-        >
-          <option value="url">Dán đường link video</option>
-          <option value="file">Tải video lên</option>
-        </select>
-      </div>
-
-      {lecture.videoType === 'url' ? (
-        <div className="input-group">
-          <label htmlFor={`video-url-${index}`}>Video URL</label>
-          <input
-            type="text"
-            id={`video-url-${index}`}
-            placeholder="Nhập đường dẫn video"
-            value={lecture.video}
-            onChange={(e) => handleLectureChange(index, 'video', e.target.value)}
-          />
+      <div className="section">
+        <h2>Nội dung khóa học</h2>
+        <div className="add-new" onClick={handleAddLecture}>
+          <i className="fas fa-plus"></i>
+          <span>Thêm mới</span>
         </div>
-      ) : (
-        <div className="input-group">
-          <label htmlFor={`video-upload-${index}`}>Tải lên video</label>
+        {lectures.map((lecture, index) => (
+          <div key={index} className="input-group">
+            <input
+              type="text"
+              placeholder="Tên bài giảng"
+              value={lecture.name}
+              onChange={(e) => handleLectureChange(index, 'name', e.target.value)}
+            />
+            <button className="remove-btn" onClick={() => handleRemoveLecture(index)}>
+              <i className="fas fa-trash"></i>
+            </button>
+          </div>
+        ))}
+      </div>
+      <div className="section">
+        <h2>Ảnh bìa</h2>
+        <div
+          className="cover-image"
+          style={{
+            backgroundImage: coverImage ? `url(${coverImage})` : "none",
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+          onClick={() => document.getElementById("cover-image-upload").click()}
+        >
+          {!coverImage && <i className="fas fa-plus upload-icon"></i>}
           <input
             type="file"
-            id={`video-upload-${index}`}
-            onChange={(e) => handleFileUpload(index, e.target.files[0])}
+            accept="image/*"
+            onChange={handleCoverImageChange}
+            style={{ display: "none" }}
+            id="cover-image-upload"
           />
-          <i className="fas fa-upload upload-icon"></i>
         </div>
-      )}
-
-      <div className="input-group">
-        <label htmlFor={`document-${index}`}>Tài liệu</label>
-        <input
-          type="text"
-          id={`document-${index}`}
-          placeholder="Tải lên tài liệu"
-          value={lecture.document}
-          onChange={(e) => handleLectureChange(index, 'document', e.target.value)}
-        />
       </div>
-      <div className="buttons">
-        <button className="save-btn">Lưu</button>
-        <button className="cancel-btn" onClick={() => handleRemoveLecture(index)}>
-          Xóa
-        </button>
-      </div>
-    </div>
-  ))}
-</div>
-
-        <div className="section">
-      <h2>Ảnh bìa</h2>
-      <div
-        className="cover-image"
-        style={{
-          backgroundImage: coverImage ? `url(${coverImage})` : "none",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-        }}
-        onClick={() => document.getElementById("cover-image-upload").click()}
-      >
-        {!coverImage && <i className="fas fa-plus upload-icon"></i>}
-
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleCoverImageChange}
-          style={{ display: "none" }}
-          id="cover-image-upload"
-        />
-      </div>
-    </div>
       <div className="learning-time-section">
-  <h2>Thời gian học</h2>
-  <div className="learning-time-row">
-    <div className="learning-time-input">
-      <label htmlFor="start-date">Ngày bắt đầu<span style={{ color: 'red' }}>*</span></label>
-      <input
-        type="date"
-        id="start-date"
-        value={startDate}
-        onChange={(e) => setStartDate(e.target.value)}
-      />
-      {errors.startDate && <span className="learning-time-error">{errors.startDate}</span>}
-    </div>
-    <div className="learning-time-input">
-      <label htmlFor="end-date">Ngày kết thúc<span style={{ color: 'red' }}>*</span></label>
-      <input
-        type="date"
-        id="end-date"
-        value={endDate}
-        onChange={(e) => setEndDate(e.target.value)}
-      />
-      {errors.endDate && <span className="learning-time-error">{errors.endDate}</span>}
-    </div>
-  </div>
-</div>
-
+        <h2>Thời gian học</h2>
+        <div className="learning-time-row">
+          <div className="learning-time-input">
+            <label htmlFor="start-date">Ngày bắt đầu<span style={{ color: 'red' }}>*</span></label>
+            <input
+              type="date"
+              id="start-date"
+              value={startDate}
+              onChange={(e) => setStartDate(e.target.value)}
+            />
+            {errors.startDate && <span className="learning-time-error">{errors.startDate}</span>}
+          </div>
+          <div className="learning-time-input">
+            <label htmlFor="end-date">Ngày kết thúc<span style={{ color: 'red' }}>*</span></label>
+            <input
+              type="date"
+              id="end-date"
+              value={endDate}
+              onChange={(e) => setEndDate(e.target.value)}
+            />
+            {errors.endDate && <span className="learning-time-error">{errors.endDate}</span>}
+          </div>
+        </div>
       </div>
       <div className="footer-buttons">
         <button className="create-btn" onClick={handleSave}>
@@ -352,4 +286,4 @@ const CourseForm = ({ isEdit, courseId }) => {
   );
 };
 
-export default CourseForm;
+export default Feature;

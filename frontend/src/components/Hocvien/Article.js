@@ -5,35 +5,39 @@ function Article() {
   const articles = [
     {
       category: "Chia sẻ học",
-      title: "Học Việc Siêu Đầu Của Số Hóa Sáng tạo với AI Powered Learning!",
-      description: "Trong thời đại số hóa hiện đại, việc học đã bước vào một kỷ nguyên mới nhờ công nghệ AI. Đây là cách mà bạn có thể tận dụng nó để nâng cao kỹ năng của mình.",
-      image: "/logo512.png", // Replace with actual image path
-      link: "/article/1", // Example link
-      author: "Nguyễn Văn A",
-      avatar: "https://placehold.co/50x50", // Replace with actual avatar path
-      subject: "ReactJS",
+      title: "Tự Học Lập Trình Web Tại Nhà: Lộ Trình Cho Người Mới Bắt Đầu",
+      description:
+        "Bài viết hướng dẫn bạn từng bước xây dựng nền tảng vững chắc: từ HTML cơ bản, CSS nâng cao đến các project JavaScript thực tế.",
+      image: "/images/learn-web.png",
+      link: "/article/learn-web",
+      author: "Lê Minh Phúc",
+      avatar: "https://placehold.co/50x50", // Thay bằng ảnh thật nếu có
+      subject: "HTML, CSS, JavaScript",
     },
     {
-      category: "Chia sẻ học",
-      title: "Bài viết 2",
-      description: "Mô tả bài viết 2.",
-      image: "/logo512.png", // Replace with actual image path
-      link: "/article/2", // Example link
-      author: "Trần Thị B",
-      avatar: "https://placehold.co/50x50", // Replace with actual avatar path
-      subject: "HTML",
+      category: "Kỹ năng học",
+      title: "Học Trực Tuyến Có Hiệu Quả Không? 5 Cách Giúp Bạn Tập Trung Khi Học Online",
+      description:
+        "Bài viết mách bạn 5 mẹo đơn giản nhưng cực kỳ hiệu quả để giữ sự tập trung khi học từ xa, từ setup góc học tập đến cách sử dụng Pomodoro.",
+      image: "/images/focus-online.png",
+      link: "/article/focus-tips",
+      author: "Trần Thị Hà",
+      avatar: "https://placehold.co/50x50",
+      subject: "Kỹ năng mềm",
     },
     {
-      category: "Chia sẻ học",
-      title: "Bài viết 3",
-      description: "Mô tả bài viết 3.",
-      image: "/path/to/image3.jpg", // Replace with actual image path
-      link: "/article/3", // Example link
-      author: "Lê Văn C",
-      avatar: "https://placehold.co/50x50", // Replace with actual avatar path
-      subject: "Java",
+      category: "Công nghệ giáo dục",
+      title: "Ứng Dụng AI Trong Học Tập: Tối Ưu Quá Trình Học Trực Tuyến",
+      description:
+        "AI đang thay đổi cách chúng ta học online. Từ trợ lý học tập ảo, gợi ý bài học đến phân tích thói quen học để tối ưu hóa thời gian.",
+      image: "/images/ai-learning.png",
+      link: "/article/ai-learning",
+      author: "Nguyễn Văn Hùng",
+      avatar: "https://placehold.co/50x50",
+      subject: "Trí tuệ nhân tạo",
     },
   ];
+  
 
   return (
     <div className="flex-1 p-8">
