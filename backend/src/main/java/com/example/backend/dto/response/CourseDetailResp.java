@@ -23,13 +23,14 @@ public class CourseDetailResp {
     private LocalDate endDate;
     private int lessonCount;
     private String statusCode;
-    private InstructorSimpleResp instructor;
+    private List<InstructorSimpleResp> instructors;
     private List<LessonSimpleResp> lessons;
 
+    // Constructor với tất cả tham số
     public CourseDetailResp(Long id, String courseCode, String courseName, String description,
             String learningOutcome, String backgroundImg, LocalDate startDate,
             LocalDate endDate, int lessonCount, String statusCode,
-            InstructorSimpleResp instructor, List<LessonSimpleResp> lessons) {
+            List<InstructorSimpleResp> instructors, List<LessonSimpleResp> lessons) {
         this.id = id;
         this.courseCode = courseCode;
         this.courseName = courseName;
@@ -40,8 +41,7 @@ public class CourseDetailResp {
         this.endDate = endDate;
         this.lessonCount = lessonCount;
         this.statusCode = statusCode;
-        this.instructor = instructor;
+        this.instructors = instructors;
         this.lessons = lessons;
     }
-
 }

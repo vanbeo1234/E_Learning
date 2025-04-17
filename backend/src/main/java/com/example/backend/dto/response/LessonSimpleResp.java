@@ -11,7 +11,6 @@ public class LessonSimpleResp {
     private String videoLink;
     private String resourceLink;
 
-    // Constructor dùng để ánh xạ từ LessonDetail
     public LessonSimpleResp(Long lessonId, String lessonName, String videoLink, String resourceLink) {
         this.lessonId = lessonId;
         this.lessonName = lessonName;

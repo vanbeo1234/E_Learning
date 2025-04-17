@@ -47,7 +47,7 @@ public class User {
     private LocalDateTime dateOfBirth;
 
     @Column(name = "ROLE_ID", nullable = false)
-    private int roleId; // Giữ nguyên roleId là int
+    private int roleId;
 
     @Column(name = "STATUS_CODE", nullable = false)
     private String statusCode;
@@ -70,13 +70,11 @@ public class User {
     @Column(name = "UPDATED_AT")
     private Timestamp updatedAt;
 
-    // Getter cho Role
     public Enum.Role getRole() {
-        return Enum.Role.fromInt(this.roleId); // Chuyển từ roleId sang Enum Role
+        return Enum.Role.fromInt(this.roleId);
     }
 
-    // Setter cho Role
     public void setRole(Enum.Role role) {
-        this.roleId = role.getValue(); // Chuyển từ Enum Role sang roleId
+        this.roleId = role.getValue();
     }
 }

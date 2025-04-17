@@ -25,5 +25,6 @@ public class UpdateCourseReq {
     // private String updatedBy;
     private List<UpdateLessonReq> lessons;
     private String updatedBy;
+    private List<Long> instructorIds;
 
 }

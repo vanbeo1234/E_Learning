@@ -165,19 +165,32 @@ public class CourseController {
      * @param req đối tượng {@link UpdateCourseReq} chứa dữ liệu cần cập nhật
      * @return ResponseEntity chứa thông tin phản hồi về kết quả cập nhật
      */
-    @PutMapping
-    public ResponseEntity<?> updateCourse(@RequestBody UpdateCourseReq req) {
-        try {
-            CourseDetailResp resp = courseService.updateCourse(req);
-            return ResponseEntity.ok(Map.of(
-                    "body", Map.of("errorStatus", 901, "message", "Chỉnh sửa khóa học thành công", "data", resp)));
-        } catch (IllegalArgumentException e) {
+    @PutMapping("/{courseCode}")
+    public ResponseEntity<?> updateCourse(@PathVariable String courseCode, @RequestBody UpdateCourseReq req) {
+        // Set courseCode từ đường dẫn vào đối tượng req
+        req.setCourseCode(courseCode);
 
-            return ResponseEntity.badRequest().body(Map.of(
-                    "body", Map.of("errorStatus", 902, "message", e.getMessage())));
+        try {
+            // Kiểm tra khóa học có tồn tại không
+            CourseResp course = courseService.getCourseByCode(courseCode); // Tìm khóa học theo courseCode
+            if (course == null) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("body", Map.of("errorStatus", 902, "message", "Khóa học không tồn tại")));
+            }
+
+            // Nếu tồn tại, thực hiện cập nhật khóa học
+            CourseDetailResp resp = courseService.updateCourse(req);
+
+            // Trả về response thành công
+            return ResponseEntity.ok(Map.of("body",
+                    Map.of("errorStatus", 901, "message", "Chỉnh sửa khóa học thành công", "data", resp)));
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest()
+                    .body(Map.of("body", Map.of("errorStatus", 902, "message", e.getMessage())));
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().body(Map.of(
-                    "body", Map.of("errorStatus", 903, "message", "Lỗi hệ thống, vui lòng thử lại sau")));
+            return ResponseEntity.internalServerError()
+                    .body(Map.of("body", Map.of("errorStatus", 903, "message", "Lỗi hệ thống, vui lòng thử lại sau")));
         }
     }
 

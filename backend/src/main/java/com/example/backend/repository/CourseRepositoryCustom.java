@@ -22,4 +22,11 @@ public interface CourseRepositoryCustom {
     void addLessonToCourse(String courseCode, LessonDetailReq lessonReq);
 
     void updateLessonInCourse(String courseCode, UpdateLessonReq lessonReq);
+
+    /**
+     * Xóa tất cả giảng viên của khóa học.
+     * 
+     * @param courseCode Mã khóa học.
+     */
+    void removeInstructorsFromCourse(String courseCode);
 }

@@ -39,7 +39,7 @@ public class LessonDetailServiceImpl implements LessonDetailService {
      */
     private LessonResp mapToResp(LessonDetail lesson) {
         LessonResp resp = new LessonResp();
-        resp.setId(lesson.getId());
+        resp.setLessonId(lesson.getId());
         resp.setLessonCode(lesson.getLessonCode());
         resp.setLessonOrder(lesson.getLessonOrder());
         resp.setLessonName(lesson.getLessonName());

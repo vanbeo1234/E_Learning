@@ -34,11 +34,9 @@ public class LessonCommentServiceImpl implements LessonCommentService {
          */
         @Override
         public Page<LessonCommentResp> getCommentsByCourseId(String courseCode, Pageable pageable) {
-                // Lấy bình luận phân trang từ repository
+
                 Page<LessonComment> comments = commentRepository.findByCourseCode(courseCode, pageable);
 
-                // Chuyển đổi từ Page<LessonComment> sang Page<LessonCommentResp> bằng cách sử
-                // dụng map()
                 return comments.map(comment -> {
                         String senderName = userRepository.findByUserCode(comment.getSendUserId())
                                         .map(user -> user.getName())
@@ -74,8 +72,7 @@ public class LessonCommentServiceImpl implements LessonCommentService {
         @Override
         public Page<LessonCommentResp> getLastCommentsEachCourse(String senderName, String courseName,
                         String commentDate, Pageable pageable) {
-                // Lấy dữ liệu phân trang từ repository và chuyển đổi sang
-                // Page<LessonCommentResp>
+
                 Page<LessonComment> lastComments = commentRepository.findBySenderNameAndCourseNameAndCommentDate(
                                 senderName, courseName, commentDate, pageable);
 
@@ -115,20 +112,16 @@ public class LessonCommentServiceImpl implements LessonCommentService {
                                 .commentTime(LocalDateTime.now())
                                 .build();
 
-                // Lưu bình luận vào cơ sở dữ liệu
                 LessonComment saved = commentRepository.save(comment);
 
-                // Lấy tên người gửi
                 String senderName = userRepository.findByUserCode(saved.getSendUserId())
                                 .map(user -> user.getName())
                                 .orElse("Unknown");
 
-                // Lấy tên khóa học
                 String courseName = courseRepository.findByCourseCode(saved.getCourseCode())
                                 .map(course -> course.getCourseName())
                                 .orElse("Unknown");
 
-                // Trả về thông tin bình luận dưới dạng DTO
                 return LessonCommentResp.builder()
                                 .senderCode(saved.getSendUserId())
                                 .senderName(senderName)

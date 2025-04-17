@@ -3,28 +3,32 @@ package com.example.backend.dto.response;
 import lombok.Getter;
 import lombok.Setter;
 
+/**
+ * LessonResp: Thông tin bài giảng trong khóa học.
+ */
 @Getter
 @Setter
 public class LessonResp {
-    private Long id;
+    private Long lessonId;
     private String lessonCode;
     private Integer lessonOrder;
     private String lessonName;
     private String videoLink;
     private String resourceLink;
 
-    // Constructor nhận các tham số
-    public LessonResp(Long id, String lessonCode, int lessonOrder, String lessonName, String videoLink,
+    // Constructor mặc định
+    public LessonResp() {
+        // Constructor không tham số
+    }
+
+    // Constructor phù hợp với truy vấn JPQL
+    public LessonResp(Long lessonId, String lessonCode, Integer lessonOrder, String lessonName, String videoLink,
             String resourceLink) {
-        this.id = id;
+        this.lessonId = lessonId;
         this.lessonCode = lessonCode;
         this.lessonOrder = lessonOrder;
         this.lessonName = lessonName;
         this.videoLink = videoLink;
         this.resourceLink = resourceLink;
-    }
-
-    // Constructor không tham số - cần thiết cho Hibernate/JPA
-    public LessonResp() {
     }
 }

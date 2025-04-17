@@ -15,9 +15,8 @@ import java.util.Optional;
 import java.util.List;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> { // Chuyển Integer thành Long
+public interface UserRepository extends JpaRepository<User, Long> {
 
-        // Lấy tất cả người dùng với phân trang
         @Override
         @NonNull
         Page<User> findAll(@NonNull Pageable pageable);
@@ -104,10 +103,8 @@ public interface UserRepository extends JpaRepository<User, Long> { // Chuyển 
                         @Param("statusCode") String statusCode,
                         Pageable pageable);
 
-        // Tìm người dùng theo role
-        List<User> findByRoleId(int roleId); // Nếu roleId là một int
+        List<User> findByRoleId(int roleId);
 
-        // Hoặc sử dụng @Query nếu bạn muốn tìm theo Enum Role
         @Query("SELECT u FROM User u WHERE u.roleId = :roleId")
         List<User> findByRole(@Param("roleId") int roleId);
 }

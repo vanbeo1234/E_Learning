@@ -1,6 +1,8 @@
 package com.example.backend.model;
+
 import jakarta.persistence.*;
 import lombok.*;
+
 @Entity
 @Table(name = "INSTRUCTOR_ENROLLMENT")
 @Getter
@@ -20,5 +22,5 @@ public class Instructor {
     @ManyToOne
     @JoinColumn(name = "INSTRUCTOR_ID", referencedColumnName = "id")
     private User instructor;
-}
 
+}
