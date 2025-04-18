@@ -13,7 +13,7 @@ import java.util.List;
  * Controller quản lý các API liên quan đến bài học.
  * Bao gồm các thao tác: thêm mới, cập nhật, xóa và thay đổi thứ tự bài học.
  */
-@CrossOrigin(origins = "http://localhost:3001")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/lessons")
 public class LessonDetailController {
