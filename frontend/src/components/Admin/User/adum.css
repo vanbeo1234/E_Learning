@@ -1,0 +1,373 @@
+/* === USER MANAGEMENT CARD === */
+.user-management-card {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-top: 6rem;
+    margin-left: 270px;
+    margin-right: 20px;
+    width: calc(100% - 290px);
+    max-width: 100%;
+    padding-bottom: 40px;
+}
+
+/* === SEARCH FORM === */
+.user-management-search-form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1rem;
+    width: 100%;
+}
+
+.user-management-search-form input,
+.user-management-search-form select {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+}
+
+.user-management-search-form label {
+    font-weight: bold;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === ACTION BUTTONS === */
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: 0.25rem;
+    color: white;
+    cursor: pointer;
+}
+
+.btn-blue { background-color: #3b82f6; }
+.btn-green { background-color: #10b981; }
+.btn-red { background-color: #ef4444; }
+.btn-yellow { background-color: #f59e0b; }
+
+.user-management-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+}
+
+.icon-edit {
+    color: rgb(24, 182, 255);
+    font-size: 15px;
+}
+
+/* === TABLE === */
+.table-container {
+    overflow-x: auto;
+    margin-top: 1rem;
+    position: relative;
+    padding-bottom: 1rem;
+}
+
+.table-container table {
+    width: 100%;
+    table-layout: fixed;
+    min-width: 1000px;
+    border-collapse: collapse;
+}
+
+.table-container td,
+.table-container th {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid #e6e6e6;
+    text-align: left;
+    word-wrap: break-word;
+}
+
+.table-container td:hover {
+    background-color: #f3f4f6;
+}
+
+.table-container th:first-child,
+.table-container td:first-child {
+    width: 50px;
+    text-align: center;
+}
+
+/* === PAGINATION === */
+.user-management-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.user-management-pagination select {
+    padding: 0.5rem;
+    border: 1px solid #d1d5db;
+    border-radius: 0.25rem;
+    background-color: #fff;
+    color: #4b5563;
+    font-size: 1rem;
+}
+
+.pagination-buttons {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.pagination-buttons button {
+    padding: 0.5rem 1rem;
+    border: 1px solid #d1d5db;
+    background-color: #fff;
+    color: #4b5563;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 0.25rem;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-buttons button:hover {
+    background-color: #3b82f6;
+    color: #fff;
+}
+
+.pagination-buttons button:first-child {
+    border-radius: 0.25rem 0 0 0.25rem;
+}
+
+.pagination-buttons button:last-child {
+    border-radius: 0 0.25rem 0.25rem 0;
+}
+
+/* === Modal container === */
+.modal.add-modal {
+    position: fixed;
+    z-index: 1000;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Roboto', Arial, sans-serif;
+  }
+  
+  /* === Modal content === */
+  .modal-content {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 8px;
+    max-width: 900px;
+    width: 100%;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    position: relative;
+  }
+  
+  /* === Close button === */
+  .modal-close-btn {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 24px;
+    cursor: pointer;
+    color: #888;
+  }
+  .modal-close-btn:hover {
+    color: #000;
+  }
+  
+  /* === Heading === */
+  .modal-h2 {
+    text-align: center;
+    font-size: 24px;
+    font-weight: 700;
+    color: #1976d2;
+    margin-bottom: 1.5rem;
+  }
+  
+  /* === Form structure === */
+  .modal-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  /* === Grid layout === */
+  .modal-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
+  
+  /* === Grid item with horizontal label/input === */
+  .modal-grid-item {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  
+  /* === Label bên trái === */
+  .field-label {
+    min-width: 130px;
+    font-weight: 600;
+    font-size: 14px;
+    white-space: nowrap;
+    text-align: right;
+  }
+  
+  /* === Input/select bên phải === */
+  .modal-grid-item input,
+  .modal-grid-item select {
+    flex: 1;
+    border: 0.5px solid #1976d2;
+    border-radius: 5px;
+    padding: 0.5rem;
+    font-size: 14px;
+    font-family: inherit;
+  }
+  
+  /* === Horizontal radio field (Giới tính, Trạng thái) === */
+  .horizontal-field {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+  .inline-options {
+    display: flex;
+    gap: 2rem;
+  }
+  .inline-options label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.8rem;
+    font-size: 14px;
+  }
+/* === Phone input group (tách riêng) === */
+.phone-input-group {
+    display: flex;
+    align-items:first baseline;
+    gap: 1rem;
+    flex: 1;
+  }
+  
+
+  
+  /* === Input số điện thoại mở rộng ra === */
+  .phone-number-input {
+    flex: 1;
+    padding: 0.5rem;
+    font-size: 14px;
+    border: 1px solid #1976d2;
+    border-radius: 5px;
+  }
+  
+  
+  /* === Certifications container === */
+.certifications {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    flex: 1;
+  }
+  
+  /* === Dropdown chọn chứng chỉ === */
+  .certificate-select {
+    width: 100%;
+    padding: 0.4rem;
+    border: 1px solid #1976d2;
+    border-radius: 5px;
+    font-size: 14px;
+  }
+  
+  /* === List các chứng chỉ đã chọn === */
+  .certificate-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-top: 0.3rem;
+    max-width: 100%;
+  }
+  
+  /* === Mỗi chứng chỉ dạng nhỏ như tag === */
+  .certificate-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 12px;
+    padding: 0.2rem 0.5rem;
+    background-color: #e6f0ff;
+    color: #0d47a1;
+    border: 1px solid #1976d2;
+    border-radius: 4px;
+    word-break: break-word;       /* Tự ngắt khi tên dài */
+    max-width: 100%;
+  }
+  
+  /* === Nút xoá chứng chỉ === */
+  .certificate-item button {
+    background: #e03e3e;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 50%;
+    border: none;
+    text-align: center;
+    cursor: pointer;
+    padding: 0;
+  }
+  
+  /* === Buttons === */
+  .modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  .modal-button-submit {
+    background-color: #1976d2;
+    color: white;
+    font-weight: bold;
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  .modal-button-reset {
+    background-color: #888;
+    color: white;
+    font-weight: bold;
+    padding: 0.6rem 1.5rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  /* === Responsive === */
+  @media (max-width: 768px) {
+    .modal-grid {
+      grid-template-columns: 1fr;
+    }
+    .modal-grid-item {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .field-label {
+      text-align: left;
+      margin-bottom: 0.3rem;
+    }
+    .modal-buttons {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .modal-button-submit,
+    .modal-button-reset {
+      width: 100%;
+    }
+  }
+  

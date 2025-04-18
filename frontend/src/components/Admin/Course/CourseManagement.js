@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import AddCourseModal from './AddCourse';
+import './adcm.css';
+import ConfirmModal from './Function/Confirm';
 
 const CourseManagement = () => {
-  const [isAddModalOpen, setAddModalOpen] = useState(false);
-  const [isEditModalOpen, setEditModalOpen] = useState(false);
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [currentAction, setCurrentAction] = useState(null);
+  const [confirmAction, setConfirmAction] = useState(null);
+  const [confirmMessage, setConfirmMessage] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(10); // Default to 10 items per page
+  const [itemsPerPage, setItemsPerPage] = useState(10);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedCourses, setSelectedCourses] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState({
@@ -16,16 +16,6 @@ const CourseManagement = () => {
     instructor: '',
     creationDate: '',
     status: ''
-  });
-  const [formData, setFormData] = useState({
-    id: null,
-    courseName: '',
-    instructor: '',
-    lessons: 0,
-    description: '',
-    startDate: '',
-    endDate: '',
-    status: 'Hoạt động'
   });
 
   const [courses, setCourses] = useState([
@@ -51,15 +41,21 @@ const CourseManagement = () => {
     }
   ]);
 
+  const [filteredCourses, setFilteredCourses] = useState(courses);
+
   const navigate = useNavigate();
 
+  useEffect(() => {
+    setFilteredCourses(courses); // Initial load
+  }, [courses]);
+
   const handleAddCourse = () => {
-    // Chuyển hướng đến trang AddCourse
     navigate('/add-course');
   };
+
   const toggleSelectAll = () => {
     if (!selectAll) {
-      setSelectedCourses(courses.map(course => course.id));
+      setSelectedCourses(filteredCourses.map(course => course.id));
     } else {
       setSelectedCourses([]);
     }
@@ -73,28 +69,32 @@ const CourseManagement = () => {
   };
 
   const handleEditCourse = (course) => {
-    setFormData(course);
-    setEditModalOpen(true);
-  };
-
-  const handleUpdateCourse = () => {
-    setCourses(prevCourses => prevCourses.map(course => course.id === formData.id ? formData : course));
-    setEditModalOpen(false);
-    resetForm();
-  };
-
-  const handleDeleteCourse = (id) => {
-    setCourses(prev => prev.filter(course => course.id !== id));
+    navigate(`/edit-course/${course.id}`);
   };
 
   const showConfirmModal = (action) => {
-    setCurrentAction(() => action);
+    setConfirmAction(() => action);
+    setConfirmMessage(action === 'disable'
+      ? 'Bạn có chắc muốn vô hiệu hóa các khóa học đã chọn?'
+      : 'Bạn có chắc muốn kích hoạt lại các khóa học đã chọn?');
     setConfirmModalOpen(true);
   };
 
   const hideConfirmModal = () => {
     setConfirmModalOpen(false);
-    setCurrentAction(null);
+    setConfirmAction(null);
+  };
+
+  const handleConfirm = () => {
+    const updated = courses.map(course =>
+      selectedCourses.includes(course.id)
+        ? { ...course, status: confirmAction === 'disable' ? 'Không hoạt động' : 'Hoạt động' }
+        : course
+    );
+    setCourses(updated);
+    setFilteredCourses(updated);
+    setConfirmModalOpen(false);
+    setSelectedCourses([]);
   };
 
   const handleSearchChange = (e) => {
@@ -103,7 +103,16 @@ const CourseManagement = () => {
   };
 
   const handleSearch = () => {
-    // Implement search logic here
+    const filtered = courses.filter(course => {
+      return (
+        (!searchCriteria.courseName || course.courseName.includes(searchCriteria.courseName)) &&
+        (!searchCriteria.instructor || course.instructor.includes(searchCriteria.instructor)) &&
+        (!searchCriteria.creationDate || course.startDate === searchCriteria.creationDate) &&
+        (!searchCriteria.status || course.status === searchCriteria.status)
+      );
+    });
+    setFilteredCourses(filtered);
+    setCurrentPage(1);
   };
 
   const handleItemsPerPageChange = (e) => {
@@ -114,22 +123,8 @@ const CourseManagement = () => {
     setCurrentPage(pageNumber);
   };
 
-  const resetForm = () => {
-    setFormData({
-      id: null,
-      courseName: '',
-      instructor: '',
-      lessons: 0,
-      description: '',
-      startDate: '',
-      endDate: '',
-      status: 'Hoạt động'
-    });
-  };
-
-
-  const totalPages = Math.ceil(courses.length / itemsPerPage);
-  const currentCourses = courses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+  const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
+  const currentCourses = filteredCourses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   return (
     <div className="course-management-container">
@@ -145,27 +140,20 @@ const CourseManagement = () => {
               <option value="Không hoạt động">Không hoạt động</option>
             </select></label>
           </div>
-          
+
           <div className="course-management-action-buttons">
             <div>
-            <button className="btn btn-green" onClick={handleAddCourse}>Thêm</button> {/* Navigate to AddCourse page */}
-            <button className="btn btn-red" onClick={() => showConfirmModal(handleDeleteCourse)}>Vô hiệu hóa</button>
-              <button className="btn btn-yellow" onClick={() => showConfirmModal(handleUpdateCourse)}>Kích hoạt</button>
+              <button className="btn btn-green" onClick={handleAddCourse}>Thêm</button>
+              <button className="btn btn-red" onClick={() => showConfirmModal('disable')}>Vô hiệu hóa</button>
+              <button className="btn btn-yellow" onClick={() => showConfirmModal('enable')}>Kích hoạt</button>
               <button className="btn btn-blue" onClick={handleSearch}>Tìm kiếm</button>
             </div>
           </div>
 
           <div className="course-management-pagination">
             <div>
-              <label htmlFor="itemsPerPage" style={{ padding: '5px' }}>Hiển thị</label>
-              <select id="itemsPerPage" value={itemsPerPage} onChange={handleItemsPerPageChange}>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-                <option value="25">25</option>
-                <option value="30">30</option>
-              </select>
-              <span style={{ padding: '5px' }}>danh mục</span>
+              <label htmlFor="itemsPerPage" style={{ padding: '5px' }}>Hiển thị danh mục</label>
+             
             </div>
           </div>
 
@@ -219,6 +207,14 @@ const CourseManagement = () => {
           </div>
         </div>
       </div>
+
+      {isConfirmModalOpen && (
+        <ConfirmModal
+          message={confirmMessage}
+          onConfirm={handleConfirm}
+          onCancel={hideConfirmModal}
+        />
+      )}
     </div>
   );
 };

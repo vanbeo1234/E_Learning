@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Modal from './Modala'; // Sửa đúng path nếu cần
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Modala from '../../Modala';
 
-const AddCourse = () => {
+const EditCourse = ({ courses, setCourses }) => {
+  const { id } = useParams();
   const [formData, setFormData] = useState({
     courseName: '',
     instructor: '',
@@ -12,31 +13,39 @@ const AddCourse = () => {
     endDate: '',
     status: 'Hoạt động',
   });
-
   const [coverImage, setCoverImage] = useState(null);
   const [objectives, setObjectives] = useState([]);
   const [lectures, setLectures] = useState([]);
   const [errors, setErrors] = useState({});
-  const [students, setStudents] = useState([]); // Danh sách học viên được chọn
-
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
 
   const navigate = useNavigate();
-  const isEdit = false;
+
+  useEffect(() => {
+    const course = courses.find(course => course.id === parseInt(id));
+    if (course) {
+      setFormData({
+        courseName: course.courseName,
+        instructor: course.instructor,
+        lessons: course.lessons,
+        description: course.description,
+        startDate: course.startDate,
+        endDate: course.endDate,
+        status: course.status,
+      });
+      setCoverImage(course.coverImage);
+      setObjectives(course.objectives || []);
+      setLectures(course.lectures || []);
+    }
+  }, [id, courses]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleAddObjective = () => {
-    setObjectives([...objectives, '']);
-  };
-
+  const handleAddObjective = () => setObjectives([...objectives, '']);
   const handleObjectiveChange = (index, value) => {
     const newObjectives = [...objectives];
     newObjectives[index] = value;
@@ -78,49 +87,50 @@ const AddCourse = () => {
     }
   };
 
-  const handleStudentSelect = (e) => {
-    const selected = Array.from(e.target.selectedOptions).map((opt) => opt.value);
-    setStudents(selected);
-  };
   const instructors = [
     { id: 1, name: 'Giảng viên A' },
     { id: 2, name: 'Giảng viên B' },
     { id: 3, name: 'Giảng viên C' },
     { id: 4, name: 'Giảng viên D' },
   ];
+
   const handleSave = () => {
     const newErrors = {};
-
     if (!formData.courseName) newErrors.courseName = 'Tên khóa học không được bỏ trống';
     if (!formData.startDate) newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
     if (!formData.endDate) newErrors.endDate = 'Ngày kết thúc là bắt buộc';
-
     lectures.forEach((lecture, index) => {
       if (!lecture.name) newErrors[`lectureName${index}`] = 'Tên bài giảng không được để trống';
     });
-
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      const fullData = {
-        ...formData,
-        objectives,
-        lectures,
-        students,
-        coverImage,
-      };
-      console.log('Dữ liệu khóa học:', fullData);
+      const updatedCourses = courses.map(course =>
+        course.id === parseInt(id) ? { ...course, ...formData, objectives, lectures, coverImage } : course
+      );
+      setCourses(updatedCourses);
       setShowSuccessModal(true);
+      // Redirect to the course management page after save
+      setTimeout(() => {
+        navigate('/course-management'); // Navigate to course management page after successful update
+      }, 1500); // Optional delay before redirecting
     }
   };
 
-  const handleCancel = () => setShowCancelModal(true);
+  const handleCancel = () => {
+    setShowCancelModal(true);
+    // Redirect to course management page after cancel
+    setTimeout(() => {
+      navigate('/course-management'); // Redirect to course management page after cancel
+    }, 1500); // Optional delay before redirecting
+  };
 
   return (
-    <div className="add-course-details">
-      <div className="add-course-section">
-        <h2>Mô tả</h2>
-        <div className="add-course-input-group">
+    <div className="edit-course-details">
+      <div className="edit-course-section">
+        <h2>Sửa thông tin khóa học</h2>
+
+        <div className="edit-course-input-group">
           <label htmlFor="course-name">Tên khóa học</label>
           <input
             type="text"
@@ -130,11 +140,10 @@ const AddCourse = () => {
             onChange={handleChange}
             required
           />
-          <i className="fas fa-pencil-alt add-course-edit-icon"></i>
           {errors.courseName && <span className="error">{errors.courseName}</span>}
         </div>
 
-        <div className="add-course-input-group">
+        <div className="edit-course-input-group">
           <label htmlFor="course-content">Nội dung</label>
           <textarea
             id="course-content"
@@ -143,7 +152,6 @@ const AddCourse = () => {
             onChange={handleChange}
             required
           />
-          <i className="fas fa-pencil-alt add-course-edit-icon"></i>
         </div>
       </div>
 
@@ -252,22 +260,14 @@ const AddCourse = () => {
 
       <div className="section">
         <h2>Ảnh bìa</h2>
-        <div
-          className="cover-image"
-          style={{
-            backgroundImage: coverImage ? `url(${coverImage})` : 'none',
-            backgroundSize: 'cover',
-            backgroundPosition: 'center',
-          }}
-          onClick={() => document.getElementById('cover-image-upload').click()}
-        >
+        <div className="cover-image" style={{ backgroundImage: coverImage ? `url(${coverImage})` : 'none' }}>
           {!coverImage && <i className="fas fa-plus upload-icon"></i>}
           <input
             type="file"
             accept="image/*"
             style={{ display: 'none' }}
             id="cover-image-upload"
-            onChange={handleCoverImageChange}
+            onChange={(e) => setCoverImage(URL.createObjectURL(e.target.files[0]))}
           />
         </div>
       </div>
@@ -276,65 +276,54 @@ const AddCourse = () => {
         <h2>Thời gian học</h2>
         <div className="learning-time-row">
           <div className="learning-time-input">
-            <label>Ngày bắt đầu<span style={{ color: 'red' }}>*</span></label>
-            <input
-              type="date"
-              value={formData.startDate}
-              name="startDate"
-              onChange={handleChange}
-            />
-            {errors.startDate && <span className="learning-time-error">{errors.startDate}</span>}
+            <label>Ngày bắt đầu</label>
+            <input type="date" value={formData.startDate} name="startDate" onChange={handleChange} />
           </div>
           <div className="learning-time-input">
-            <label>Ngày kết thúc<span style={{ color: 'red' }}>*</span></label>
-            <input
-              type="date"
-              value={formData.endDate}
-              name="endDate"
-              onChange={handleChange}
-            />
-            {errors.endDate && <span className="learning-time-error">{errors.endDate}</span>}
+            <label>Ngày kết thúc</label>
+            <input type="date" value={formData.endDate} name="endDate" onChange={handleChange} />
           </div>
         </div>
+      </div>
 
-        <div className="select-instructor-group">
-  <label htmlFor="instructor">Chọn giảng viên</label>
-  <select
-    name="instructor"
-    value={formData.instructor}
-    onChange={handleChange}
-    className="instructor-select"
-  >
-    <option value="">Chọn giảng viên</option>
-    {instructors.map((instructor) => (
-      <option key={instructor.id} value={instructor.name}>
-        {instructor.name}
-      </option>
-    ))}
-  </select>
-</div>
-</div>
-      <div className="footer-buttons">
-        <button className="create-btn" onClick={handleSave}>
-          {isEdit ? 'Cập nhật' : 'Tạo mới'}
-        </button>
+      <div className="input-group">
+        <label>Giảng viên</label>
+        <input type="text" value={formData.instructor} onChange={handleChange} name="instructor" />
+      </div>
+
+      <div className="input-group">
+        <label>Trạng thái</label>
+        <select name="status" value={formData.status} onChange={handleChange}>
+          <option value="Hoạt động">Hoạt động</option>
+          <option value="Không hoạt động">Không hoạt động</option>
+        </select>
+      </div>
+
+      <div className="form-actions">
+        <button className="save-btn" onClick={handleSave}>Lưu</button>
         <button className="cancel-btn" onClick={handleCancel}>Hủy</button>
       </div>
 
-      <Modal
-        show={showSuccessModal}
-        title={isEdit ? 'Cập nhật khóa học thành công' : 'Thêm khóa học thành công'}
-        onConfirm={() => navigate('/')}
-        onCancel={() => setShowSuccessModal(false)}
-      />
-      <Modal
-        show={showCancelModal}
-        title="Bạn chắc chắn muốn hủy?"
-        onConfirm={() => navigate('/')}
-        onCancel={() => setShowCancelModal(false)}
-      />
+      {showCancelModal && (
+        <Modala
+          type="cancel"
+          title="Xác nhận hủy"
+          content="Bạn có chắc chắn muốn hủy không?"
+          onClose={() => setShowCancelModal(false)}
+          onConfirm={() => navigate('/courses')}
+        />
+      )}
+
+      {showSuccessModal && (
+        <Modala
+          type="success"
+          title="Cập nhật thành công"
+          content="Khóa học đã được cập nhật thành công!"
+          onClose={() => setShowSuccessModal(false)}
+        />
+      )}
     </div>
   );
 };
 
-export default AddCourse;
+export default EditCourse;

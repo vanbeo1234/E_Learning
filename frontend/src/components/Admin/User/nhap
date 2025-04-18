@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
 
+export default UserManagement;
+import React, { useState } from 'react';
+import'./adum.css'
 const UserManagement = () => {
   const [isAddModalOpen, setAddModalOpen] = useState(false);
   const [isEditModalOpen, setEditModalOpen] = useState(false);

@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import './App.css';
 import Login from './components/Login';
 import Signup from './components/Signup';
+import Footer from './components/Footer';
 import Sidebar from './components/Hocvien/Sidebar';
 import Header from './components/Hocvien/Header';
 import Home from './components/Hocvien/Home';
@@ -11,12 +12,13 @@ import LearningProgress from './components/Hocvien/LearningProgress';
 import Article from './components/Hocvien/Article';
 import CourseReactJS from './components/Hocvien/Course Information/CourseReactJS';
 import Learn1 from './components/Hocvien/Course Information/Study Course/Learn1';
-import UserManagement from './components/Admin/UserManagement';
-import CourseManagement from './components/Admin/CourseManagement';
+import UserManagement from './components/Admin/User/UserManagement';
+import CourseManagement from './components/Admin/Course/CourseManagement';
 import Headera from './components/Admin/Headera';
 import Sidebara from './components/Admin/Sidebara';
 import Modala from './components/Admin/Modala';
-import AddCourseModal from './components/Admin/AddCourse';
+import AddCourseModal from './components/Admin/Course/Function/AddCourse';
+import EditCourse from './components/Admin/Course/Function/EditCourse';
 import CourseForm from './components/giangvien/CourseForm';
 import FeedbackList from './components/giangvien/FeedbackList';
 import CourseTable from './components/giangvien/CourseTable';
@@ -27,68 +29,54 @@ import Headers from './components/giangvien/Header';
 import Homeg from './components/giangvien/Homeg';
 import Feature from './components/giangvien/Feature';
 
+
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [courses, setCourses] = useState([]);
+  const [isInstructor, setIsInstructor] = useState(true);  // Assuming `isInstructor` is set based on user login/role
 
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={
-          isAuthenticated ? 
-            <Navigate to="/user-management" /> : 
-            <Login setIsAuthenticated={setIsAuthenticated} />
-        } />
-        <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+      <div className="container">
+        {/* Show Sidebar and Header only if the user is an Instructor */}
+        {isInstructor && <Sidebars />}
         
-        {/* Admin Routes */}
-        <Route
-          path="/user-management"
-          element={
-            isAuthenticated ? (
-              <div className="app-container">
-                <Sidebara />
-                <div className="app-content">
-                  <Headera />
-                  <div className="main-content">
-                    <UserManagement />
-                  </div>
-                </div>
-              </div>
+        <div className="content">
+          {/* Header will be displayed for instructors */}
+          {isInstructor && <Headers title="E Learning" />}
+
+          <Routes>
+            {isInstructor ? (
+              <>
+                <Route path="/" element={<Homeg />} />
+                <Route path="/homeg" element={<Homeg />} />
+                <Route path="/courses" element={<CourseTable />} />
+                <Route path="/course-info/:id" element={<CourseInfo />} />
+                <Route path="/course/:id" element={<CourseInfo />} />
+                <Route path="/edit-course/:id" element={<Feature isEdit={true} />} />
+                <Route path="/create-course" element={<CourseForm isEdit={false} />} />
+                <Route path="/feedback" element={<FeedbackList />} />
+                <Route path="*" element={<div>404 - Không tìm thấy trang</div>} />
+              </>
             ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-        
-        <Route
-          path="/course-management"
-          element={
-            isAuthenticated ? (
-              <div className="app-container">
-                <Sidebara />
-                <div className="app-content">
-                  <Headera />
-                  <div className="main-content">
-                    <CourseManagement />
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-        
-        <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
-      </Routes>
+              <>
+                {/* Routes for non-Instructor users */}
+                <Route path="/user-management" element={<UserManagement />} />
+                <Route path="/course-management" element={<CourseManagement courses={courses} setCourses={setCourses} />} />
+                <Route path="/add-course" element={<AddCourseModal />} />
+                <Route path="/edit-course/:id" element={<EditCourse courses={courses} setCourses={setCourses} />} />
+              </>
+            )}
+          </Routes>
+        </div>
+      </div>
+
+      {/* Add Footer to be fixed at the bottom */}
+      <Footer />
     </Router>
   );
 }
 
 export default App;
-
-  
-  
   
   
 /**            <Route path="/user-management" element={<UserManagement />} />
@@ -144,3 +132,55 @@ export default App;
           </Routes>
         </div>
       </div>*/
+
+
+      /**dk,dn   <Routes>
+        <Route path="/login" element={
+          isAuthenticated ? 
+            <Navigate to="/user-management" /> : 
+            <Login setIsAuthenticated={setIsAuthenticated} />
+        } />
+        <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+        
+        {/* 
+        <Route
+        path="/user-management"
+        element={
+          isAuthenticated ? (
+            <div className="app-container">
+              <Sidebara />
+              <div className="app-content">
+                <Headera />
+                <div className="main-content">
+                  <UserManagement />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+      
+      <Route
+        path="/course-management"
+        element={
+          isAuthenticated ? (
+            <div className="app-container">
+              <Sidebara />
+              <div className="app-content">
+                <Headera />
+                <div className="main-content">
+                  <CourseManagement />
+                </div>
+              </div>
+            </div>
+          ) : (
+            <Navigate to="/login" />
+          )
+        }
+      />
+      
+      <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
+    </Routes>
+  </Router>* */
