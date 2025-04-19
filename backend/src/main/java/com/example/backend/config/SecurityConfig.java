@@ -55,11 +55,12 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/v1/api/auth/**").permitAll()
-                        .requestMatchers("/v1/api/users/**").hasRole("ADMIN")
-                        .requestMatchers("/v1/api/courses/**").hasAnyRole("ADMIN", "INSTRUCTOR", "STUDENT")
-                        .requestMatchers("/v1/api/lessons/**").hasAnyRole("ADMIN", "INSTRUCTOR")
-                        .requestMatchers("/v1/api/courses/filter").hasAnyRole("INSTRUCTOR")
+                        .requestMatchers("/v1/api/user/**").hasRole("ADMIN")
+                        .requestMatchers("/v1/api/course/**").hasAnyRole("ADMIN", "INSTRUCTOR", "STUDENT")
+                        .requestMatchers("/v1/api/lesson/**").hasAnyRole("ADMIN", "INSTRUCTOR")
+                        .requestMatchers("/v1/api/course/filter").hasAnyRole("INSTRUCTOR")
                         .requestMatchers("/v1/api/comment/**").hasAnyRole("INSTRUCTOR", "STUDENT")
+                        .requestMatchers("/v1/api/student/**").hasAnyRole("STUDENT")
                         .anyRequest().authenticated())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedEntryPoint()));
 

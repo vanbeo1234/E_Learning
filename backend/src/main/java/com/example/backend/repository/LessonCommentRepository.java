@@ -50,13 +50,22 @@ public interface LessonCommentRepository extends JpaRepository<LessonComment, In
         * @param pageable    phân trang kết quả
         * @return Trang các bình luận thỏa mãn điều kiện
         */
-       @Query("SELECT c FROM LessonComment c " +
-                     "JOIN User u ON c.sendUserId = u.userCode " +
-                     "JOIN Course course ON c.courseCode = course.courseCode " +
-                     "WHERE (:senderName IS NULL OR u.name LIKE %:senderName%) " +
-                     "AND (:courseName IS NULL OR course.courseName LIKE %:courseName%) " +
-                     "AND (:commentDate IS NULL OR CAST(c.commentTime AS date) = CAST(:commentDate AS date))")
-       Page<LessonComment> findBySenderNameAndCourseNameAndCommentDate(
+       @Query(value = "SELECT c.* FROM lesson_comment c " +
+                     "JOIN user u ON c.send_user_id = u.user_code " +
+                     "JOIN course course ON c.course_code = course.course_code " +
+                     "WHERE (:senderName IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT('%', :senderName, '%'))) " +
+                     "AND (:courseName IS NULL OR LOWER(course.course_name) LIKE LOWER(CONCAT('%', :courseName, '%'))) "
+                     +
+                     "AND (:commentDate IS NULL OR DATE(c.comment_time) = :commentDate)", countQuery = "SELECT COUNT(*) FROM lesson_comment c "
+                                   +
+                                   "JOIN user u ON c.send_user_id = u.user_code " +
+                                   "JOIN course course ON c.course_code = course.course_code " +
+                                   "WHERE (:senderName IS NULL OR LOWER(u.name) LIKE LOWER(CONCAT('%', :senderName, '%'))) "
+                                   +
+                                   "AND (:courseName IS NULL OR LOWER(course.course_name) LIKE LOWER(CONCAT('%', :courseName, '%'))) "
+                                   +
+                                   "AND (:commentDate IS NULL OR DATE(c.comment_time) = :commentDate)", nativeQuery = true)
+       Page<LessonComment> findBySenderNameAndCourseNameAndCommentDateNative(
                      @Param("senderName") String senderName,
                      @Param("courseName") String courseName,
                      @Param("commentDate") String commentDate,

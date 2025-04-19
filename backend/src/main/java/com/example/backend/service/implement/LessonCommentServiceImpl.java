@@ -10,6 +10,7 @@ import com.example.backend.service.LessonCommentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -73,9 +74,8 @@ public class LessonCommentServiceImpl implements LessonCommentService {
         public Page<LessonCommentResp> getLastCommentsEachCourse(String senderName, String courseName,
                         String commentDate, Pageable pageable) {
 
-                Page<LessonComment> lastComments = commentRepository.findBySenderNameAndCourseNameAndCommentDate(
+                Page<LessonComment> lastComments = commentRepository.findBySenderNameAndCourseNameAndCommentDateNative(
                                 senderName, courseName, commentDate, pageable);
-
                 return lastComments.map(comment -> {
                         String sender = userRepository.findByUserCode(comment.getSendUserId())
                                         .map(user -> user.getName())
@@ -105,9 +105,12 @@ public class LessonCommentServiceImpl implements LessonCommentService {
          */
         @Override
         public LessonCommentResp addComment(CreateCommentReq request) {
+
+                String senderCode = SecurityContextHolder.getContext().getAuthentication().getName();
+
                 LessonComment comment = LessonComment.builder()
                                 .courseCode(request.getCourseCode())
-                                .sendUserId(request.getSendUserId())
+                                .sendUserId(senderCode)
                                 .message(request.getMessage())
                                 .commentTime(LocalDateTime.now())
                                 .build();
@@ -130,4 +133,5 @@ public class LessonCommentServiceImpl implements LessonCommentService {
                                 .courseName(courseName)
                                 .build();
         }
+
 }

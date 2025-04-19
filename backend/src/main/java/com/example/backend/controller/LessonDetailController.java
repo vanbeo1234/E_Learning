@@ -15,7 +15,7 @@ import java.util.List;
  */
 @CrossOrigin(origins = "http://localhost:3001")
 @RestController
-@RequestMapping("/lessons")
+@RequestMapping("/lesson")
 public class LessonDetailController {
 
     @Autowired
@@ -68,7 +68,7 @@ public class LessonDetailController {
     }
 
     /**
-     * Đức thêm method này
+     * 
      * API lấy danh sách bài giảng theo ID khóa học
      * 
      * @param courseId ID của khóa học

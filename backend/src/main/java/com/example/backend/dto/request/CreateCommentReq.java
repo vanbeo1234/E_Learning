@@ -11,6 +11,5 @@ import lombok.Setter;
 @Setter
 public class CreateCommentReq {
     private String courseCode;
-    private String sendUserId;
     private String message;
 }

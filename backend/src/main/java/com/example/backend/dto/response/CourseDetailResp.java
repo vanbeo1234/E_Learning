@@ -26,7 +26,6 @@ public class CourseDetailResp {
     private List<InstructorSimpleResp> instructors;
     private List<LessonSimpleResp> lessons;
 
-    // Constructor với tất cả tham số
     public CourseDetailResp(Long id, String courseCode, String courseName, String description,
             String learningOutcome, String backgroundImg, LocalDate startDate,
             LocalDate endDate, int lessonCount, String statusCode,

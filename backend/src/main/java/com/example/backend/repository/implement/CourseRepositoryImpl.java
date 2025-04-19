@@ -36,19 +36,19 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     private EntityManager entityManager;
 
     /**
-     * Cập nhật thông tin khóa học theo yêu cầu.
-     * 
-     * @param req Đối tượng chứa các thông tin cần cập nhật cho khóa học
+     * Cập nhật thông tin của một khóa học, bao gồm các trường cơ bản và danh sách
+     * bài giảng nếu có.
+     *
+     * @param req Đối tượng yêu cầu chứa thông tin cần cập nhật cho khóa học
      */
     @Override
     public void updateCourse(UpdateCourseReq req) {
-        // Tìm khóa học theo courseCode
+
         Course course = entityManager.createQuery(
                 "SELECT c FROM Course c WHERE LOWER(c.courseCode) = LOWER(:courseCode)", Course.class)
                 .setParameter("courseCode", req.getCourseCode())
                 .getSingleResult();
 
-        // Cập nhật thông tin khóa học
         course.setCourseName(req.getCourseName());
         course.setDescription(req.getDescription());
         course.setLearningOutcome(req.getLearningOutcome());
@@ -57,10 +57,15 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
         course.setEndDate(req.getEndDate());
         course.setLessonCount(req.getLessonCount());
         course.setStatusCode(req.getStatusCode());
-        course.setUpdatedBy(req.getUpdatedBy()); // Đảm bảo trường "updatedBy" được cập nhật
+        course.setUpdatedBy(req.getUpdatedBy());
 
-        // Thực hiện cập nhật vào cơ sở dữ liệu
-        entityManager.merge(course); // merge sẽ lưu lại thay đổi
+        entityManager.merge(course);
+
+        if (req.getLessons() != null) {
+            for (UpdateLessonReq lesson : req.getLessons()) {
+                updateLessonInCourse(req.getCourseCode(), lesson);
+            }
+        }
 
         log.info("Khóa học {} đã được cập nhật thành công", req.getCourseCode());
     }
@@ -157,10 +162,10 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     }
 
     /**
-     * Thêm bài giảng vào khóa học.
-     * 
+     * Thêm bài giảng vào khóa học với lessonCode tự sinh.
+     *
      * @param courseCode Mã khóa học mà bài giảng sẽ được thêm vào
-     * @param lessonReq  Thông tin bài giảng cần thêm
+     * @param lessonReq  Thông tin bài giảng cần thêm (không cần truyền lessonCode)
      */
     @Override
     public void addLessonToCourse(String courseCode, LessonDetailReq lessonReq) {
@@ -169,16 +174,36 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .setParameter("courseCode", courseCode)
                 .getSingleResult();
 
+        String generatedLessonCode = generateLessonCode(courseCode, course.getId());
+
         LessonDetail lesson = LessonDetail.builder()
-                .lessonCode(lessonReq.getLessonCode())
+                .lessonCode(generatedLessonCode)
                 .lessonOrder(lessonReq.getLessonOrder())
                 .lessonName(lessonReq.getLessonName())
-                .videoLink(EmbedUtil.convertYoutubeUrlToEmbed(lessonReq.getVideoLink())) // ✅ link nhúng
+                .videoLink(EmbedUtil.convertYoutubeUrlToEmbed(lessonReq.getVideoLink()))
                 .resourceLink(EmbedUtil.convertResourceLink(lessonReq.getResourceLink()))
                 .course(course)
                 .build();
 
         entityManager.persist(lesson);
+        log.info("Đã thêm bài giảng '{}' với mã '{}' vào khóa học {}", lesson.getLessonName(), generatedLessonCode,
+                courseCode);
+    }
+
+    /**
+     * Sinh mã bài giảng dựa theo số lượng hiện có trong một khóa học.
+     *
+     * @param courseCode mã khóa học
+     * @param courseId   id khóa học
+     * @return mã bài giảng dạng KH043_L001
+     */
+    private String generateLessonCode(String courseCode, Long courseId) {
+        Long count = entityManager.createQuery(
+                "SELECT COUNT(l) FROM LessonDetail l WHERE l.course.id = :courseId", Long.class)
+                .setParameter("courseId", courseId)
+                .getSingleResult();
+
+        return courseCode + "_L" + String.format("%03d", count + 1);
     }
 
     /**
@@ -191,8 +216,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
     @Override
     public void updateLessonInCourse(String courseCode, UpdateLessonReq lessonReq) {
         try {
-            // Sử dụng getResultList() thay vì getSingleResult() để xử lý trường hợp không
-            // có kết quả
+
             List<LessonDetail> lessons = entityManager.createQuery(
                     "SELECT l FROM LessonDetail l WHERE l.id = :lessonId AND l.course.courseCode = :courseCode",
                     LessonDetail.class)
@@ -201,28 +225,22 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                     .getResultList();
 
             if (lessons.isEmpty()) {
-                // Nếu không tìm thấy bài học, ném ra lỗi tùy chỉnh
                 throw new IllegalArgumentException(
                         "Không tìm thấy bài học với mã " + lessonReq.getLessonId() + " trong khóa học " + courseCode);
             }
 
-            // Chỉ lấy bài học đầu tiên trong trường hợp có nhiều kết quả (dự kiến chỉ có 1)
             LessonDetail lesson = lessons.get(0);
 
-            // Cập nhật thông tin bài học
             lesson.setLessonName(lessonReq.getLessonName());
             lesson.setVideoLink(lessonReq.getVideoLink());
             lesson.setResourceLink(lessonReq.getResourceLink());
 
-            // Đảm bảo lưu vào DB nếu cần (có thể sử dụng transaction nếu cần)
-            entityManager.flush(); // Dùng flush để áp dụng thay đổi vào cơ sở dữ liệu ngay lập tức
+            entityManager.flush();
 
         } catch (NoResultException e) {
-            // Xử lý nếu không tìm thấy bài học
             log.error("Không tìm thấy bài học với lessonId {} và courseCode {}", lessonReq.getLessonId(), courseCode);
             throw new RuntimeException("Không tìm thấy bài học với mã " + lessonReq.getLessonId());
         } catch (Exception e) {
-            // Xử lý các lỗi khác
             log.error("Lỗi khi cập nhật bài học: {}", e.getMessage(), e);
             throw new RuntimeException("Cập nhật bài học thất bại: " + e.getMessage());
         }

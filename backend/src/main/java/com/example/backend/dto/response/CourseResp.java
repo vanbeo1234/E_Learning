@@ -24,6 +24,7 @@ public class CourseResp {
     private LocalDate endDate;
     private String statusCode;
     private List<InstructorResp> instructors;
+
     private List<LessonResp> lessons;
     private String createdBy;
 

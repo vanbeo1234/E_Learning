@@ -1,6 +1,7 @@
 package com.example.backend.service.implement;
 
 import com.example.backend.dto.response.LessonResp;
+import com.example.backend.common.util.EmbedUtil;
 import com.example.backend.dto.request.LessonDetailReq;
 import com.example.backend.dto.request.LessonReorderReq;
 import com.example.backend.model.Course;
@@ -59,6 +60,7 @@ public class LessonDetailServiceImpl implements LessonDetailService {
         Course course = courseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found"));
 
+        // Xác định lessonOrder tự động nếu chưa được truyền
         Integer lessonOrder = request.getLessonOrder();
         if (lessonOrder == null) {
             List<LessonDetail> existingLessons = lessonDetailRepository.findByCourseOrderByLessonOrderAsc(course);
@@ -66,17 +68,18 @@ public class LessonDetailServiceImpl implements LessonDetailService {
                     : existingLessons.get(existingLessons.size() - 1).getLessonOrder() + 1;
         }
 
+        // Tự sinh lessonCode nếu không có
         String lessonCode = request.getLessonCode();
         if (lessonCode == null || lessonCode.trim().isEmpty()) {
-            lessonCode = "COURSE_" + course.getId() + "_L" + lessonOrder;
+            lessonCode = course.getCourseCode() + "_L" + String.format("%03d", lessonOrder);
         }
 
         LessonDetail lesson = LessonDetail.builder()
                 .lessonCode(lessonCode)
                 .lessonOrder(lessonOrder)
                 .lessonName(request.getLessonName())
-                .videoLink(request.getVideoLink())
-                .resourceLink(request.getResourceLink())
+                .videoLink(EmbedUtil.convertYoutubeUrlToEmbed(request.getVideoLink()))
+                .resourceLink(EmbedUtil.convertResourceLink(request.getResourceLink()))
                 .course(course)
                 .build();
 
@@ -128,11 +131,10 @@ public class LessonDetailServiceImpl implements LessonDetailService {
             lesson.setCourse(course);
         }
 
-        lesson.setLessonCode(request.getLessonCode());
         lesson.setLessonOrder(request.getLessonOrder());
         lesson.setLessonName(request.getLessonName());
-        lesson.setVideoLink(request.getVideoLink());
-        lesson.setResourceLink(request.getResourceLink());
+        lesson.setVideoLink(EmbedUtil.convertYoutubeUrlToEmbed(request.getVideoLink()));
+        lesson.setResourceLink(EmbedUtil.convertResourceLink(request.getResourceLink()));
 
         LessonDetail updated = lessonDetailRepository.save(lesson);
         return mapToResp(updated);
@@ -151,7 +153,7 @@ public class LessonDetailServiceImpl implements LessonDetailService {
     }
 
     /**
-     * Đức thêm
+     * 
      * Lấy danh sách bài giảng theo khóa học, sắp xếp theo lessonOrder tăng dần.
      * 
      * @param courseId ID của khóa học

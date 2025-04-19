@@ -16,12 +16,10 @@ public class LessonResp {
     private String videoLink;
     private String resourceLink;
 
-    // Constructor mặc định
     public LessonResp() {
-        // Constructor không tham số
+
     }
 
-    // Constructor phù hợp với truy vấn JPQL
     public LessonResp(Long lessonId, String lessonCode, Integer lessonOrder, String lessonName, String videoLink,
             String resourceLink) {
         this.lessonId = lessonId;

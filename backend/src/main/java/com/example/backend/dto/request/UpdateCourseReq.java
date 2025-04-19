@@ -22,7 +22,6 @@ public class UpdateCourseReq {
     private LocalDate endDate;
     private int lessonCount;
     private String statusCode;
-    // private String updatedBy;
     private List<UpdateLessonReq> lessons;
     private String updatedBy;
     private List<Long> instructorIds;

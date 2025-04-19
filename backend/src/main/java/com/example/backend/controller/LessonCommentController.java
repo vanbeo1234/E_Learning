@@ -38,7 +38,7 @@ public class LessonCommentController {
         @GetMapping("/course/{courseCode}")
         public ResponseEntity<?> getCommentsByCourse(@PathVariable String courseCode, Pageable pageable) {
                 try {
-                        // Lấy bình luận phân trang từ service
+
                         Page<LessonCommentResp> comments = commentService.getCommentsByCourseId(courseCode, pageable);
 
                         if (comments.isEmpty()) {
@@ -111,6 +111,7 @@ public class LessonCommentController {
                         return ResponseEntity.ok().body(response);
 
                 } catch (Exception e) {
+
                         return ResponseEntity.internalServerError().body(
                                         Map.of(
                                                         "errorStatus", 903,
@@ -128,10 +129,9 @@ public class LessonCommentController {
         @PostMapping
         public ResponseEntity<?> createComment(@RequestBody CreateCommentReq request) {
                 try {
-                        // Thêm bình luận mới vào cơ sở dữ liệu
+
                         LessonCommentResp savedComment = commentService.addComment(request);
 
-                        // Trả về phản hồi thành công với cấu trúc theo yêu cầu
                         Map<String, Object> response = new HashMap<>();
                         response.put("errorStatus", 901);
                         response.put("message", "Tin nhắn đã được gửi");
@@ -140,7 +140,7 @@ public class LessonCommentController {
                         return ResponseEntity.ok().body(response);
 
                 } catch (Exception e) {
-                        // Trường hợp lỗi hệ thống
+
                         return ResponseEntity.internalServerError().body(
                                         Map.of(
                                                         "errorStatus", 903,
