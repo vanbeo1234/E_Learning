@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Modal from './Modal';
 import './giangvien.css';
+
 const CourseForm = ({ isEdit, courseId }) => {
   const [courseName, setCourseName] = useState('');
   const [courseContent, setCourseContent] = useState('');
@@ -29,6 +30,88 @@ const CourseForm = ({ isEdit, courseId }) => {
       }
     }
   }, [isEdit, courseId]);
+
+  // Hàm kiểm tra hợp lệ form
+  const validateForm = () => {
+    const newErrors = {};
+    if (!courseName.trim()) newErrors.courseName = 'Tên khóa học là bắt buộc';
+    if (!courseContent.trim()) newErrors.courseContent = 'Nội dung khóa học là bắt buộc';
+    if (!startDate) newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
+    if (!endDate) newErrors.endDate = 'Ngày kết thúc là bắt buộc';
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      newErrors.dateRange = 'Ngày bắt đầu phải trước ngày kết thúc';
+    }
+    if (!coverImage) newErrors.coverImage = 'Ảnh bìa là bắt buộc';
+    if (objectives.length === 0) newErrors.objectives = 'Mục tiêu là bắt buộc';
+    if (lectures.length === 0) newErrors.lectures = 'Ít nhất một bài giảng phải có';
+    
+    lectures.forEach((lecture, index) => {
+      if (!lecture.name.trim()) {
+        newErrors[`lectureName${index}`] = 'Tên bài giảng là bắt buộc';
+      }
+      if (!lecture.video && !lecture.document) {
+        newErrors[`lectureFile${index}`] = 'Phải có ít nhất một file video hoặc tài liệu';
+      }
+    });
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  // Hàm lưu khóa học
+  const handleSave = () => {
+    if (validateForm()) {
+      const newCourse = {
+        id: isEdit ? courseId : Date.now(), // Giả lập ID, dùng ID cũ khi chỉnh sửa
+        name: courseName,
+        description: courseContent,
+        image: coverImage || 'https://storage.googleapis.com/a1aa/image/0TzyXeqJ-3SrhNVPfxvj8ePIWFBxnJLCDSIO-0TWOhU.jpg',
+        objectives,
+        lectures,
+        startDate,
+        endDate,
+        creationDate: new Date().toISOString().split('T')[0], // Thêm ngày tạo
+        status: 'Hoạt động', // Có thể thay đổi tùy theo trạng thái khóa học
+        instructor: 'Giảng viên', // Cập nhật tên giảng viên (nếu có)
+        lessons: lectures.length // Số bài học
+      };
+
+      const existingCourses = JSON.parse(localStorage.getItem('courses') || '[]');
+
+      if (isEdit) {
+        // Cập nhật khóa học
+        const updatedCourses = existingCourses.map((course) =>
+          course.id === newCourse.id ? newCourse : course
+        );
+        localStorage.setItem('courses', JSON.stringify(updatedCourses));
+      } else {
+        // Thêm khóa học mới
+        localStorage.setItem('courses', JSON.stringify([...existingCourses, newCourse]));
+      }
+
+      setShowSuccessModal(true);
+    }
+  };
+
+  // Hàm hủy bỏ và hiển thị modal xác nhận
+  const handleCancel = () => {
+    setShowCancelModal(true);
+  };
+
+  // Hàm xác nhận hủy bỏ
+  const handleConfirmCancel = () => {
+    window.history.back(); // Trở lại trang trước đó
+  };
+
+  // Hàm đóng modal thành công
+  const handleCloseSuccessModal = () => {
+    setShowSuccessModal(false);
+  };
+
+  // Hàm đóng modal hủy bỏ
+  const handleCloseCancelModal = () => {
+    setShowCancelModal(false);
+  };
 
   // Hàm thêm mục tiêu
   const handleAddObjective = () => {
@@ -63,13 +146,7 @@ const CourseForm = ({ isEdit, courseId }) => {
     updatedLectures[index][field] = value;
     setLectures(updatedLectures);
   };
-  
-  const handleFileUpload = (index, file) => {
-    const updatedLectures = [...lectures];
-    updatedLectures[index].video = file; // Lưu file vào bài giảng
-    setLectures(updatedLectures);
-  };
-  
+
   // Hàm thay đổi ảnh bìa
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
@@ -78,76 +155,12 @@ const CourseForm = ({ isEdit, courseId }) => {
     }
   };
 
-  // Hàm kiểm tra hợp lệ form
-  const validateForm = () => {
-    const newErrors = {};
-    if (!courseName.trim()) newErrors.courseName = 'Tên khóa học là bắt buộc';
-    if (!courseContent.trim()) newErrors.courseContent = 'Nội dung là bắt buộc';
-    if (!startDate) newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
-    if (!endDate) newErrors.endDate = 'Ngày kết thúc là bắt buộc';
-    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
-      newErrors.dateRange = 'Ngày bắt đầu phải trước ngày kết thúc';
-    }
-    lectures.forEach((lecture, index) => {
-      if (!lecture.name.trim()) {
-        newErrors[`lectureName${index}`] = 'Tên bài giảng là bắt buộc';
-      }
-    });
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSave = () => {
-    if (validateForm()) {
-      const newCourse = {
-        id: isEdit ? courseId : Date.now(), // Giả lập ID, dùng ID cũ khi chỉnh sửa
-        name: courseName,
-        description: courseContent,
-        image: coverImage || 'https://storage.googleapis.com/a1aa/image/0TzyXeqJ-3SrhNVPfxvj8ePIWFBxnJLCDSIO-0TWOhU.jpg',
-        objectives,
-        lectures,
-        startDate,
-        endDate,
-        creationDate: new Date().toISOString().split('T')[0], // Thêm ngày tạo
-        status: 'Hoạt động', // Có thể thay đổi tùy theo trạng thái khóa học
-        instructor: 'Giảng viên', // Cập nhật tên giảng viên (nếu có)
-        lessons: lectures.length // Số bài học
-      };
-  
-      const existingCourses = JSON.parse(localStorage.getItem('courses') || '[]');
-  
-      if (isEdit) {
-        // Cập nhật khóa học
-        const updatedCourses = existingCourses.map((course) =>
-          course.id === newCourse.id ? newCourse : course
-        );
-        localStorage.setItem('courses', JSON.stringify(updatedCourses));
-      } else {
-        // Thêm khóa học mới
-        localStorage.setItem('courses', JSON.stringify([...existingCourses, newCourse]));
-      }
-  
-      setShowSuccessModal(true);
-    }
-  };  
-  // Hàm hủy bỏ và hiển thị modal xác nhận
-  const handleCancel = () => {
-    setShowCancelModal(true);
-  };
-
-  // Hàm xác nhận hủy bỏ
-  const handleConfirmCancel = () => {
-    window.history.back(); // Trở lại trang trước đó
-  };
-
-  // Hàm đóng modal thành công
-  const handleCloseSuccessModal = () => {
-    setShowSuccessModal(false);
-  };
-
-  // Hàm đóng modal hủy bỏ
-  const handleCloseCancelModal = () => {
-    setShowCancelModal(false);
+  // Hàm thay đổi video
+  const handleFileUpload = (index, e) => {
+    const file = e.target.files[0];
+    const updatedLectures = [...lectures];
+    updatedLectures[index].video = file;
+    setLectures(updatedLectures);
   };
   return (
     <div className="course-details">

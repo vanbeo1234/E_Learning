@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'; // Import axios để gọi API
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 import { CListGroup } from '@coreui/react';
-import { Link } from 'react-router-dom';
 import './course.css';
 
 const CourseReactJS = () => {
@@ -11,14 +11,16 @@ const CourseReactJS = () => {
     courseVideo: "",
     courseDateTime: {},
     instructorName: "",
-    learnWhatYouGet: [] // Mảng lưu trữ dữ liệu mục "Bạn đã học được gì?"
+    learnWhatYouGet: []
   });
 
   const [loading, setLoading] = useState(true);
+  const [isRegistered, setIsRegistered] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
 
-  // Gọi API khi component được mount
+  const navigate = useNavigate();
+
   useEffect(() => {
-    // API giả để lấy dữ liệu (có thể thay bằng API thật)
     const fakeApiResponse = {
       courseContent: [
         { title: "Giới thiệu về ReactJS" },
@@ -53,32 +55,36 @@ const CourseReactJS = () => {
       ]
     };
 
-    // Giả lập phản hồi từ API
     setTimeout(() => {
       setCourseData(fakeApiResponse);
       setLoading(false);
     }, 2000);
-
-    // Nếu sử dụng API thật, bỏ phần dưới và uncomment đoạn axios
-    // axios.get('https://api.example.com/course-data') // Thay bằng API thật của bạn
-    //   .then((res) => {
-    //     setCourseData(res.data); // Cập nhật dữ liệu nhận được vào state
-    //     setLoading(false);  // Đặt loading thành false khi tải xong
-    //   })
-    //   .catch((err) => {
-    //     console.error('Lỗi khi lấy dữ liệu từ API:', err);
-    //     setLoading(false); // Đảm bảo không bị kẹt ở trạng thái loading nếu có lỗi
-    //   });
   }, []);
+
+  const handleRegister = () => {
+    setShowPopup(true);
+    setIsRegistered(true);
+    // Tự động ẩn popup sau 2s
+    setTimeout(() => {
+      setShowPopup(false);
+    }, 2000);
+  };
+
+  const handleClosePopup = () => {
+    setShowPopup(false);
+  };
+
+  const handleStartCourse = () => {
+    navigate("/learn1");
+  };
 
   return (
     <>
       <div className="courseReactJS-container">
         <div className="courseReactJS-info">
           <h2>{loading ? "Đang tải..." : courseData.courseInfo.title}</h2>
-          <p>
-            {loading ? "Đang tải mô tả khóa học..." : courseData.courseInfo.description}
-          </p>
+          <p>{loading ? "Đang tải mô tả khóa học..." : courseData.courseInfo.description}</p>
+
           <CListGroup className="courseReactJS-stars">
             <h2>Bạn sẽ được học những gì?</h2>
             {loading ? (
@@ -111,9 +117,9 @@ const CourseReactJS = () => {
           </div>
 
           <div className="courseReactJS-register-button">
-            <Link to="/learn1">
-              <button>Đăng ký ngay</button>
-            </Link>
+            <button onClick={isRegistered ? handleStartCourse : handleRegister}>
+              {isRegistered ? "Học ngay" : "Đăng ký ngay"}
+            </button>
           </div>
 
           <div className="courseReactJS-date-time">
@@ -147,6 +153,16 @@ const CourseReactJS = () => {
           )}
         </div>
       </div>
+
+      {showPopup && (
+        <div className="popup-confirmation">
+          <div className="popup-content">
+            <h3>Đăng ký thành công!</h3>
+            <p>Chúc mừng bạn đã đăng ký thành công khóa học!</p>
+            <button onClick={handleClosePopup}>Đóng</button>
+          </div>
+        </div>
+      )}
     </>
   );
 };

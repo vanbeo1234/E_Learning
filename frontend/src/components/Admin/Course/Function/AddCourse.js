@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Modala from '../../Modala';
+import Modala from './Modala';
 
 const AddCourse = () => {
   const [formData, setFormData] = useState({
@@ -18,9 +18,12 @@ const AddCourse = () => {
   const [lectures, setLectures] = useState([]);
   const [errors, setErrors] = useState({});
   const [students, setStudents] = useState([]);
-
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showInstructorModal, setShowInstructorModal] = useState(false);
+  const [searchCode, setSearchCode] = useState('');
+  const [searchName, setSearchName] = useState('');
+  const [selectedInstructor, setSelectedInstructor] = useState(null);
 
   const navigate = useNavigate();
   const isEdit = false;
@@ -79,21 +82,72 @@ const AddCourse = () => {
   };
 
   const instructors = [
-    { id: 1, name: 'Giảng viên A' },
-    { id: 2, name: 'Giảng viên B' },
-    { id: 3, name: 'Giảng viên C' },
-    { id: 4, name: 'Giảng viên D' },
+    { id: 1, code: 'US0001', name: 'Nguyễn Văn A', email: 'nva@gmail.com', phone: '0123456789', dob: '01/01/1990', experience: 2 },
+    { id: 2, code: 'US0002', name: 'Trần Thị B', email: 'ttb@gmail.com', phone: '0987654321', dob: '15/05/1985', experience: 5 },
+    { id: 3, code: 'US0003', name: 'Lê Văn C', email: 'lvc@gmail.com', phone: '0912345678', dob: '20/10/1992', experience: 3 },
+    { id: 4, code: 'US0004', name: 'Phạm Thị D', email: 'ptd@gmail.com', phone: '0932145678', dob: '30/12/1988', experience: 4 },
   ];
+
+  const filteredInstructors = instructors.filter((instructor) =>
+    (searchCode ? instructor.code.toLowerCase().includes(searchCode.toLowerCase()) : true) &&
+    (searchName ? instructor.name.toLowerCase().includes(searchName.toLowerCase()) : true)
+  );
+
+  const handleInstructorSelect = (instructor) => {
+    setSelectedInstructor(instructor);
+  };
+
+  const handleConfirmInstructor = () => {
+    if (selectedInstructor) {
+      setFormData((prev) => ({ ...prev, instructor: selectedInstructor.name }));
+      console.log('Giảng viên đã chọn:', selectedInstructor);
+    }
+    setShowInstructorModal(false);
+    setSearchCode('');
+    setSearchName('');
+    setSelectedInstructor(null);
+  };
+
+  const handleCancelInstructor = () => {
+    setShowInstructorModal(false);
+    setSearchCode('');
+    setSearchName('');
+    setSelectedInstructor(null);
+  };
 
   const handleSave = () => {
     const newErrors = {};
+
+    // Validate formData fields
     if (!formData.courseName) newErrors.courseName = 'Tên khóa học không được bỏ trống';
+    if (!formData.instructor) newErrors.instructor = 'Giảng viên là bắt buộc';
+    if (!formData.lessons) newErrors.lessons = 'Số lượng bài học không được bỏ trống';
+    if (!formData.description) newErrors.description = 'Nội dung không được bỏ trống';
     if (!formData.startDate) newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
     if (!formData.endDate) newErrors.endDate = 'Ngày kết thúc là bắt buộc';
-    lectures.forEach((lecture, index) => {
-      if (!lecture.name) newErrors[`lectureName${index}`] = 'Tên bài giảng không được để trống';
+
+    // Validate objectives
+    objectives.forEach((objective, index) => {
+      if (!objective) newErrors[`objective${index}`] = 'Mục tiêu không được để trống';
     });
+
+    // Validate lectures
+    if (lectures.length === 0) {
+      newErrors.lectures = 'Phải có ít nhất một bài giảng';
+    } else {
+      lectures.forEach((lecture, index) => {
+        if (!lecture.order) newErrors[`lectureOrder${index}`] = 'Thứ tự bài giảng không được để trống';
+        if (!lecture.name) newErrors[`lectureName${index}`] = 'Tên bài giảng không được để trống';
+        if (!lecture.video) newErrors[`lectureVideo${index}`] = 'Video bài giảng không được để trống';
+        if (!lecture.document) newErrors[`lectureDocument${index}`] = 'Tài liệu bài giảng không được để trống';
+      });
+    }
+
+    // Validate cover image
+    if (!coverImage) newErrors.coverImage = 'Ảnh bìa là bắt buộc';
+
     setErrors(newErrors);
+
     if (Object.keys(newErrors).length === 0) {
       const fullData = {
         ...formData,
@@ -109,12 +163,17 @@ const AddCourse = () => {
 
   const handleCancel = () => setShowCancelModal(true);
 
+  const handleOpenInstructorModal = () => {
+    console.log('Opening instructor modal, showInstructorModal:', showInstructorModal);
+    setShowInstructorModal(true);
+  };
+
   return (
     <div className="add-course-details">
       <div className="add-course-section">
         <h2>Mô tả</h2>
         <div className="add-course-input-group">
-          <label htmlFor="course-name">Tên khóa học</label>
+          <label htmlFor="course-name">Tên khóa học <span style={{ color: 'red' }}>*</span></label>
           <input
             type="text"
             id="course-name"
@@ -128,7 +187,21 @@ const AddCourse = () => {
         </div>
 
         <div className="add-course-input-group">
-          <label htmlFor="course-content">Nội dung</label>
+          <label htmlFor="lessons">Số lượng bài học <span style={{ color: 'red' }}>*</span></label>
+          <input
+            type="text"
+            id="lessons"
+            name="lessons"
+            value={formData.lessons}
+            onChange={handleChange}
+            required
+          />
+          <i className="fas fa-pencil-alt add-course-edit-icon"></i>
+          {errors.lessons && <span className="error">{errors.lessons}</span>}
+        </div>
+
+        <div className="add-course-input-group">
+          <label htmlFor="course-content">Nội dung <span style={{ color: 'red' }}>*</span></label>
           <textarea
             id="course-content"
             name="description"
@@ -137,11 +210,12 @@ const AddCourse = () => {
             required
           />
           <i className="fas fa-pencil-alt add-course-edit-icon"></i>
+          {errors.description && <span className="error">{errors.description}</span>}
         </div>
       </div>
 
       <div className="section">
-        <h2>Mục tiêu</h2>
+        <h2>Mục tiêu <span style={{ color: 'red' }}>*</span></h2>
         <div className="add-new" onClick={handleAddObjective}>
           <i className="fas fa-plus"></i> <span>Thêm mới</span>
         </div>
@@ -156,25 +230,30 @@ const AddCourse = () => {
             <button className="remove-btn" onClick={() => handleRemoveObjective(index)}>
               <i className="fas fa-trash"></i>
             </button>
+            {errors[`objective${index}`] && <span className="error">{errors[`objective${index}`]}</span>}
           </div>
         ))}
       </div>
 
       <div className="section">
-        <h2>Nội dung khóa học</h2>
+        <h2>Nội dung khóa học <span style={{ color: 'red' }}>*</span></h2>
         <div className="add-new" onClick={handleAddLecture}>
           <i className="fas fa-plus"></i> <span>Thêm mới</span>
         </div>
+        {errors.lectures && <span className="error">{errors.lectures}</span>}
         {lectures.map((lecture, index) => (
           <div className="course-content" key={index}>
             <div className="input-group">
-              <label>Thứ tự</label>
+              <label>Thứ tự <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 placeholder="Nhập thứ tự"
                 value={lecture.order}
                 onChange={(e) => handleLectureChange(index, 'order', e.target.value)}
               />
+              {errors[`lectureOrder${index}`] && (
+                <span className="error">{errors[`lectureOrder${index}`]}</span>
+              )}
             </div>
 
             <div className="input-group">
@@ -205,32 +284,41 @@ const AddCourse = () => {
 
             {lecture.videoType === 'url' ? (
               <div className="input-group">
-                <label>Video URL</label>
+                <label>Video URL <span style={{ color: 'red' }}>*</span></label>
                 <input
                   type="text"
                   placeholder="Nhập URL video"
                   value={lecture.video}
                   onChange={(e) => handleLectureChange(index, 'video', e.target.value)}
                 />
+                {errors[`lectureVideo${index}`] && (
+                  <span className="error">{errors[`lectureVideo${index}`]}</span>
+                )}
               </div>
             ) : (
               <div className="input-group">
-                <label>Tải lên video</label>
+                <label>Tải lên video <span style={{ color: 'red' }}>*</span></label>
                 <input
                   type="file"
                   onChange={(e) => handleFileUpload(index, e.target.files[0])}
                 />
+                {errors[`lectureVideo${index}`] && (
+                  <span className="error">{errors[`lectureVideo${index}`]}</span>
+                )}
               </div>
             )}
 
             <div className="input-group">
-              <label>Tài liệu</label>
+              <label>Tài liệu <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 placeholder="Tải lên tài liệu"
                 value={lecture.document}
                 onChange={(e) => handleLectureChange(index, 'document', e.target.value)}
               />
+              {errors[`lectureDocument${index}`] && (
+                <span className="error">{errors[`lectureDocument${index}`]}</span>
+              )}
             </div>
 
             <div className="buttons">
@@ -244,7 +332,7 @@ const AddCourse = () => {
       </div>
 
       <div className="section">
-        <h2>Ảnh bìa</h2>
+        <h2>Ảnh bìa <span style={{ color: 'red' }}>*</span></h2>
         <div
           className="cover-image"
           style={{
@@ -263,13 +351,14 @@ const AddCourse = () => {
             onChange={handleCoverImageChange}
           />
         </div>
+        {errors.coverImage && <span className="error">{errors.coverImage}</span>}
       </div>
 
       <div className="learning-time-section">
         <h2>Thời gian học</h2>
         <div className="learning-time-row">
           <div className="learning-time-input">
-            <label>Ngày bắt đầu<span style={{ color: 'red' }}>*</span></label>
+            <label>Ngày bắt đầu <span style={{ color: 'red' }}>*</span></label>
             <input
               type="date"
               value={formData.startDate}
@@ -279,7 +368,7 @@ const AddCourse = () => {
             {errors.startDate && <span className="learning-time-error">{errors.startDate}</span>}
           </div>
           <div className="learning-time-input">
-            <label>Ngày kết thúc<span style={{ color: 'red' }}>*</span></label>
+            <label>Ngày kết thúc <span style={{ color: 'red' }}>*</span></label>
             <input
               type="date"
               value={formData.endDate}
@@ -291,43 +380,103 @@ const AddCourse = () => {
         </div>
 
         <div className="select-instructor-group">
-  <label htmlFor="instructor">Chọn giảng viên</label>
-  <select
-    name="instructor"
-    value={formData.instructor}
-    onChange={handleChange}
-    className="instructor-select"
-  >
-    <option value="">Chọn giảng viên</option>
-    {instructors.map((instructor) => (
-      <option key={instructor.id} value={instructor.name}>
-        {instructor.name}
-      </option>
-    ))}
-  </select>
-</div>
-</div>
+          <h2>Chọn giảng viên <span style={{ color: 'red' }}>*</span></h2>
+          <button className="select-instructor-btn" onClick={handleOpenInstructorModal}>
+            {formData.instructor || 'Chọn giảng viên'}
+          </button>
+          {errors.instructor && <span className="error">{errors.instructor}</span>}
+        </div>
+      </div>
+
       <div className="footer-buttons">
         <button className="create-btn" onClick={handleSave}>
           {isEdit ? 'Cập nhật' : 'Tạo mới'}
         </button>
         <button className="cancel-btn" onClick={handleCancel}>Hủy</button>
       </div>
+
       <Modala
-  show={showSuccessModal}
-  title={isEdit ? 'Cập nhật khóa học thành công' : 'Thêm khóa học thành công'}
-  onConfirm={() => {
-    navigate('/course-management');  // Chuyển hướng sau khi thêm thành công
-  }}
-  onCancel={() => setShowSuccessModal(false)}
-/>
+        show={showSuccessModal}
+        title={isEdit ? 'Cập nhật khóa học thành công' : 'Thêm khóa học thành công'}
+        onConfirm={() => {
+          navigate('/course-management');
+        }}
+        onCancel={() => setShowSuccessModal(false)}
+        modalClass="add-modal"
+      />
 
       <Modala
         show={showCancelModal}
         title="Bạn chắc chắn muốn hủy?"
         onConfirm={() => navigate('/courses')}
         onCancel={() => setShowCancelModal(false)}
+        modalClass="add-modal"
       />
+
+      <Modala
+        show={showInstructorModal}
+        title="Tìm kiếm giảng viên"
+        onConfirm={handleConfirmInstructor}
+        onCancel={handleCancelInstructor}
+        confirmText="Xác nhận"
+        cancelText="Hủy"
+        modalClass="instructor-modal"
+      >
+        <div className="instructor-search">
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Mã giảng viên"
+              value={searchCode}
+              onChange={(e) => setSearchCode(e.target.value)}
+              className="search-input"
+            />
+            <input
+              type="text"
+              placeholder="Tên giảng viên"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              className="search-input"
+            />
+            <button className="search-btn">Tìm kiếm</button>
+          </div>
+          <table className="instructor-table">
+            <thead>
+              <tr>
+                <th>Stt</th>
+                <th>Mã định danh</th>
+                <th>Họ tên</th>
+                <th>Email</th>
+                <th>Số điện thoại</th>
+                <th>Ngày sinh</th>
+                <th>Năm kinh nghiệm</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredInstructors.map((instructor, index) => (
+                <tr key={instructor.id}>
+                  <td>{index + 1}</td>
+                  <td>{instructor.code}</td>
+                  <td>{instructor.name}</td>
+                  <td>{instructor.email}</td>
+                  <td>{instructor.phone}</td>
+                  <td>{instructor.dob}</td>
+                  <td>{instructor.experience}</td>
+                  <td>
+                    <input
+                      type="radio"
+                      name="instructor"
+                      checked={selectedInstructor?.id === instructor.id}
+                      onChange={() => handleInstructorSelect(instructor)}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </Modala>
     </div>
   );
 };

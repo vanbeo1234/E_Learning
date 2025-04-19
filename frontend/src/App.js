@@ -3,7 +3,7 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import './App.css';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import Footer from './components/Footer';
+import Footer from './components/Hocvien/Footer';
 import Sidebar from './components/Hocvien/Sidebar';
 import Header from './components/Hocvien/Header';
 import Home from './components/Hocvien/Home';
@@ -29,61 +29,99 @@ import Headers from './components/giangvien/Header';
 import Homeg from './components/giangvien/Homeg';
 import Feature from './components/giangvien/Feature';
 
-
 function App() {
-  const [courses, setCourses] = useState([]);
-  const [isInstructor, setIsInstructor] = useState(true);  // Assuming `isInstructor` is set based on user login/role
+  const [courses, setCourses] = useState([
+    {
+      id: 1,
+      courseName: 'Java Core',
+      instructor: 'Nguyễn Văn A',
+      lessons: 20,
+      description: 'Cung cấp kiến thức cơ bản về OOP, design pattern',
+      startDate: '2023-01-01',
+      endDate: '2023-03-31',
+      status: 'Hoạt động',
+      coverImage: null,
+      objectives: [],
+      lectures: [],
+    },
+    {
+      id: 2,
+      courseName: 'ReactJS',
+      instructor: 'Trần Thị B',
+      lessons: 15,
+      description: 'Học cách xây dựng ứng dụng với ReactJS',
+      startDate: '2023-02-01',
+      endDate: '2023-04-30',
+      status: 'Không hoạt động',
+      coverImage: null,
+      objectives: [],
+      lectures: [],
+    },
+  ]);
 
   return (
     <Router>
       <div className="container">
-        {/* Show Sidebar and Header only if the user is an Instructor */}
-        {isInstructor && <Sidebars />}
-        
-        <div className="content">
-          {/* Header will be displayed for instructors */}
-          {isInstructor && <Headers title="E Learning" />}
-
-          <Routes>
-            {isInstructor ? (
+        <Sidebara />
+        <Routes>
+          <Route
+            path="/user-management"
+            element={
               <>
-                <Route path="/" element={<Homeg />} />
-                <Route path="/homeg" element={<Homeg />} />
-                <Route path="/courses" element={<CourseTable />} />
-                <Route path="/course-info/:id" element={<CourseInfo />} />
-                <Route path="/course/:id" element={<CourseInfo />} />
-                <Route path="/edit-course/:id" element={<Feature isEdit={true} />} />
-                <Route path="/create-course" element={<CourseForm isEdit={false} />} />
-                <Route path="/feedback" element={<FeedbackList />} />
-                <Route path="*" element={<div>404 - Không tìm thấy trang</div>} />
+                <Headera title="Quản lý người dùng" />
+                <UserManagement />
               </>
-            ) : (
+            }
+          />
+          <Route
+            path="/course-management"
+            element={
               <>
-                {/* Routes for non-Instructor users */}
-                <Route path="/user-management" element={<UserManagement />} />
-                <Route path="/course-management" element={<CourseManagement courses={courses} setCourses={setCourses} />} />
-                <Route path="/add-course" element={<AddCourseModal />} />
-                <Route path="/edit-course/:id" element={<EditCourse courses={courses} setCourses={setCourses} />} />
+                <Headera title="Quản lý khóa học" />
+                <CourseManagement courses={courses} setCourses={setCourses} />
               </>
-            )}
-          </Routes>
-        </div>
+            }
+          />
+          <Route
+            path="/add-course"
+            element={
+              <>
+                <Headera title="Thêm khóa học" />
+                <AddCourseModal />
+              </>
+            }
+          />
+          <Route
+            path="/edit-course/:id"
+            element={
+              <>
+                <Headera title="Sửa khóa học" />
+                <EditCourse courses={courses} setCourses={setCourses} />
+              </>
+            }
+          />
+          <Route path="/" element={<Navigate to="/course-management" />} />
+        </Routes>
       </div>
-
-      {/* Add Footer to be fixed at the bottom */}
-      <Footer />
     </Router>
   );
 }
 
 export default App;
-  
-  
+
 /**            <Route path="/user-management" element={<UserManagement />} />
             <Route path="/course-management" element={<CourseManagement />} />
             <Route path="*" element={<Navigate to="/user-management" />} />
 
-/**      <div className="container">
+/**         function AppContent() {
+  const [courses, setCourses] = useState([]);
+  const location = useLocation();  // Sử dụng useLocation để lấy đường dẫn hiện tại
+  const showFooterPaths = ["/home", "/my-course", "/progress", "/article"];
+  const shouldShowFooter = showFooterPaths.includes(location.pathname); // Kiểm tra xem footer có hiển thị không
+
+  return (
+    <div className="app-wrapper">
+      <div className="container">
         <Sidebar />
         <div className="content">
           <Routes>
@@ -96,7 +134,22 @@ export default App;
             <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
         </div>
-      </div> */
+      </div>
+      {shouldShowFooter && <Footer />}
+    </div>
+  );
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
+  );
+}
+
+export default App; 
+   */
 
 
       /**        <div className="container">
@@ -111,27 +164,38 @@ export default App;
 
 
       /*giangvien
-                <div className="container">
-        {isInstructor && <Sidebars />}
-        <div className="content">
-          {isInstructor && <Headers title="E Learning" />}
-          <Routes>
-            {isInstructor && (
-              <>
-                <Route path="/" element={<Homeg />} />
-                <Route path="/homeg" element={<Homeg />} />
-                <Route path="/courses" element={<CourseTable />} />
-                <Route path="/course-info/:id" element={<CourseInfo />} />
-                <Route path="/course/:id" element={<CourseInfo />} />
-                <Route path="/edit-course/:id" element={<Feature isEdit={true} />} />
-                <Route path="/create-course" element={<CourseForm isEdit={false} />} />
-                <Route path="/feedback" element={<FeedbackList />} />
-                <Route path="*" element={<div>404 - Không tìm thấy trang</div>} />
-              </>
-            )}
-          </Routes>
-        </div>
-      </div>*/
+                      <div className="app-wrapper">
+          <Sidebars />
+          <div className="content">
+            <Routes>
+              <Route
+                path="/homeg"
+                element={<><Headers title="Trang chủ giảng viên" /><Homeg /></>}
+              />
+              <Route
+                path="/courses"
+                element={<><Headers title="Danh sách khóa học" /><CourseTable /></>}
+              />
+              <Route
+                path="/create-course"
+                element={<><Headers title="Tạo khóa học mới" /><CourseForm isEdit={false} /></>}
+              />
+              <Route
+                path="/edit-course/:id"
+                element={<><Headers title="Chỉnh sửa khóa học" /><Feature isEdit={true} /></>}
+              />
+              <Route
+                path="/course-info/:id"
+                element={<><Headers title="Thông tin khóa học" /><CourseInfo /></>}
+              />
+              <Route
+                path="/feedback"
+                element={<><Headers title="Phản hồi từ học viên" /><FeedbackList /></>}
+              />
+              <Route path="*" element={<Navigate to="/homeg" />} />
+            </Routes>
+          </div>
+        </div>*/
 
 
       /**dk,dn   <Routes>

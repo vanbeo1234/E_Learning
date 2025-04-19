@@ -1120,4 +1120,110 @@ th:first-child, td:first-child {
   font-size: 16px;
   transition: background-color 0.3s ease;
 }
+/* === Modal Tìm kiếm Giảng viên === */
+/* === Nút Chọn giảng viên === */
+.select-instructor-btn {
+  padding: 10px 20px; /* Kích thước nút */
+  margin-top: 20px;
+  font-size: 14px; /* Kích thước chữ trong nút */
+  background-color: #5aacff; /* Màu nền nút */
+  color: white; /* Màu chữ */
+  border: none; /* Loại bỏ border mặc định */
+  border-radius: 5px; /* Bo góc cho nút */
+  cursor: pointer; /* Con trỏ chuột khi hover qua */
+  transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu nền và nhấn nút */
+  display: inline-flex; /* Để căn giữa text */
+  justify-content: center; /* Căn giữa text theo chiều ngang */
+  align-items: center; /* Căn giữa text theo chiều dọc */
+}
+
+.select-instructor-btn:hover {
+  background-color: #1565c0; /* Màu nền khi hover */
+  transform: scale(1.05); /* Tăng kích thước nút khi hover */
+}
+
+.select-instructor-btn:focus {
+  outline: none; /* Loại bỏ outline mặc định khi nhấn */
+  box-shadow: 0 0 5px rgba(25, 118, 210, 0.6); /* Thêm hiệu ứng khi focus */
+}
+
+.instructor-modal .instructor-search {
+  padding: 1rem;
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.instructor-modal .search-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.instructor-modal .search-input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #1976d2;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.instructor-modal .search-btn {
+  padding: 8px 14px;
+  margin-left: 20px;
+  margin-bottom: 8px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.instructor-modal .search-btn:hover {
+  background-color: #1565c0;
+}
+
+.instructor-modal .instructor-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.instructor-modal .instructor-table th,
+.instructor-modal .instructor-table td {
+  padding: 12px;
+  text-align: left;
+  border: 1px solid #ddd;
+}
+
+.instructor-modal .instructor-table th {
+  background-color: #f5f5f5;
+  color: #1976d2;
+}
+
+.instructor-modal .instructor-table td {
+  font-size: 14px;
+}
+
+.instructor-modal .instructor-table input[type="radio"] {
+  margin-left: 10px;
+}
+
+.instructor-modal .modal-footer {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.instructor-modal .modal-footer button {
+  padding: 8px 16px;
+  background-color: #1976d2;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.instructor-modal .modal-footer button:hover {
+  background-color: #1565c0;
+}
 

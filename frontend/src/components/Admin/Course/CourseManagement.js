@@ -69,7 +69,8 @@ const CourseManagement = () => {
   };
 
   const handleEditCourse = (course) => {
-    navigate(`/edit-course/${course.id}`);
+    console.log('Navigating to edit course with ID:', course.id, 'Data:', course);
+    navigate(`/edit-course/${course.id}`, { state: { course } });
   };
 
   const showConfirmModal = (action) => {
@@ -105,8 +106,8 @@ const CourseManagement = () => {
   const handleSearch = () => {
     const filtered = courses.filter(course => {
       return (
-        (!searchCriteria.courseName || course.courseName.includes(searchCriteria.courseName)) &&
-        (!searchCriteria.instructor || course.instructor.includes(searchCriteria.instructor)) &&
+        (!searchCriteria.courseName || course.courseName.toLowerCase().includes(searchCriteria.courseName.toLowerCase())) &&
+        (!searchCriteria.instructor || course.instructor.toLowerCase().includes(searchCriteria.instructor.toLowerCase())) &&
         (!searchCriteria.creationDate || course.startDate === searchCriteria.creationDate) &&
         (!searchCriteria.status || course.status === searchCriteria.status)
       );
@@ -117,14 +118,15 @@ const CourseManagement = () => {
 
   const handleItemsPerPageChange = (e) => {
     setItemsPerPage(Number(e.target.value));
-  };
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
+    setCurrentPage(1);
   };
 
   const totalPages = Math.ceil(filteredCourses.length / itemsPerPage);
   const currentCourses = filteredCourses.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
+
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
 
   return (
     <div className="course-management-container">
@@ -153,7 +155,12 @@ const CourseManagement = () => {
           <div className="course-management-pagination">
             <div>
               <label htmlFor="itemsPerPage" style={{ padding: '5px' }}>Hiển thị danh mục</label>
-             
+              <select id="itemsPerPage" value={itemsPerPage} onChange={handleItemsPerPageChange}>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+              </select>
             </div>
           </div>
 
@@ -161,7 +168,7 @@ const CourseManagement = () => {
             <table>
               <thead>
                 <tr>
-                  <th><input type="checkbox" id="selectAll" onClick={toggleSelectAll} /></th>
+                  <th><input type="checkbox" id="selectAll" checked={selectAll} onChange={toggleSelectAll} /></th>
                   <th>STT</th>
                   <th>Mã khóa học</th>
                   <th>Tên khóa học</th>
@@ -197,13 +204,17 @@ const CourseManagement = () => {
           </div>
 
           <div className="pagination-buttons">
-            <button onClick={() => handlePageChange(1)}>&laquo;</button>
+            <button onClick={() => handlePageChange(1)} disabled={currentPage === 1}>«</button>
             {[...Array(totalPages).keys()].map(number => (
-              <button key={number + 1} onClick={() => handlePageChange(number + 1)}>
+              <button
+                key={number + 1}
+                onClick={() => handlePageChange(number + 1)}
+                className={currentPage === number + 1 ? 'active' : ''}
+              >
                 {number + 1}
               </button>
             ))}
-            <button onClick={() => handlePageChange(totalPages)}>&raquo;</button>
+            <button onClick={() => handlePageChange(totalPages)} disabled={currentPage === totalPages}>»</button>
           </div>
         </div>
       </div>

@@ -147,95 +147,91 @@ const MyCourse = () => {
     return title.replace('#', '-sharp').toLowerCase().replace(/ /g, '-');
   };
   
-  return (
-    <main className="mycourse-main-content">
-      <section className="mycourse-courses">
-        <div className="mycourse-courses-header">
-          <h2>Khóa học đã đăng ký</h2>
+    return (
+      <main className="mycourse-main-content">
+        <div className="mycourse-page-content">
+          <section className="mycourse-courses">
+            {/* Khóa học đã đăng ký */}
+            <div className="mycourse-courses-header">
+              <h2>Khóa học đã đăng ký</h2>
+            </div>
+            <div className="mycourse-course-grid">
+              {currentCourses.map((course, index) => (
+                <Link
+                  to={`/course/${formatCourseTitle(course.title)}`}
+                  key={index}
+                  className="mycourse-course-card"
+                >
+                  <img src={course.image} alt={course.title} className="mycourse-course-image" />
+                  <div className="mycourse-course-header">
+                    <span>{getCategoryIcon(course.category)} {course.category}</span>
+                    <span><i className="fas fa-clock"></i> {course.duration}</span>
+                  </div>
+                  <h3>{course.title}</h3>
+                  <p>{course.description}</p>
+                </Link>
+              ))}
+            </div>
+    
+            {/* Các mục khác giữ nguyên */}
+            <div className="mycourse-courses-header">
+              <h2>Khóa học tiếp tục</h2>
+            </div>
+            <div className="mycourse-course-grid">
+              {continuingCourses.map((course, index) => (
+                <Link
+                  to={`/course/${formatCourseTitle(course.title)}`}
+                  key={index}
+                  className="mycourse-course-card"
+                >
+                  <img src={course.image} alt={course.title} className="mycourse-course-image" />
+                  <div className="mycourse-course-header">
+                    <span>{getCategoryIcon(course.category)} {course.category}</span>
+                    <span><i className="fas fa-clock"></i> {course.duration}</span>
+                  </div>
+                  <h3>{course.title}</h3>
+                  <p>{course.description}</p>
+                </Link>
+              ))}
+            </div>
+    
+            {/* Đã hoàn thành */}
+            <div className="mycourse-courses-header">
+              <h2>Khóa học đã hoàn thành</h2>
+            </div>
+            <div className="mycourse-course-grid">
+              {completedCourses.map((course, index) => (
+                <Link
+                  to={`/course/${formatCourseTitle(course.title)}`}
+                  key={index}
+                  className="mycourse-course-card"
+                >
+                  <img src={course.image} alt={course.title} className="mycourse-course-image" />
+                  <div className="mycourse-course-header">
+                    <span>{getCategoryIcon(course.category)} {course.category}</span>
+                    <span><i className="fas fa-clock"></i> {course.duration}</span>
+                  </div>
+                  <h3>{course.title}</h3>
+                  <p>{course.description}</p>
+                </Link>
+              ))}
+            </div>
+    
+            <div className="mycourse-pagination-buttons">
+              {Array.from({ length: totalPages }, (_, index) => (
+                <button
+                  key={index}
+                  className={index + 1 === currentPage ? 'mycourse-active' : ''}
+                  onClick={() => handlePageChange(index + 1)}
+                >
+                  {index + 1}
+                </button>
+              ))}
+            </div>
+          </section>
         </div>
-        <div className="mycourse-course-grid">
-          {currentCourses.map((course, index) => (
-            <Link 
-              to={{
-                pathname: `/course/${formatCourseTitle(course.title)}`,
-                state: { course }
-              }} 
-              key={index}
-              className="mycourse-course-card"
-            >
-              <img src={course.image} alt={course.title} className="mycourse-course-image" />
-              <div className="mycourse-course-header">
-                <span>{getCategoryIcon(course.category)} {course.category}</span>
-                <span><i className="fas fa-clock"></i> {course.duration}</span>
-              </div>
-              <h3>{course.title}</h3>
-              <p>{course.description}</p>
-            </Link>
-          ))}
-        </div>
-  
-        <div className="mycourse-courses-header">
-          <h2>Khóa học tiếp tục</h2>
-        </div>
-        <div className="mycourse-course-grid">
-          {continuingCourses.map((course, index) => (
-            <Link 
-              to={{
-                pathname: `/course/${formatCourseTitle(course.title)}`,
-                state: { course }
-              }} 
-              key={index}
-              className="mycourse-course-card"
-            >
-              <img src={course.image} alt={course.title} className="mycourse-course-image" />
-              <div className="mycourse-course-header">
-                <span>{getCategoryIcon(course.category)} {course.category}</span>
-                <span><i className="fas fa-clock"></i> {course.duration}</span>
-              </div>
-              <h3>{course.title}</h3>
-              <p>{course.description}</p>
-            </Link>
-          ))}
-        </div>
-  
-        <div className="mycourse-courses-header">
-          <h2>Khóa học đã hoàn thành</h2>
-        </div>
-        <div className="mycourse-course-grid">
-          {completedCourses.map((course, index) => (
-            <Link 
-              to={{
-                pathname: `/course/${formatCourseTitle(course.title)}`,
-                state: { course }
-              }} 
-              key={index}
-              className="mycourse-course-card"
-            >
-              <img src={course.image} alt={course.title} className="mycourse-course-image" />
-              <div className="mycourse-course-header">
-                <span>{getCategoryIcon(course.category)} {course.category}</span>
-                <span><i className="fas fa-clock"></i> {course.duration}</span>
-              </div>
-              <h3>{course.title}</h3>
-              <p>{course.description}</p>
-            </Link>
-          ))}
-        </div>
-  
-        <div className="mycourse-pagination-buttons">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index}
-              className={index + 1 === currentPage ? 'mycourse-active' : ''}
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
-      </section>
-    </main>
-  );
-};  
+      </main>
+    );
+  }
 
 export default MyCourse;

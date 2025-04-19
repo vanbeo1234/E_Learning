@@ -122,11 +122,13 @@ const Learn1 = () => {
             )}
           </div>
         </div>
+
+        {/* Navigation and Rating buttons section */}
         <div className="navigation-rating-buttons">
           <div className="navigation-buttons">
             <Link to="/previous-lesson">
               <button aria-label="Previous Lesson" className="previous-button">
-              <i className="fas fa-arrow-left"></i> Bài trước
+                <i className="fas fa-arrow-left"></i> Bài trước
               </button>
             </Link>
             <Link to="/next-lesson">
@@ -164,6 +166,7 @@ const Learn1 = () => {
           )}
         </div>
       </div>
+
       <div className="learn1-content-rating">
         <div className="learn1-content-list">
           <h3>Nội dung khóa học</h3>
@@ -177,7 +180,7 @@ const Learn1 = () => {
             <li>7. CSS, SCSS và CSS Modules</li>
             <li>8. React Router V6</li>
             <li>9. Redux (quản lý state)</li>
-            <li>10. Deploy ứng dụng lên Headde</li><li>1. Giới thiệu</li>
+            <li>10. Deploy ứng dụng lên Headde</li>            <li>1. Giới thiệu</li>
             <li>2. Lập trình ES6++</li>
             <li>3. React, Redux</li>
             <li>4. JSX, Components, Props</li>

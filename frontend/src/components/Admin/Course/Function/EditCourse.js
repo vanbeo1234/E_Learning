@@ -87,21 +87,37 @@ const EditCourse = ({ courses, setCourses }) => {
     }
   };
 
-  const instructors = [
-    { id: 1, name: 'Giảng viên A' },
-    { id: 2, name: 'Giảng viên B' },
-    { id: 3, name: 'Giảng viên C' },
-    { id: 4, name: 'Giảng viên D' },
-  ];
-
   const handleSave = () => {
     const newErrors = {};
+
+    // Validate formData fields
     if (!formData.courseName) newErrors.courseName = 'Tên khóa học không được bỏ trống';
+    if (!formData.instructor) newErrors.instructor = 'Giảng viên là bắt buộc';
+    if (!formData.lessons) newErrors.lessons = 'Số lượng bài học không được bỏ trống';
+    if (!formData.description) newErrors.description = 'Nội dung không được bỏ trống';
     if (!formData.startDate) newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
     if (!formData.endDate) newErrors.endDate = 'Ngày kết thúc là bắt buộc';
-    lectures.forEach((lecture, index) => {
-      if (!lecture.name) newErrors[`lectureName${index}`] = 'Tên bài giảng không được để trống';
+
+    // Validate objectives
+    objectives.forEach((objective, index) => {
+      if (!objective) newErrors[`objective${index}`] = 'Mục tiêu không được để trống';
     });
+
+    // Validate lectures
+    if (lectures.length === 0) {
+      newErrors.lectures = 'Phải có ít nhất một bài giảng';
+    } else {
+      lectures.forEach((lecture, index) => {
+        if (!lecture.order) newErrors[`lectureOrder${index}`] = 'Thứ tự bài giảng không được để trống';
+        if (!lecture.name) newErrors[`lectureName${index}`] = 'Tên bài giảng không được để trống';
+        if (!lecture.video) newErrors[`lectureVideo${index}`] = 'Video bài giảng không được để trống';
+        if (!lecture.document) newErrors[`lectureDocument${index}`] = 'Tài liệu bài giảng không được để trống';
+      });
+    }
+
+    // Validate cover image
+    if (!coverImage) newErrors.coverImage = 'Ảnh bìa là bắt buộc';
+
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
@@ -109,20 +125,14 @@ const EditCourse = ({ courses, setCourses }) => {
         course.id === parseInt(id) ? { ...course, ...formData, objectives, lectures, coverImage } : course
       );
       setCourses(updatedCourses);
+      console.log('Course updated successfully, showing success modal');
       setShowSuccessModal(true);
-      // Redirect to the course management page after save
-      setTimeout(() => {
-        navigate('/course-management'); // Navigate to course management page after successful update
-      }, 1500); // Optional delay before redirecting
     }
   };
 
   const handleCancel = () => {
+    console.log('Cancel button clicked, showing cancel modal');
     setShowCancelModal(true);
-    // Redirect to course management page after cancel
-    setTimeout(() => {
-      navigate('/course-management'); // Redirect to course management page after cancel
-    }, 1500); // Optional delay before redirecting
   };
 
   return (
@@ -131,7 +141,7 @@ const EditCourse = ({ courses, setCourses }) => {
         <h2>Sửa thông tin khóa học</h2>
 
         <div className="edit-course-input-group">
-          <label htmlFor="course-name">Tên khóa học</label>
+          <label htmlFor="course-name">Tên khóa học <span style={{ color: 'red' }}>*</span></label>
           <input
             type="text"
             id="course-name"
@@ -144,7 +154,20 @@ const EditCourse = ({ courses, setCourses }) => {
         </div>
 
         <div className="edit-course-input-group">
-          <label htmlFor="course-content">Nội dung</label>
+          <label htmlFor="lessons">Số lượng bài học <span style={{ color: 'red' }}>*</span></label>
+          <input
+            type="text"
+            id="lessons"
+            name="lessons"
+            value={formData.lessons}
+            onChange={handleChange}
+            required
+          />
+          {errors.lessons && <span className="error">{errors.lessons}</span>}
+        </div>
+
+        <div className="edit-course-input-group">
+          <label htmlFor="course-content">Nội dung <span style={{ color: 'red' }}>*</span></label>
           <textarea
             id="course-content"
             name="description"
@@ -152,11 +175,12 @@ const EditCourse = ({ courses, setCourses }) => {
             onChange={handleChange}
             required
           />
+          {errors.description && <span className="error">{errors.description}</span>}
         </div>
       </div>
 
       <div className="section">
-        <h2>Mục tiêu</h2>
+        <h2>Mục tiêu <span style={{ color: 'red' }}>*</span></h2>
         <div className="add-new" onClick={handleAddObjective}>
           <i className="fas fa-plus"></i> <span>Thêm mới</span>
         </div>
@@ -171,25 +195,30 @@ const EditCourse = ({ courses, setCourses }) => {
             <button className="remove-btn" onClick={() => handleRemoveObjective(index)}>
               <i className="fas fa-trash"></i>
             </button>
+            {errors[`objective${index}`] && <span className="error">{errors[`objective${index}`]}</span>}
           </div>
         ))}
       </div>
 
       <div className="section">
-        <h2>Nội dung khóa học</h2>
+        <h2>Nội dung khóa học <span style={{ color: 'red' }}>*</span></h2>
         <div className="add-new" onClick={handleAddLecture}>
           <i className="fas fa-plus"></i> <span>Thêm mới</span>
         </div>
+        {errors.lectures && <span className="error">{errors.lectures}</span>}
         {lectures.map((lecture, index) => (
           <div className="course-content" key={index}>
             <div className="input-group">
-              <label>Thứ tự</label>
+              <label>Thứ tự <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 placeholder="Nhập thứ tự"
                 value={lecture.order}
                 onChange={(e) => handleLectureChange(index, 'order', e.target.value)}
               />
+              {errors[`lectureOrder${index}`] && (
+                <span className="error">{errors[`lectureOrder${index}`]}</span>
+              )}
             </div>
 
             <div className="input-group">
@@ -220,32 +249,41 @@ const EditCourse = ({ courses, setCourses }) => {
 
             {lecture.videoType === 'url' ? (
               <div className="input-group">
-                <label>Video URL</label>
+                <label>Video URL <span style={{ color: 'red' }}>*</span></label>
                 <input
                   type="text"
                   placeholder="Nhập URL video"
                   value={lecture.video}
                   onChange={(e) => handleLectureChange(index, 'video', e.target.value)}
                 />
+                {errors[`lectureVideo${index}`] && (
+                  <span className="error">{errors[`lectureVideo${index}`]}</span>
+                )}
               </div>
             ) : (
               <div className="input-group">
-                <label>Tải lên video</label>
+                <label>Tải lên video <span style={{ color: 'red' }}>*</span></label>
                 <input
                   type="file"
                   onChange={(e) => handleFileUpload(index, e.target.files[0])}
                 />
+                {errors[`lectureVideo${index}`] && (
+                  <span className="error">{errors[`lectureVideo${index}`]}</span>
+                )}
               </div>
             )}
 
             <div className="input-group">
-              <label>Tài liệu</label>
+              <label>Tài liệu <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 placeholder="Tải lên tài liệu"
                 value={lecture.document}
                 onChange={(e) => handleLectureChange(index, 'document', e.target.value)}
               />
+              {errors[`lectureDocument${index}`] && (
+                <span className="error">{errors[`lectureDocument${index}`]}</span>
+              )}
             </div>
 
             <div className="buttons">
@@ -259,40 +297,68 @@ const EditCourse = ({ courses, setCourses }) => {
       </div>
 
       <div className="section">
-        <h2>Ảnh bìa</h2>
-        <div className="cover-image" style={{ backgroundImage: coverImage ? `url(${coverImage})` : 'none' }}>
+        <h2>Ảnh bìa <span style={{ color: 'red' }}>*</span></h2>
+        <div
+          className="cover-image"
+          style={{
+            backgroundImage: coverImage ? `url(${coverImage})` : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
+          }}
+          onClick={() => document.getElementById('cover-image-upload').click()}
+        >
           {!coverImage && <i className="fas fa-plus upload-icon"></i>}
           <input
             type="file"
             accept="image/*"
             style={{ display: 'none' }}
             id="cover-image-upload"
-            onChange={(e) => setCoverImage(URL.createObjectURL(e.target.files[0]))}
+            onChange={handleCoverImageChange}
           />
         </div>
+        {errors.coverImage && <span className="error">{errors.coverImage}</span>}
       </div>
 
       <div className="learning-time-section">
         <h2>Thời gian học</h2>
         <div className="learning-time-row">
           <div className="learning-time-input">
-            <label>Ngày bắt đầu</label>
-            <input type="date" value={formData.startDate} name="startDate" onChange={handleChange} />
+            <label>Ngày bắt đầu <span style={{ color: 'red' }}>*</span></label>
+            <input
+              type="date"
+              value={formData.startDate}
+              name="startDate"
+              onChange={handleChange}
+            />
+            {errors.startDate && <span className="learning-time-error">{errors.startDate}</span>}
           </div>
           <div className="learning-time-input">
-            <label>Ngày kết thúc</label>
-            <input type="date" value={formData.endDate} name="endDate" onChange={handleChange} />
+            <label>Ngày kết thúc <span style={{ color: 'red' }}>*</span></label>
+            <input
+              type="date"
+              value={formData.endDate}
+              name="endDate"
+              onChange={handleChange}
+            />
+            {errors.endDate && <span className="learning-time-error">{errors.endDate}</span>}
           </div>
         </div>
       </div>
 
       <div className="input-group">
-        <label>Giảng viên</label>
-        <input type="text" value={formData.instructor} onChange={handleChange} name="instructor" />
+        <label>Giảng viên <span style={{ color: 'red' }}>*</span></label>
+        <input
+          type="text"
+          value={formData.instructor}
+          onChange={handleChange}
+          name="instructor"
+        />
+        {errors.instructor && <span className="error">{errors.instructor}</span>}
       </div>
 
       <div className="input-group">
         <label>Trạng thái</label>
+        
         <select name="status" value={formData.status} onChange={handleChange}>
           <option value="Hoạt động">Hoạt động</option>
           <option value="Không hoạt động">Không hoạt động</option>
@@ -310,7 +376,10 @@ const EditCourse = ({ courses, setCourses }) => {
           title="Xác nhận hủy"
           content="Bạn có chắc chắn muốn hủy không?"
           onClose={() => setShowCancelModal(false)}
-          onConfirm={() => navigate('/courses')}
+          onConfirm={() => {
+            console.log('Cancel confirmed, navigating to /course-management');
+            navigate('/course-management');
+          }}
         />
       )}
 
@@ -319,7 +388,16 @@ const EditCourse = ({ courses, setCourses }) => {
           type="success"
           title="Cập nhật thành công"
           content="Khóa học đã được cập nhật thành công!"
-          onClose={() => setShowSuccessModal(false)}
+          onClose={() => {
+            console.log('Success modal closed, navigating to /course-management');
+            setShowSuccessModal(false);
+            navigate('/course-management');
+          }}
+          onConfirm={() => {
+            console.log('Success modal confirmed, navigating to /course-management');
+            setShowSuccessModal(false);
+            navigate('/course-management');
+          }}
         />
       )}
     </div>

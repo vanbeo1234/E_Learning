@@ -9,6 +9,54 @@ function Home() {
       duration: "3 Month",
       title: "Java Core",
       description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
+    },{
+      image: '/logo512.png',
+      category: "Java",
+      duration: "3 Month",
+      title: "Java Core",
+      description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
+    },{
+      image: '/logo512.png',
+      category: "Java",
+      duration: "3 Month",
+      title: "Java Core",
+      description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
+    },{
+      image: '/logo512.png',
+      category: "Java",
+      duration: "3 Month",
+      title: "Java Core",
+      description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
+    },{
+      image: '/logo512.png',
+      category: "Java",
+      duration: "3 Month",
+      title: "Java Core",
+      description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
+    },{
+      image: '/logo512.png',
+      category: "Java",
+      duration: "3 Month",
+      title: "Java Core",
+      description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
+    },{
+      image: '/logo512.png',
+      category: "Java",
+      duration: "3 Month",
+      title: "Java Core",
+      description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
+    },{
+      image: '/logo512.png',
+      category: "Java",
+      duration: "3 Month",
+      title: "Java Core",
+      description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
+    },{
+      image: '/logo512.png',
+      category: "Java",
+      duration: "3 Month",
+      title: "Java Core",
+      description: "Cung cấp kiến thức cơ bản về OOP, design pattern",
     },
     {
       image: '/logo512.png',
@@ -113,7 +161,10 @@ function Home() {
         </div>
       </section>
     </main>
+    
   );
+
+  
 }
 
 export default Home;
