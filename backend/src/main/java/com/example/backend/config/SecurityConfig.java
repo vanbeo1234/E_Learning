@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.AuthenticationException;
@@ -15,11 +16,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.lang.NonNull;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 /**
  * Cấu hình bảo mật cho hệ thống:
@@ -34,7 +39,7 @@ public class SecurityConfig {
 
     /**
      * Constructor của lớp SecurityConfig.
-     * 
+     *
      * @param jwtTokenProvider Cung cấp các phương thức xác thực và tạo JWT.
      */
 
@@ -44,7 +49,7 @@ public class SecurityConfig {
 
     /**
      * Cấu hình filter chính cho Spring Security.
-     * 
+     *
      * @param http HttpSecurity để cấu hình các yêu cầu bảo mật cho ứng dụng.
      * @return Cấu hình bảo mật cho ứng dụng.
      * @throws Exception nếu có lỗi trong quá trình cấu hình bảo mật.
@@ -55,6 +60,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers("/v1/api/auth/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/v1/api/user").permitAll()
                         .requestMatchers("/v1/api/user/**").hasRole("ADMIN")
                         .requestMatchers("/v1/api/course/**").hasAnyRole("ADMIN", "INSTRUCTOR", "STUDENT")
                         .requestMatchers("/v1/api/lesson/**").hasAnyRole("ADMIN", "INSTRUCTOR")
@@ -62,6 +68,7 @@ public class SecurityConfig {
                         .requestMatchers("/v1/api/comment/**").hasAnyRole("INSTRUCTOR", "STUDENT")
                         .requestMatchers("/v1/api/student/**").hasAnyRole("STUDENT")
                         .anyRequest().authenticated())
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(unauthorizedEntryPoint()));
 
         http.addFilterBefore(new OncePerRequestFilter() {
@@ -108,7 +115,7 @@ public class SecurityConfig {
 
     /**
      * Trả về lỗi 401 nếu token không hợp lệ hoặc không có token trong request.
-     * 
+     *
      * @return AuthenticationEntryPoint xử lý lỗi xác thực khi token không hợp lệ.
      */
     @Bean
@@ -120,11 +127,25 @@ public class SecurityConfig {
 
     /**
      * Cấu hình mã hóa mật khẩu người dùng bằng thuật toán BCrypt.
-     * 
+     *
      * @return PasswordEncoder sử dụng BCryptPasswordEncoder để mã hóa mật khẩu.
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
+    @Bean
+    CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+        config.setAllowedOriginPatterns(List.of("http://localhost:3000"));
+        config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+        config.setAllowedHeaders(List.of("*"));
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
 }

@@ -36,26 +36,35 @@ const Signup = ({ setIsAuthenticated }) => {
       setUserCodeError('Tên đăng nhập phải từ 3 đến 20 ký tự, chỉ bao gồm chữ cái và số.');
       return; // Nếu không hợp lệ, không kiểm tra tồn tại trong DB nữa
     }
- 
+
+    
     const timeout = setTimeout(async () => {
       try {
-        // Gọi API lấy danh sách người dùng từ backend
-        const res = await fetch('http://localhost:8081/v1/api/users');
-        const data = await res.json();
- 
-        // Kiểm tra nếu userCode đã tồn tại trong danh sách người dùng
-        const userExists = data.some(user => user.userCode.toLowerCase() === trimmedUserCode);
- 
+        const res = await fetch('http://localhost:8081/v1/api/user', {
+          method: 'GET',
+        });
+  
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+  
+        const json = await res.json();
+        const users = json.data;
+  
+        const userExists = users.some(
+          (user) => user.userCode.toLowerCase() === trimmedUserCode
+        );
+  
         if (userExists) {
           setUserCodeError('Tên đăng nhập đã tồn tại.');
         } else {
-          setUserCodeError(''); // Không có lỗi nếu tên đăng nhập chưa tồn tại
+          setUserCodeError('');
         }
       } catch (err) {
         console.error('Lỗi khi lấy danh sách người dùng:', err);
         setUserCodeError('Không thể kiểm tra tên đăng nhập.');
       }
-    }, 500); // debounce 500ms
+    }, 500);
  
     return () => clearTimeout(timeout); // Dọn dẹp timeout khi effect thay đổi
   }, [userCode]);
@@ -283,10 +292,8 @@ const Signup = ({ setIsAuthenticated }) => {
       gender: genderValue,
       createdBy: "SYSTEM"
     };
- 
+ // không dán token vẫn đăng ký đc :)))
     try {
-      console.log('Sending payload:', JSON.stringify(payload, null, 2));
- 
       const response = await fetch('http://localhost:8081/v1/api/auth/register', {
         method: 'POST',
         headers: {
@@ -717,6 +724,7 @@ const Signup = ({ setIsAuthenticated }) => {
               onClick={handleSignup}
               disabled={isLoading || userCodeError || passwordError || nameError || emailError || phoneError || addressError || dobError || experienceError}
             >
+
               {isLoading ? 'Đang xử lý...' : 'Đăng ký'}
             </button>
           </div>
