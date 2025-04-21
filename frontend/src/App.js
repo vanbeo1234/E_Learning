@@ -42,42 +42,76 @@ import EditCourse from './components/Admin/Course/Function/EditCourse';
 import SearchCourses from './components/Admin/Course/Function/Search';
 import Modala from './components/Admin/Course/Function/Modala';
 
-function AppContent() {
-  const [courses, setCourses] = useState([]);
-  const location = useLocation();  // Sử dụng useLocation để lấy đường dẫn hiện tại
-  const showFooterPaths = ["/home", "/my-course", "/progress", "/article"];
-  const shouldShowFooter = showFooterPaths.includes(location.pathname); // Kiểm tra xem footer có hiển thị không
-
-  return (
-    <div className="app-wrapper">
-      <div className="container">
-        <Sidebar />
-        <div className="content">
-          <Routes>
-            <Route path="/home" element={<><Header title="Trang chủ" isSearch={true} /><Home /></>} />
-            <Route path="/my-course" element={<><Header title="Khóa học của tôi" /><MyCourse /></>} />
-            <Route path="/progress" element={<><Header title="Tiến độ học tập" /><LearningProgress /></>} />
-            <Route path="/article" element={<><Header title="Bài viết" /><Article /></>} />
-            <Route path="/course/:courseId" element={<><Header title="Thông tin khóa học" /><CourseReactJS courses={courses} /></>} />
-            <Route path="/learn1" element={<><Header title="Học ReactJS" /><Learn1 /></>} />
-            <Route path="*" element={<Navigate to="/home" />} />
-          </Routes>
-        </div>
-      </div>
-      {shouldShowFooter && <Footer />}
-    </div>
-  );
-}
-
 function App() {
   return (
     <Router>
-      <AppContent />
+      <div className="app-wrapper">
+        <Sidebars />
+        <div className="content">
+          <Routes>
+            <Route
+              path="/homeg"
+              element={
+                <>
+                  <Headers title="Trang chủ giảng viên" />
+                  <Homes />
+                </>
+              }
+            />
+            <Route
+              path="/courses"
+              element={
+                <>
+                  <Headers title="Danh sách khóa học" />
+                  <CourseTable />
+                </>
+              }
+            />
+            <Route
+              path="/create-course"
+              element={
+                <>
+                  <Headers title="Tạo khóa học mới" />
+                  <CourseForm isEdit={false} />
+                </>
+              }
+            />
+            <Route
+              path="/edit-course/:id"
+              element={
+                <>
+                  <Headers title="Chỉnh sửa khóa học" />
+                  <Feature isEdit={true} />
+                </>
+              }
+            />
+            <Route
+              path="/course-info/:id"
+              element={
+                <>
+                  <Headers title="Thông tin khóa học" />
+                  <CourseInfo />
+                </>
+              }
+            />
+            <Route
+              path="/feedback"
+              element={
+                <>
+                  <Headers title="Phản hồi từ học viên" />
+                  <FeedbackList />
+                </>
+              }
+            />
+            <Route path="*" element={<Navigate to="/homeg" replace />} />
+          </Routes>
+        </div>
+      </div>
     </Router>
   );
 }
 
-export default App; 
+export default App;
 
 
 /**            <Route path="/user-management" element={<UserManagement />} />

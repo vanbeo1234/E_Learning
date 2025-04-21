@@ -313,60 +313,77 @@ body {
 /* Feedback List */
 /* Sửa phần .search-bar để đảm bảo các nút và input có kiểu dáng giống nhau */
 .search-bar {
-display: flex;
-justify-content: space-between;
-margin: 20px 0;
-gap: 30px;
+  display: flex;
+  justify-content: space-between; /* Đẩy Học viên sang trái, Tìm kiếm sang phải */
+  margin: 20px 0;
+  align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.search-bar-middle {
+  display: flex;
+  gap: 20px; /* Khoảng cách đều giữa Khóa học và Ngày tìm kiếm */
+  align-items: center; /* Căn giữa theo chiều dọc */
 }
 
 .search-bar input,
 .search-bar button {
-padding: 10px;
-font-size: 16px;
-border: 1px solid #ccc;
-border-radius: 5px;
-flex: 1;
+  padding: 10px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+.search-bar input:not([type="date"]) {
+  flex: none;
+  width: 350px; /* Chiều rộng cố định cho Học viên và Khóa học */
+  padding: 8px;
+}
+
+.search-bar input[type="date"] {
+  flex: none;
+  width: 150px; /* Chiều rộng cho Ngày tìm kiếm */
+  padding: 8px;
 }
 
 .search-bar button {
-background-color: #3399ff;
-color: #fff;
-border: none;
-cursor: pointer;
+  flex: none;
+  width: 120px; /* Chiều rộng cho nút Tìm kiếm */
+  padding: 8px 16px;
+  background-color: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .search-bar button:hover {
-background-color: #007bff;
+  background-color: #2563eb;
 }
 
 .search-bar label {
-display: flex;
-flex-direction: column;
-justify-content: center;
-gap: 5px;
-flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  flex: 1;
 }
 
 .search-bar label input,
 .search-bar label select {
-padding: 8px;
-font-size: 16px;
-border: 1px solid #ccc;
-border-radius: 5px;
-}
-
-.search-bar input[type="date"] {
-width: 100%;
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
 }
 
 .search-bar select {
-width: 100%;
-cursor: pointer;
+  width: 100%;
+  cursor: pointer;
 }
 
 .search-bar label span {
-font-size: 14px;
-color: #666;
+  font-size: 14px;
+  color: #666;
 }
 .search-bar button {
 padding: 10px 20px;
@@ -932,27 +949,31 @@ max-width: 100%;
 margin: 0 auto;
 padding-top: 40px;
 padding-bottom: 20px;
+
 }
 
 .course-table-search-form {
-display: grid;
-grid-template-columns: auto auto auto auto auto;
-gap: 1rem;
-margin-bottom: 1rem;
-width: 100%;
+  display: flex; /* Sử dụng flexbox thay vì grid */
+  flex-wrap: wrap; /* Cho phép các phần tử xuống dòng nếu không đủ không gian */
+  justify-content: flex-start; /* Căn lề trái */
+  gap: 1rem; /* Khoảng cách đều nhau giữa các phần tử */
+  margin-bottom: 1rem;
+  width: 100%;
 }
 
 .course-table-search-form input,
 .course-table-search-form select {
-padding: 0.5rem;
-border: 1px solid #d1d5db;
-border-radius: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  min-width: 150px; /* Đảm bảo input có chiều rộng tối thiểu */
 }
 
 .course-table-search-form label {
-align-self: center;
-font-weight: bold;
-margin-right: 1rem;
+  display: flex;
+  align-items: center; /* Căn giữa theo chiều dọc */
+  gap: 0.5rem; /* Khoảng cách giữa label và input */
+  font-weight: bold;
 }
 .learning-time-section {
 margin-bottom: 1.5rem;
@@ -1029,67 +1050,107 @@ font-size: 15px;
 }
 
 .table-container {
-overflow-x: auto;
-margin-top: 1rem;
-position: relative;
-padding-bottom: 1rem;
+  overflow-x: auto; /* Hỗ trợ cuộn ngang trên màn hình nhỏ */
+  margin-top: 1rem;
+  background-color: #fff; /* Nền trắng cho bảng */
+  border-radius: 5px; /* Bo góc nhẹ */
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
+  padding: 1rem; /* Khoảng cách bên trong */
+  min-width: 1500px; /* Đảm bảo container đủ rộng để hiển thị thanh cuộn */
 }
 
+/* Bỏ thanh cuộn tùy chỉnh */
 .table-scroll-handle {
-display: none;
-position: absolute;
-bottom: 0;
-left: 0;
-width: 100%;
-height: 8px;
-background-color: #e5e7eb;
-cursor: pointer;
-border-radius: 4px;
-}
-
-.table-container:hover .table-scroll-handle {
-display: block;
-}
-
-.table-scroll-handle:hover {
-background-color: #9ca3af;
+  display: none; /* Không cần thanh cuộn tùy chỉnh */
 }
 
 table {
-width: 100%;
-border-collapse: collapse;
-min-width: 1200px;
+  width: 1500px; /* Mở rộng bảng lên 1500px */
+  border-collapse: collapse; /* Gộp viền */
+  table-layout: auto; /* Tự động điều chỉnh chiều rộng cột dựa trên nội dung */
 }
 
 th, td {
-padding: 0.5rem 1rem;
-border-bottom: 1px solid #e6e6e6;
-text-align: left;
+  padding: 0.75rem 1rem; /* Padding vừa đủ để dễ nhìn */
+  border-bottom: 1px solid #e6e6e6; /* Viền dưới nhẹ */
+  text-align: left; /* Căn trái mặc định */
+  vertical-align: middle; /* Căn giữa theo chiều dọc */
+  white-space: normal; /* Cho phép xuống dòng */
+  word-wrap: break-word; /* Đảm bảo từ dài được ngắt */
 }
 
+th {
+  background-color: #efefef; /* Nền xám nhạt cho header */
+  font-weight: bold; /* Chữ đậm */
+  color: #4b5563; /* Màu chữ xám đậm */
+}
+
+/* Điều chỉnh chiều rộng tối ưu cho từng cột với tổng chiều rộng 1500px */
+th:nth-child(1), td:nth-child(1) {
+  width: 80px; /* STT */
+  text-align: center; /* Căn giữa số thứ tự */
+}
+
+th:nth-child(2), td:nth-child(2) {
+  width: 200px; /* Mã khóa học */
+}
+
+th:nth-child(3), td:nth-child(3) {
+  width: 300px; /* Tên giảng viên - Tăng để chứa nội dung dài */
+}
+
+th:nth-child(4), td:nth-child(4) {
+  width: 120px; /* Số bài học */
+  text-align: center; /* Căn giữa số bài học */
+}
+
+th:nth-child(5), td:nth-child(5) {
+  width: 150px; /* Mô tả */
+}
+
+th:nth-child(6), td:nth-child(6) {
+  width: 150px; /* Ngày bắt đầu */
+}
+
+th:nth-child(7), td:nth-child(7) {
+  width: 150px; /* Ngày kết thúc */
+}
+
+th:nth-child(8), td:nth-child(8) {
+  width: 100px; /* Tính năng (icon chỉnh sửa) */
+  text-align: center; /* Căn giữa icon */
+}
+
+/* Hiệu ứng hover để cải thiện UX */
 td:hover {
-background-color: #f3f4f6;
+  background-color: #f3f4f6; /* Nền sáng khi hover */
 }
 
-th:first-child, td:first-child {
-width: 50px;
-text-align: center;
+/* Style cho icon chỉnh sửa trong cột Tính năng */
+.icon-edit {
+  color: rgb(24, 182, 255); /* Màu xanh cho icon */
+  font-size: 15px;
+  cursor: pointer; /* Con trỏ chuột khi hover */
 }
 
-.course-table-pagination {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 1rem;
+.icon-edit:hover {
+  color: #1d4ed8; /* Màu đậm hơn khi hover */
 }
 
-.course-table-pagination select {
-padding: 0.5rem;
-border: 1px solid #d1d5db;
-border-radius: 0.25rem;
-background-color: #fff;
-color: #4b5563;
-font-size: 1rem;
+/* Responsive: Điều chỉnh cho màn hình nhỏ */
+@media (max-width: 1500px) {
+  th, td {
+    padding: 0.5rem 0.75rem; /* Giảm padding để tiết kiệm không gian */
+  }
+
+  .table-container {
+    min-width: 100%; /* Thu nhỏ về 100% nếu màn hình nhỏ hơn 1500px */
+  }
+
+  table {
+    width: 100%; /* Thu nhỏ bảng về 100% */
+  }
+
 }
 
 .pagination-buttons {

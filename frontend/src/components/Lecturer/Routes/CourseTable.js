@@ -133,19 +133,13 @@ const CourseTable = () => {
             </div>
           </div>
 
-          {/* Pagination: items per page */}
-          <div className="course-table-pagination">
-            <div>
-              <label htmlFor="itemsPerPage" style={{ padding: '5px' }}>Hiển thị danh mục</label>
-            </div>
-          </div>
-
+         
           {/* Bảng dữ liệu */}
           <div className="table-container">
             <table>
               <thead>
                 <tr>
-                  <th><input type="checkbox" id="selectAll" onClick={toggleSelectAll} /></th>
+                  
                   <th>STT</th>
                   <th>Mã khóa học</th>
                   <th>Tên khóa học</th>
@@ -160,14 +154,6 @@ const CourseTable = () => {
               <tbody>
                 {currentCourses.map((course, index) => (
                   <tr key={course.id}>
-                    <td>
-                      <input
-                        type="checkbox"
-                        className="row-checkbox"
-                        checked={selectedCourses.includes(course.id)}
-                        onChange={() => handleCheckboxChange(course.id)}
-                      />
-                    </td>
                     <td>{index + 1 + (currentPage - 1) * itemsPerPage}</td>
                     <td>{course.id}</td>
                     <td>{course.courseName}</td>

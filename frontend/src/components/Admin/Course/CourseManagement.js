@@ -152,17 +152,7 @@ const CourseManagement = () => {
             </div>
           </div>
 
-          <div className="course-management-pagination">
-            <div>
-              <label htmlFor="itemsPerPage" style={{ padding: '5px' }}>Hiển thị danh mục</label>
-              <select id="itemsPerPage" value={itemsPerPage} onChange={handleItemsPerPageChange}>
-                <option value="5">5</option>
-                <option value="10">10</option>
-                <option value="15">15</option>
-                <option value="20">20</option>
-              </select>
-            </div>
-          </div>
+          
 
           <div className="table-container">
             <table>
