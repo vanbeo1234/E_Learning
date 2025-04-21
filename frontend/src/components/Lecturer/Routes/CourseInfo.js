@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { CListGroup, CListGroupItem } from '@coreui/react';
-import './giangvien.css';
+import '../Style/giangvien.css';
 
 const CourseInfo = () => {
   const { id } = useParams();

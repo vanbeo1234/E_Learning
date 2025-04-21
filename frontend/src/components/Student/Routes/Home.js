@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
+import '../Style/hocvien.css';
 
 function Home() {
   const courses = [
@@ -149,16 +150,30 @@ function Home() {
         </div>
 
         <div className="homestudents-pagination-buttons">
-          {Array.from({ length: totalPages }, (_, index) => (
-            <button
-              key={index}
-              className={index + 1 === currentPage ? 'homestudents-active' : ''}
-              onClick={() => handlePageChange(index + 1)}
-            >
-              {index + 1}
-            </button>
-          ))}
-        </div>
+  <button
+    onClick={() => handlePageChange(1)}
+    disabled={currentPage === 1}
+    className={currentPage === 1 ? 'homestudents-disabled' : ''}
+  >
+    «
+  </button>
+  {[...Array(totalPages).keys()].map((number) => (
+    <button
+      key={number + 1}
+      onClick={() => handlePageChange(number + 1)}
+      className={currentPage === number + 1 ? 'homestudents-active' : ''}
+    >
+      {number + 1}
+    </button>
+  ))}
+  <button
+    onClick={() => handlePageChange(totalPages)}
+    disabled={currentPage === totalPages}
+    className={currentPage === totalPages ? 'homestudents-disabled' : ''}
+  >
+    »
+  </button>
+</div>
       </section>
     </main>
     

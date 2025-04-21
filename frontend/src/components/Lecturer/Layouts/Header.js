@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'; // Đảm bảo rằng Link được import từ react-router-dom
+import '../Style/giangvien.css';
 
-const Header = ({ title, isSearch = false }) => {
+const Headers = ({ title, isSearch = false }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => {
@@ -30,4 +31,4 @@ const Header = ({ title, isSearch = false }) => {
   );
 };
 
-export default Header;
+export default Headers;

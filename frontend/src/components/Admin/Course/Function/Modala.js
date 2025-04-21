@@ -1,4 +1,5 @@
 import React from 'react';
+import '../../Style/adcm.css';
 
 const Modala = ({
   show, // For compatibility with AddCourse

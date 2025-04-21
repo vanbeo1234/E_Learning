@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import './adcm.css';
+import '../Style/adcm.css';
 import ConfirmModal from './Function/Confirm';
 
 const CourseManagement = () => {

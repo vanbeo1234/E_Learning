@@ -1,5 +1,6 @@
 // components/CourseManagement/Function/Disable.jsx
 import React from 'react';
+import '../../Style/adcm.css';
 
 const DisableCourses = ({ selectedCourses, setCourses, setSelectedCourses }) => {
   const handleDisable = () => {

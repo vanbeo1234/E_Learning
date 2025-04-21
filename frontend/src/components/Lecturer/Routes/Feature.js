@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import Modal from './Modal';
-import './giangvien.css';
+import Modal from '../Layouts/Modal';
+import '../Style/giangvien.css';
 
 const Feature = ({ isEdit, courseId }) => {
   const [courseName, setCourseName] = useState('');

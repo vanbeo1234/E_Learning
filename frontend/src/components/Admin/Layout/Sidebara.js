@@ -1,7 +1,7 @@
 import React from 'react';
-import './admin.css';
+import '../Style/admin.css';
 import { useLocation, Link } from 'react-router-dom';
-const Sidebar = () => {
+const Sidebara = () => {
   const getActivePage = () => {
     const path = window.location.pathname;
     if (path.includes('user-management')) return 'user-management';
@@ -33,4 +33,4 @@ const Sidebar = () => {
   );
 };
 
-export default Sidebar;
+export default Sidebara;

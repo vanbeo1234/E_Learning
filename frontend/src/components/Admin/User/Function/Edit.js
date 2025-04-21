@@ -1,5 +1,6 @@
 // File: components/UserManagement/Function/Edit.jsx
 import React from 'react';
+import '../../Style/adum.css';
 
 const EditUserModal = ({
   formData,

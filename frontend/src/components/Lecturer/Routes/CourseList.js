@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './giangvien.css';
+import '../Style/giangvien.css';
 
 const CourseList = () => {
   const [courses, setCourses] = useState([]);

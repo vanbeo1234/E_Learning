@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import AddUserModal from './Function/Add';
 import EditUserModal from './Function/Edit';
-import './adum.css';
+import '../Style/adum.css'; 
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 

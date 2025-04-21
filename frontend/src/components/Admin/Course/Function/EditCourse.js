@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import Modala from '../../Modala';
+import '../../Style/adcm.css'; // trước đó là '../../../Style/adcm.css'
+import Modala from './Modala'; // trước đó là '../../Modala'
+
 
 const EditCourse = ({ courses, setCourses }) => {
   const { id } = useParams();

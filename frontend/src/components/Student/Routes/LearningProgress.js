@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import '../Style/hocvien.css';
 
 const getCategoryIcon = (category) => {
   switch (category) {

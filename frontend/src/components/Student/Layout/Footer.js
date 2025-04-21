@@ -1,5 +1,5 @@
 import React from 'react';
-import './hocvien.css';
+import '../Style/hocvien.css';
 
 const Footer = () => {
   return (

@@ -1,6 +1,6 @@
 import React from 'react';
-import "./giangvien.css";
-const Modal = ({ show, title, onConfirm, onCancel }) => {
+import '../Style/admin.css';
+const Modala = ({ show, title, onConfirm, onCancel }) => {
   if (!show) return null;
 
   return (
@@ -16,4 +16,4 @@ const Modal = ({ show, title, onConfirm, onCancel }) => {
   );
 };
 
-export default Modal;
+export default Modala;

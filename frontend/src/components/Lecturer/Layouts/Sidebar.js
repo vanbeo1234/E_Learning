@@ -1,5 +1,6 @@
 import React from 'react';
 import { useLocation, Link } from 'react-router-dom';
+import '../Style/giangvien.css';
 
 const Sidebars = () => {
   const location = useLocation();

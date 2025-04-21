@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import "./giangvien.css";
+import '../Style/giangvien.css';
 
 const FeedbackList = () => {
   const feedbacks = [

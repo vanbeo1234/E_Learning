@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modala from './Modala';
+import '../../Style/adcm.css';
+
 
 const AddCourse = () => {
   const [formData, setFormData] = useState({

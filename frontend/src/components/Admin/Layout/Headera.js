@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import './hocvien.css';
-const Headers = ({ title, isSearch = false }) => {
+import { Link } from 'react-router-dom'; // Đảm bảo rằng Link được import từ react-router-dom
+import '../Style/admin.css';
+
+const Headera = ({ title, isSearch = false }) => {
   const [showDropdown, setShowDropdown] = useState(false);
 
   const toggleDropdown = () => {
@@ -20,7 +21,6 @@ const Headers = ({ title, isSearch = false }) => {
             <button>Trang cá nhân</button>
             <button>Hỗ trợ</button>
             <button>Cài đặt</button>
-            <button>Cài đặt</button>
             <Link to="/login">
               <button>Đăng xuất</button>
             </Link>
@@ -31,4 +31,4 @@ const Headers = ({ title, isSearch = false }) => {
   );
 };
 
-export default Headers;
+export default Headera;

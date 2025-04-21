@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom'; // Use useNavigate from react-router-dom
-import './giangvien.css';
+import '../Style/giangvien.css';
 
 const CourseTable = () => {
   const [courses, setCourses] = useState([]);

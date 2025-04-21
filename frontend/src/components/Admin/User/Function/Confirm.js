@@ -1,5 +1,6 @@
 // File: components/UserManagement/Function/Confirm.jsx
 import React from 'react';
+import '../../Style/adum.css';
 
 const ConfirmModal = ({ hideConfirmModal, currentAction }) => {
   return (

@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import '../Style/giangvien.css';
 
-function Homeg() {
+function Homes() {
   const courses = [
     {
       image: '/logo512.png',
@@ -100,4 +101,4 @@ function Homeg() {
   );
 }
 
-export default Homeg;
+export default Homes;

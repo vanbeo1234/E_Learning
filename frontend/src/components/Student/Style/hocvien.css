@@ -298,7 +298,7 @@ html, body {
 .homestudents-main-content {
   width: 100%;
   box-sizing: border-box;
-  padding-top: 100px;     /* Né header cố định */
+  padding-top: 20px;     /* Né header cố định */
   padding-bottom: 80px;   /* Né footer */
   min-height: 100vh;      /* Đảm bảo chiếm toàn bộ chiều cao màn hình */
   overflow-y: auto;
@@ -322,6 +322,7 @@ width: 100%;
 height: 100%;
 object-fit: cover;
 transition: opacity 1s ease-in-out;
+
 }
 
 /* Pagination */
@@ -493,7 +494,7 @@ background-color: #1d4ed8;
 .mycourse-main-content {
   width: 100%;
   box-sizing: border-box;
-  padding-top: 100px;     /* Né header cố định */
+  padding-top: 20px;     /* Né header cố định */
   padding-bottom: 80px;   /* Né footer */
   min-height: 100vh;      /* Đảm bảo chiếm toàn bộ chiều cao màn hình */
   overflow-y: auto;
@@ -634,7 +635,7 @@ background-color: #1d4ed8;
 .learningprogress-main-content {
   width: 100%;
   box-sizing: border-box;
-  padding-top: 100px;     /* Né header cố định */
+  padding-top: 20px;     /* Né header cố định */
   padding-bottom: 80px;   /* Né footer */
   min-height: 100vh;      /* Đảm bảo chiếm toàn bộ chiều cao màn hình */
   overflow-y: auto;
