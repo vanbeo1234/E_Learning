@@ -14,137 +14,218 @@
 
 /* === SEARCH FORM === */
 .user-management-search-form {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-bottom: 1rem;
-    width: 100%;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+  margin-bottom: 1rem;
+  width: 100%;
+}
+
+.user-management-search-form label {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: bold;
+}
+
+/* Căn lề trái cho Họ và tên */
+.user-management-search-form label.align-left {
+  justify-self: start;
+}
+
+/* Căn lề phải cho Trạng thái */
+.user-management-search-form label.align-right {
+  justify-self: end;
+}
+
+/* Dịch sang phải một chút cho Ngày sinh và Vai trò */
+.user-management-search-form label.shift-right {
+  margin-left: 2rem; /* Dịch sang phải 1rem (16px) */
 }
 
 .user-management-search-form input,
 .user-management-search-form select {
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.25rem;
+  padding: 0.5rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.25rem;
+  flex: 1;
+  min-width: 0;
 }
 
-.user-management-search-form label {
-    font-weight: bold;
-    display: flex;
-    flex-direction: column;
+
+.user-management-search-form input[type="date"],
+.user-management-search-form select[name="role"],
+.user-management-search-form select[name="status"] {
+  flex: none;
+  width: 120px;
+  min-width: 120px;
+  max-width: 120px;
 }
+
 
 /* === ACTION BUTTONS === */
+.user-management-action-buttons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+  gap: 1rem; /* Tăng từ 0.5rem lên 1rem để các nút cách đều nhau hơn */
+}
+
 .btn {
-    padding: 0.5rem 1rem;
-    border: none;
-    border-radius: 0.25rem;
-    color: white;
-    cursor: pointer;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 0.25rem;
+  color: white;
+  cursor: pointer;
 }
 
 .btn-blue { background-color: #3b82f6; }
 .btn-green { background-color: #10b981; }
 .btn-red { background-color: #ef4444; }
 .btn-yellow { background-color: #f59e0b; }
-
-.user-management-action-buttons {
-    display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-}
-
-.icon-edit {
-    color: rgb(24, 182, 255);
-    font-size: 15px;
-}
+/* ... (phần trên của CSS giữ nguyên) */
 
 /* === TABLE === */
 .table-container {
-    overflow-x: auto;
-    margin-top: 1rem;
-    position: relative;
-    padding-bottom: 1rem;
+  overflow-x: auto;
+  margin-top: 1rem;
+  position: relative;
+  padding-bottom: 1rem;
 }
 
 .table-container table {
-    width: 100%;
-    table-layout: fixed;
-    min-width: 1000px;
-    border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  min-width: 1300px; /* Tăng từ 1200px lên 1300px để chứa đủ tất cả cột */
+  border-collapse: collapse;
 }
 
-.table-container td,
+.table-container th,
+.table-container td {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e6e6e6;
+  overflow-wrap: anywhere;
+}
+
+/* Ngăn ngắt dòng trong tiêu đề */
 .table-container th {
-    padding: 0.5rem 1rem;
-    border-bottom: 1px solid #e6e6e6;
-    text-align: left;
-    word-wrap: break-word;
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* Đặt chiều rộng và căn lề cho từng cột */
+.table-container th:nth-child(1),
+.table-container td:nth-child(1) {
+  width: 50px; /* Checkbox */
+  text-align: center;
+}
+
+.table-container th:nth-child(2),
+.table-container td:nth-child(2) {
+  width: 50px; /* STT */
+  text-align: center;
+}
+
+.table-container th:nth-child(3),
+.table-container td:nth-child(3) {
+  width: 80px; /* Mã */
+  text-align: center;
+}
+
+.table-container th:nth-child(4),
+.table-container td:nth-child(4) {
+  width: 150px; /* Họ và tên */
+  text-align: left;
+}
+
+.table-container th:nth-child(5),
+.table-container td:nth-child(5) {
+  width: 200px; /* Email */
+  text-align: left;
+}
+
+.table-container th:nth-child(6),
+.table-container td:nth-child(6) {
+  width: 120px; /* Số điện thoại */
+  text-align: left;
+}
+
+.table-container th:nth-child(7),
+.table-container td:nth-child(7) {
+  width: 200px; /* Địa chỉ */
+  text-align: left;
+}
+
+.table-container th:nth-child(8),
+.table-container td:nth-child(8) {
+  width: 100px; /* Giới tính */
+  text-align: center;
+}
+
+.table-container th:nth-child(9),
+.table-container td:nth-child(9) {
+  width: 120px; /* Ngày sinh */
+  text-align: center;
+}
+
+.table-container th:nth-child(10),
+.table-container td:nth-child(10) {
+  width: 100px; /* Vai trò */
+  text-align: center;
+}
+
+.table-container th:nth-child(11),
+.table-container td:nth-child(11) {
+  width: 120px; /* Trạng thái */
+  text-align: center;
+}
+
+.table-container th:nth-child(12),
+.table-container td:nth-child(12) {
+  width: 100px; /* Kinh nghiệm */
+  text-align: center;
+  white-space: nowrap; /* Ngăn ngắt dòng */
+}
+
+.table-container th:nth-child(13),
+.table-container td:nth-child(13) {
+  width: 200px; /* Chứng chỉ - Tăng từ 150px lên 200px để chứa nội dung dài */
+  text-align: left;
+  overflow-wrap: anywhere; /* Cho phép ngắt dòng mềm */
+}
+
+.table-container th:nth-child(14),
+.table-container td:nth-child(14) {
+  width: 80px; /* Tính năng */
+  text-align: center;
+  white-space: nowrap; /* Ngăn ngắt dòng */
 }
 
 .table-container td:hover {
-    background-color: #f3f4f6;
+  background-color: #f3f4f6;
 }
 
-.table-container th:first-child,
-.table-container td:first-child {
-    width: 50px;
-    text-align: center;
+/* Định dạng cột Trạng thái */
+.table-container td.status {
+  /* Chỉ giữ căn giữa */
 }
 
-/* === PAGINATION === */
-.user-management-pagination {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-    gap: 1rem;
+/* Đảm bảo icon chỉnh sửa hiển thị đúng */
+.icon-edit {
+  color: rgb(24, 182, 255);
+  font-size: 15px;
+  cursor: pointer;
+  transition: color 0.3s;
 }
 
-.user-management-pagination select {
-    padding: 0.5rem;
-    border: 1px solid #d1d5db;
-    border-radius: 0.25rem;
-    background-color: #fff;
-    color: #4b5563;
-    font-size: 1rem;
+.icon-edit:hover {
+  color: rgb(0, 120, 200);
 }
 
-.pagination-buttons {
-    display: flex;
-    justify-content: center;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-}
-
-.pagination-buttons button {
-    padding: 0.5rem 1rem;
-    border: 1px solid #d1d5db;
-    background-color: #fff;
-    color: #4b5563;
-    cursor: pointer;
-    font-size: 1rem;
-    border-radius: 0.25rem;
-    transition: background-color 0.3s, color 0.3s;
-}
-
-.pagination-buttons button:hover {
-    background-color: #3b82f6;
-    color: #fff;
-}
-
-.pagination-buttons button:first-child {
-    border-radius: 0.25rem 0 0 0.25rem;
-}
-
-.pagination-buttons button:last-child {
-    border-radius: 0 0.25rem 0.25rem 0;
-}
+/* ... (phần dưới của CSS giữ nguyên) */
 /* === Modal container === */
 .modal.add-modal {
   position: fixed;
