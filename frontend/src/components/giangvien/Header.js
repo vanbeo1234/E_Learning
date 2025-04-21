@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom'; // Đảm bảo rằng Link được import từ react-router-dom
 
 const Header = ({ title, isSearch = false }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -19,7 +20,9 @@ const Header = ({ title, isSearch = false }) => {
             <button>Trang cá nhân</button>
             <button>Hỗ trợ</button>
             <button>Cài đặt</button>
-            <button>Đăng xuất</button>
+            <Link to="/login">
+              <button>Đăng xuất</button>
+            </Link>
           </div>
         )}
       </div>

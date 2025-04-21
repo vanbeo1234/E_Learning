@@ -1,6 +1,6 @@
 import React from 'react';
 import './admin.css';
-
+import { useLocation, Link } from 'react-router-dom';
 const Sidebar = () => {
   const getActivePage = () => {
     const path = window.location.pathname;
@@ -24,9 +24,9 @@ const Sidebar = () => {
           </a>
         </li>
         <li className="logout">
-          <a href="#">
+          <Link to="/login">
             <i className="fas fa-sign-out-alt"></i> Đăng xuất
-          </a>
+          </Link>
         </li>
       </ul>
     </div>

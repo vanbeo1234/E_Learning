@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './hocvien.css';
 const Headers = ({ title, isSearch = false }) => {
   const [showDropdown, setShowDropdown] = useState(false);
@@ -19,7 +20,10 @@ const Headers = ({ title, isSearch = false }) => {
             <button>Trang cá nhân</button>
             <button>Hỗ trợ</button>
             <button>Cài đặt</button>
-            <button>Đăng xuất</button>
+            <button>Cài đặt</button>
+            <Link to="/login">
+              <button>Đăng xuất</button>
+            </Link>
           </div>
         )}
       </div>

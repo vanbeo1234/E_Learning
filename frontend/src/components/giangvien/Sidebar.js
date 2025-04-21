@@ -28,9 +28,9 @@ const Sidebars = () => {
           </Link>
         </li>
         <li className="logout">
-          <a href="#">
+          <Link to="/login">
             <i className="fas fa-sign-out-alt"></i> Đăng xuất
-          </a>
+          </Link>
         </li>
       </ul>
     </div>

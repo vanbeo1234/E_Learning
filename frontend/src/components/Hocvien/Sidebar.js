@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, Link } from 'react-router-dom'; 
 import './hocvien.css';
 
 const Sidebar = () => {
@@ -34,9 +34,9 @@ const Sidebar = () => {
           </a>
         </li>
         <li className="logout">
-          <a href="#">
+          <Link to="/login">
             <i className="fas fa-sign-out-alt"></i> Đăng xuất
-          </a>
+          </Link>
         </li>
       </ul>
     </div>

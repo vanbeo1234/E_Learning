@@ -3,81 +3,24 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import './App.css';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import Footer from './components/Hocvien/Footer';
-import Sidebar from './components/Hocvien/Sidebar';
-import Header from './components/Hocvien/Header';
-import Home from './components/Hocvien/Home';
-import MyCourse from './components/Hocvien/MyCourse';
-import LearningProgress from './components/Hocvien/LearningProgress';
-import Article from './components/Hocvien/Article';
-import CourseReactJS from './components/Hocvien/Course Information/CourseReactJS';
-import Learn1 from './components/Hocvien/Course Information/Study Course/Learn1';
 import UserManagement from './components/Admin/User/UserManagement';
 import CourseManagement from './components/Admin/Course/CourseManagement';
 import Headera from './components/Admin/Headera';
 import Sidebara from './components/Admin/Sidebara';
-import Modala from './components/Admin/Modala';
-import AddCourseModal from './components/Admin/Course/Function/AddCourse';
-import EditCourse from './components/Admin/Course/Function/EditCourse';
-import CourseForm from './components/giangvien/CourseForm';
-import FeedbackList from './components/giangvien/FeedbackList';
-import CourseTable from './components/giangvien/CourseTable';
-import CourseList from './components/giangvien/CourseList';
-import CourseInfo from './components/giangvien/CourseInfo';
-import Sidebars from './components/giangvien/Sidebar';
-import Headers from './components/giangvien/Header';
-import Homeg from './components/giangvien/Homeg';
-import Feature from './components/giangvien/Feature';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // ✅ Thêm dòng này vào
-
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      courseName: 'Java Core',
-      instructor: 'Nguyễn Văn A',
-      lessons: 20,
-      description: 'Cung cấp kiến thức cơ bản về OOP, design pattern',
-      startDate: '2023-01-01',
-      endDate: '2023-03-31',
-      status: 'Hoạt động',
-      coverImage: null,
-      objectives: [],
-      lectures: [],
-    },
-    {
-      id: 2,
-      courseName: 'ReactJS',
-      instructor: 'Trần Thị B',
-      lessons: 15,
-      description: 'Học cách xây dựng ứng dụng với ReactJS',
-      startDate: '2023-02-01',
-      endDate: '2023-04-30',
-      status: 'Không hoạt động',
-      coverImage: null,
-      objectives: [],
-      lectures: [],
-    },
-  ]);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   return (
     <Router>
       <Routes>
-        <Route
-          path="/login"
-          element={
-            isAuthenticated ? (
-              <Navigate to="/user-management" />
-            ) : (
-              <Login setIsAuthenticated={setIsAuthenticated} />
-            )
-          }
-        />
-        <Route
-          path="/signup"
-          element={<Signup setIsAuthenticated={setIsAuthenticated} />}
-        />
+        <Route path="/login" element={
+          isAuthenticated ? 
+            <Navigate to="/user-management" /> : 
+            <Login setIsAuthenticated={setIsAuthenticated} />
+        } />
+        <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+        
         <Route
           path="/user-management"
           element={
@@ -96,6 +39,7 @@ function App() {
             )
           }
         />
+        
         <Route
           path="/course-management"
           element={
@@ -114,17 +58,15 @@ function App() {
             )
           }
         />
-        <Route
-          path="/"
-          element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />}
-        />
+        
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
       </Routes>
     </Router>
   );
 }
 
-
 export default App;
+
 
 /**            <Route path="/user-management" element={<UserManagement />} />
             <Route path="/course-management" element={<CourseManagement />} />
