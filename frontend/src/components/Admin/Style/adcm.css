@@ -1,13 +1,14 @@
 /* Add Course Form */
 .add-course-details {
     max-width: 1200px;
-    padding: 100px 20px 20px; /* Tránh header */
+    padding: 80px 20px 20px; /* Tránh header */
     margin: 0 auto; /* Căn giữa ngang */
     margin-left: calc(250px + 20px); /* Dịch sang phải tránh sidebar */
     box-sizing: border-box;
     position: relative;
     z-index: 1; 
-    padding-bottom: 40px;   
+    padding-bottom: 40px;  
+    text-align: left; /* Căn trái tiêu đề */ 
 }
 
 
@@ -20,13 +21,15 @@
     font-weight: bold;
     margin-bottom: 10px;
     color: #333;
+    text-align: left; /* Căn trái tiêu đề */
 }
 
 .add-course-input-group {
     display: flex;
     align-items: center;
     margin-bottom: 10px;
-    flex-wrap: wrap; /* Cho phép xuống dòng nếu cần */
+    flex-wrap: wrap;
+    text-align: left; /* Căn trái tiêu đề */ /* Cho phép xuống dòng nếu cần */
 }
 
 .add-course-input-group label {
@@ -489,6 +492,7 @@ th:first-child, td:first-child {
     display: flex;
     justify-content: flex-end;
     margin-top: 20px;
+    padding-bottom: 40px;
   }
   
   .footer-buttons button {
@@ -762,13 +766,15 @@ th:first-child, td:first-child {
 /* Edit Course Form (same as Add Course Form) */
 .edit-course-details {
   max-width: 1200px;
-  padding: 100px 20px 20px; /* Tránh header */
+  padding: 80px 20px 20px; /* Tránh header */
   margin: 0 auto; /* Căn giữa ngang */
   margin-left: calc(250px + 20px); /* Dịch sang phải tránh sidebar */
   box-sizing: border-box;
   position: relative;
   z-index: 1;
   padding-bottom: 40px;
+  text-align: left; /* Căn trái tiêu đề */ 
+
 }
 
 .edit-course-section {
@@ -1124,33 +1130,32 @@ th:first-child, td:first-child {
 /* === Nút Chọn giảng viên === */
 .select-instructor-btn {
   padding: 10px 20px; /* Kích thước nút */
-  margin-top: 20px;
-  font-size: 14px; /* Kích thước chữ trong nút */
+  margin-top: 10px; /* Giảm margin-top để căn chỉnh gọn hơn */
+  font-size: 14px; /* Kích thước chữ */
   background-color: #5aacff; /* Màu nền nút */
   color: white; /* Màu chữ */
-  border: none; /* Loại bỏ border mặc định */
-  border-radius: 5px; /* Bo góc cho nút */
-  cursor: pointer; /* Con trỏ chuột khi hover qua */
-  transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu nền và nhấn nút */
-  display: inline-flex; /* Để căn giữa text */
-  justify-content: center; /* Căn giữa text theo chiều ngang */
-  align-items: center; /* Căn giữa text theo chiều dọc */
+  border: none; /* Loại bỏ border */
+  border-radius: 5px; /* Bo góc */
+  cursor: pointer; /* Con trỏ chuột khi hover */
+  transition: background-color 0.3s, transform 0.2s; /* Hiệu ứng chuyển màu và nhấn nút */
+  display: inline-flex; /* Căn giữa text */
+  justify-content: center; /* Căn giữa text ngang */
+  align-items: center; /* Căn giữa text dọc */
+  width: 18%; /* Chiếm toàn bộ chiều rộng */
 }
 
 .select-instructor-btn:hover {
   background-color: #1565c0; /* Màu nền khi hover */
-  transform: scale(1.05); /* Tăng kích thước nút khi hover */
+  transform: scale(1.05); /* Tăng kích thước khi hover */
 }
 
 .select-instructor-btn:focus {
-  outline: none; /* Loại bỏ outline mặc định khi nhấn */
-  box-shadow: 0 0 5px rgba(25, 118, 210, 0.6); /* Thêm hiệu ứng khi focus */
+  outline: none; /* Loại bỏ outline mặc định */
+  box-shadow: 0 0 5px rgba(25, 118, 210, 0.6); /* Hiệu ứng khi focus */
 }
-
 .instructor-modal .instructor-search {
   padding: 1rem;
   max-height: 70vh;
-  overflow-y: auto;
 }
 
 .instructor-modal .search-bar {
@@ -1164,28 +1169,34 @@ th:first-child, td:first-child {
   font-size: 14px;
   border: 1px solid #1976d2;
   border-radius: 5px;
-  width: 100%;
+  width: 80%;
 }
 
 .instructor-modal .search-btn {
-  padding: 8px 14px;
-  margin-left: 20px;
+  padding: 10px 14px;
   margin-bottom: 8px;
   background-color: #1976d2;
   color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
+  padding-right: 20px;
 }
 
 .instructor-modal .search-btn:hover {
   background-color: #1565c0;
+}
+/* === Bảng danh sách giảng viên === */
+.instructor-modal .instructor-table-container {
+  overflow-x: auto; /* Cho phép cuộn ngang */
+  max-width: 100%;
 }
 
 .instructor-modal .instructor-table {
   width: 100%;
   border-collapse: collapse;
   margin-top: 20px;
+  min-width: 1200px; /* Đảm bảo bảng đủ rộng để cuộn ngang */
 }
 
 .instructor-modal .instructor-table th,
@@ -1193,37 +1204,55 @@ th:first-child, td:first-child {
   padding: 12px;
   text-align: left;
   border: 1px solid #ddd;
+  font-size: 14px;
 }
 
 .instructor-modal .instructor-table th {
   background-color: #f5f5f5;
   color: #1976d2;
+  font-weight: bold;
 }
 
-.instructor-modal .instructor-table td {
-  font-size: 14px;
+/* Cột nút chọn (radio button) */
+.instructor-modal .instructor-table th:first-child,
+.instructor-modal .instructor-table td:first-child {
+  width: 50px; /* Chiều rộng cố định cho cột nút chọn */
+  position: sticky; /* Cố định cột khi cuộn ngang */
+  left: 0; /* Dính vào mép trái */
+  background-color: #fff; /* Nền trắng để không bị mờ */
+  z-index: 1; /* Đảm bảo cột nút chọn nằm trên các cột khác */
+  text-align: center; /* Căn giữa radio button */
 }
 
-.instructor-modal .instructor-table input[type="radio"] {
-  margin-left: 10px;
+.instructor-modal .instructor-table th:first-child {
+  background-color: #f5f5f5; /* Nền header cho cột nút chọn */
 }
 
+.instructor-modal .instructor-table td:first-child input[type="radio"] {
+  margin: 0 auto; /* Căn giữa radio button */
+}
+
+/* Modal footer */
 .instructor-modal .modal-footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-start; /* Căn trái các nút */
   margin-top: 20px;
+  gap: 10px;
 }
 
 .instructor-modal .modal-footer button {
   padding: 8px 16px;
-  background-color: #1976d2;
-  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
-.instructor-modal .modal-footer button:hover {
-  background-color: #1565c0;
+.instructor-modal .modal-footer button.confirm {
+  background-color: #1976d2;
+  color: white;
 }
 
+.instructor-modal .modal-footer button.cancel {
+  background-color: #dc3545;
+  color: white;
+}

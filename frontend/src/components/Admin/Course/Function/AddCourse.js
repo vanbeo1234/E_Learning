@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modala from './Modala';
 import '../../Style/adcm.css';
+import { v4 as uuidv4 } from 'uuid';
 
-
-const AddCourse = () => {
+const AddCourse = ({ addCourse }) => {
   const [formData, setFormData] = useState({
     courseName: '',
     instructor: '',
@@ -26,9 +26,15 @@ const AddCourse = () => {
   const [searchCode, setSearchCode] = useState('');
   const [searchName, setSearchName] = useState('');
   const [selectedInstructor, setSelectedInstructor] = useState(null);
+  const [isSaved, setIsSaved] = useState(false);
 
   const navigate = useNavigate();
-  const isEdit = false;
+
+  useEffect(() => {
+    if (isSaved && showSuccessModal) {
+      navigate('/course-management');
+    }
+  }, [isSaved, showSuccessModal, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -120,7 +126,6 @@ const AddCourse = () => {
   const handleSave = () => {
     const newErrors = {};
 
-    // Validate formData fields
     if (!formData.courseName) newErrors.courseName = 'Tên khóa học không được bỏ trống';
     if (!formData.instructor) newErrors.instructor = 'Giảng viên là bắt buộc';
     if (!formData.lessons) newErrors.lessons = 'Số lượng bài học không được bỏ trống';
@@ -128,12 +133,10 @@ const AddCourse = () => {
     if (!formData.startDate) newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
     if (!formData.endDate) newErrors.endDate = 'Ngày kết thúc là bắt buộc';
 
-    // Validate objectives
     objectives.forEach((objective, index) => {
       if (!objective) newErrors[`objective${index}`] = 'Mục tiêu không được để trống';
     });
 
-    // Validate lectures
     if (lectures.length === 0) {
       newErrors.lectures = 'Phải có ít nhất một bài giảng';
     } else {
@@ -145,20 +148,21 @@ const AddCourse = () => {
       });
     }
 
-    // Validate cover image
     if (!coverImage) newErrors.coverImage = 'Ảnh bìa là bắt buộc';
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      const fullData = {
+      const newCourse = {
+        id: uuidv4(),
         ...formData,
         objectives,
         lectures,
         students,
         coverImage,
       };
-      console.log('Dữ liệu khóa học:', fullData);
+      addCourse(newCourse);
+      setIsSaved(true);
       setShowSuccessModal(true);
     }
   };
@@ -166,7 +170,6 @@ const AddCourse = () => {
   const handleCancel = () => setShowCancelModal(true);
 
   const handleOpenInstructorModal = () => {
-    console.log('Opening instructor modal, showInstructorModal:', showInstructorModal);
     setShowInstructorModal(true);
   };
 
@@ -184,7 +187,6 @@ const AddCourse = () => {
             onChange={handleChange}
             required
           />
-          <i className="fas fa-pencil-alt add-course-edit-icon"></i>
           {errors.courseName && <span className="error">{errors.courseName}</span>}
         </div>
 
@@ -198,7 +200,6 @@ const AddCourse = () => {
             onChange={handleChange}
             required
           />
-          <i className="fas fa-pencil-alt add-course-edit-icon"></i>
           {errors.lessons && <span className="error">{errors.lessons}</span>}
         </div>
 
@@ -211,7 +212,6 @@ const AddCourse = () => {
             onChange={handleChange}
             required
           />
-          <i className="fas fa-pencil-alt add-course-edit-icon"></i>
           {errors.description && <span className="error">{errors.description}</span>}
         </div>
       </div>
@@ -259,9 +259,7 @@ const AddCourse = () => {
             </div>
 
             <div className="input-group">
-              <label>
-                Tên bài giảng <span style={{ color: 'red' }}>*</span>
-              </label>
+              <label>Tên bài giảng <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 placeholder="Nhập tên bài giảng"
@@ -392,16 +390,16 @@ const AddCourse = () => {
 
       <div className="footer-buttons">
         <button className="create-btn" onClick={handleSave}>
-          {isEdit ? 'Cập nhật' : 'Tạo mới'}
+          Tạo mới
         </button>
         <button className="cancel-btn" onClick={handleCancel}>Hủy</button>
       </div>
 
       <Modala
         show={showSuccessModal}
-        title={isEdit ? 'Cập nhật khóa học thành công' : 'Thêm khóa học thành công'}
+        title="Tạo khóa học thành công"
         onConfirm={() => {
-          navigate('/course-management');
+          setIsSaved(true); // Đánh dấu đã lưu để kích hoạt chuyển hướng trong useEffect
         }}
         onCancel={() => setShowSuccessModal(false)}
         modalClass="add-modal"
@@ -410,7 +408,7 @@ const AddCourse = () => {
       <Modala
         show={showCancelModal}
         title="Bạn chắc chắn muốn hủy?"
-        onConfirm={() => navigate('/courses')}
+        onConfirm={() => navigate('/course-management')}
         onCancel={() => setShowCancelModal(false)}
         modalClass="add-modal"
       />
@@ -442,41 +440,43 @@ const AddCourse = () => {
             />
             <button className="search-btn">Tìm kiếm</button>
           </div>
-          <table className="instructor-table">
-            <thead>
-              <tr>
-                <th>Stt</th>
-                <th>Mã định danh</th>
-                <th>Họ tên</th>
-                <th>Email</th>
-                <th>Số điện thoại</th>
-                <th>Ngày sinh</th>
-                <th>Năm kinh nghiệm</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredInstructors.map((instructor, index) => (
-                <tr key={instructor.id}>
-                  <td>{index + 1}</td>
-                  <td>{instructor.code}</td>
-                  <td>{instructor.name}</td>
-                  <td>{instructor.email}</td>
-                  <td>{instructor.phone}</td>
-                  <td>{instructor.dob}</td>
-                  <td>{instructor.experience}</td>
-                  <td>
-                    <input
-                      type="radio"
-                      name="instructor"
-                      checked={selectedInstructor?.id === instructor.id}
-                      onChange={() => handleInstructorSelect(instructor)}
-                    />
-                  </td>
+          <div className="instructor-table-container">
+            <table className="instructor-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Stt</th>
+                  <th>Mã định danh</th>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>Số điện thoại</th>
+                  <th>Ngày sinh</th>
+                  <th>Năm kinh nghiệm</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {filteredInstructors.map((instructor, index) => (
+                  <tr key={instructor.id}>
+                    <td>
+                      <input
+                        type="radio"
+                        name="instructor"
+                        checked={selectedInstructor?.id === instructor.id}
+                        onChange={() => handleInstructorSelect(instructor)}
+                      />
+                    </td>
+                    <td>{index + 1}</td>
+                    <td>{instructor.code}</td>
+                    <td>{instructor.name}</td>
+                    <td>{instructor.email}</td>
+                    <td>{instructor.phone}</td>
+                    <td>{instructor.dob}</td>
+                    <td>{instructor.experience}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </Modala>
     </div>

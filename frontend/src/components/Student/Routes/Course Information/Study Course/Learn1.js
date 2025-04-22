@@ -4,6 +4,7 @@ import './learn.css';
 
 const Learn1 = () => {
   const [showNotes, setShowNotes] = useState(false);
+  const [newNote, setNewNote] = useState(''); // Note persists after saving
   const [showQA, setShowQA] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [completedLessons, setCompletedLessons] = useState(0);
@@ -66,6 +67,32 @@ const Learn1 = () => {
     toggleRating(); // Close the rating popup
   };
 
+  const handleSaveNote = () => {
+    // Handle saving the note
+    console.log('Saved Note:', newNote);
+    setShowNotes(false); // Close the notes section after saving
+    // Note is not cleared, so it persists
+  };
+
+  // Course content list with lock icons
+  const courseContent = [
+    '1. Giới thiệu',
+    '2. Lập trình ES6++',
+    '3. React, Redux',
+    '4. JSX, Components, Props',
+    '5. Create React App',
+    '6. Hooks',
+    '7. CSS, SCSS và CSS Modules',
+    '8. React Router V6',
+    '9. Redux (quản lý state)',
+    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
+    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
+    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
+    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
+    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
+    '10. Deploy ứng dụng lên Headde',
+  ];
+
   return (
     <div className="learn1-container">
       <div className="learn1-left-section">
@@ -84,8 +111,16 @@ const Learn1 = () => {
             {showNotes && (
               <div className="notes-popup">
                 <h3 className="notes-title">Ghi chú của tôi</h3>
-                <textarea className="notes-input" placeholder="Nhập ghi chú của bạn..."></textarea>
-                <button onClick={toggleNotes} aria-label="Close Notes" className="close-notes-button">Đóng</button>
+                <textarea
+                  className="notes-input"
+                  placeholder="Nhập ghi chú của bạn..."
+                  value={newNote}
+                  onChange={(e) => setNewNote(e.target.value)}
+                ></textarea>
+                <div className="notes-buttons">
+                  <button onClick={handleSaveNote} className="save-note-button">Lưu</button>
+                  <button onClick={toggleNotes} className="close-notes-button">Đóng</button>
+                </div>
               </div>
             )}
 
@@ -161,7 +196,7 @@ const Learn1 = () => {
               <button className="confirm-button" onClick={handleConfirmRating}>
                 Xác nhận
               </button>
-              <button onClick={toggleRating} aria-label="Close Rating" className="close-rating-button">Đóng</button>
+              <button onClick={toggleRating} className="close-rating-button">Đóng</button>
             </div>
           )}
         </div>
@@ -171,25 +206,14 @@ const Learn1 = () => {
         <div className="learn1-content-list">
           <h3>Nội dung khóa học</h3>
           <ul>
-          <li>1. Giới thiệu</li>
-            <li>2. Lập trình ES6++</li>
-            <li>3. React, Redux</li>
-            <li>4. JSX, Components, Props</li>
-            <li>5. Create React App</li>
-            <li>6. Hooks</li>
-            <li>7. CSS, SCSS và CSS Modules</li>
-            <li>8. React Router V6</li>
-            <li>9. Redux (quản lý state)</li>
-            <li>10. Deploy ứng dụng lên Headde</li>            <li>1. Giới thiệu</li>
-            <li>2. Lập trình ES6++</li>
-            <li>3. React, Redux</li>
-            <li>4. JSX, Components, Props</li>
-            <li>5. Create React App</li>
-            <li>6. Hooks</li>
-            <li>7. CSS, SCSS và CSS Modules</li>
-            <li>8. React Router V6</li>
-            <li>9. Redux (quản lý state)</li>
-            <li>10. Deploy ứng dụng lên Headde</li>
+            {courseContent.map((lesson, index) => (
+              <li key={index}>
+                {lesson}
+                {index !== 0 && (
+                  <i className="fas fa-lock" style={{ marginLeft: '8px', color: '#888' }}></i>
+                )}
+              </li>
+            ))}
           </ul>
         </div>
       </div>

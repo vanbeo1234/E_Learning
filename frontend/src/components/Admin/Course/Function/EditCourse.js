@@ -1,46 +1,44 @@
+
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
-import '../../Style/adcm.css'; // trước đó là '../../../Style/adcm.css'
-import Modala from './Modala'; // trước đó là '../../Modala'
+import { useNavigate, useLocation } from 'react-router-dom';
+import Modala from './Modala';
+import '../../Style/adcm.css';
 
+const EditCourse = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const course = location.state?.course;
+  const updateCourse = location.state?.updateCourse; // Lấy callback từ state
 
-const EditCourse = ({ courses, setCourses }) => {
-  const { id } = useParams();
   const [formData, setFormData] = useState({
-    courseName: '',
-    instructor: '',
-    lessons: '',
-    description: '',
-    startDate: '',
-    endDate: '',
-    status: 'Hoạt động',
+    courseName: course?.courseName || '',
+    instructor: course?.instructor || '',
+    lessons: course?.lessons || '',
+    description: course?.description || '',
+    startDate: course?.startDate || '',
+    endDate: course?.endDate || '',
+    status: course?.status || 'Hoạt động',
   });
-  const [coverImage, setCoverImage] = useState(null);
-  const [objectives, setObjectives] = useState([]);
-  const [lectures, setLectures] = useState([]);
+
+  const [coverImage, setCoverImage] = useState(course?.coverImage || null);
+  const [objectives, setObjectives] = useState(course?.objectives || []);
+  const [lectures, setLectures] = useState(course?.lectures || []);
   const [errors, setErrors] = useState({});
+  const [students, setStudents] = useState(course?.students || []);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [showInstructorModal, setShowInstructorModal] = useState(false);
+  const [searchCode, setSearchCode] = useState('');
+  const [searchName, setSearchName] = useState('');
+  const [selectedInstructor, setSelectedInstructor] = useState(null);
 
-  const navigate = useNavigate();
+  const isEdit = true;
 
   useEffect(() => {
-    const course = courses.find(course => course.id === parseInt(id));
-    if (course) {
-      setFormData({
-        courseName: course.courseName,
-        instructor: course.instructor,
-        lessons: course.lessons,
-        description: course.description,
-        startDate: course.startDate,
-        endDate: course.endDate,
-        status: course.status,
-      });
-      setCoverImage(course.coverImage);
-      setObjectives(course.objectives || []);
-      setLectures(course.lectures || []);
+    if (!course) {
+      navigate('/course-management'); // Nếu không có dữ liệu khóa học, quay về trang quản lý
     }
-  }, [id, courses]);
+  }, [course, navigate]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -48,6 +46,7 @@ const EditCourse = ({ courses, setCourses }) => {
   };
 
   const handleAddObjective = () => setObjectives([...objectives, '']);
+
   const handleObjectiveChange = (index, value) => {
     const newObjectives = [...objectives];
     newObjectives[index] = value;
@@ -89,10 +88,48 @@ const EditCourse = ({ courses, setCourses }) => {
     }
   };
 
+  const handleStudentSelect = (e) => {
+    const selected = Array.from(e.target.selectedOptions).map((opt) => opt.value);
+    setStudents(selected);
+  };
+
+  const instructors = [
+    { id: 1, code: 'US0001', name: 'Nguyễn Văn A', email: 'nva@gmail.com', phone: '0123456789', dob: '01/01/1990', experience: 2 },
+    { id: 2, code: 'US0002', name: 'Trần Thị B', email: 'ttb@gmail.com', phone: '0987654321', dob: '15/05/1985', experience: 5 },
+    { id: 3, code: 'US0003', name: 'Lê Văn C', email: 'lvc@gmail.com', phone: '0912345678', dob: '20/10/1992', experience: 3 },
+    { id: 4, code: 'US0004', name: 'Phạm Thị D', email: 'ptd@gmail.com', phone: '0932145678', dob: '30/12/1988', experience: 4 },
+  ];
+
+  const filteredInstructors = instructors.filter((instructor) =>
+    (searchCode ? instructor.code.toLowerCase().includes(searchCode.toLowerCase()) : true) &&
+    (searchName ? instructor.name.toLowerCase().includes(searchName.toLowerCase()) : true)
+  );
+
+  const handleInstructorSelect = (instructor) => {
+    setSelectedInstructor(instructor);
+  };
+
+  const handleConfirmInstructor = () => {
+    if (selectedInstructor) {
+      setFormData((prev) => ({ ...prev, instructor: selectedInstructor.name }));
+      console.log('Giảng viên đã chọn:', selectedInstructor);
+    }
+    setShowInstructorModal(false);
+    setSearchCode('');
+    setSearchName('');
+    setSelectedInstructor(null);
+  };
+
+  const handleCancelInstructor = () => {
+    setShowInstructorModal(false);
+    setSearchCode('');
+    setSearchName('');
+    setSelectedInstructor(null);
+  };
+
   const handleSave = () => {
     const newErrors = {};
 
-    // Validate formData fields
     if (!formData.courseName) newErrors.courseName = 'Tên khóa học không được bỏ trống';
     if (!formData.instructor) newErrors.instructor = 'Giảng viên là bắt buộc';
     if (!formData.lessons) newErrors.lessons = 'Số lượng bài học không được bỏ trống';
@@ -100,12 +137,10 @@ const EditCourse = ({ courses, setCourses }) => {
     if (!formData.startDate) newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
     if (!formData.endDate) newErrors.endDate = 'Ngày kết thúc là bắt buộc';
 
-    // Validate objectives
     objectives.forEach((objective, index) => {
       if (!objective) newErrors[`objective${index}`] = 'Mục tiêu không được để trống';
     });
 
-    // Validate lectures
     if (lectures.length === 0) {
       newErrors.lectures = 'Phải có ít nhất một bài giảng';
     } else {
@@ -117,31 +152,34 @@ const EditCourse = ({ courses, setCourses }) => {
       });
     }
 
-    // Validate cover image
     if (!coverImage) newErrors.coverImage = 'Ảnh bìa là bắt buộc';
 
     setErrors(newErrors);
 
     if (Object.keys(newErrors).length === 0) {
-      const updatedCourses = courses.map(course =>
-        course.id === parseInt(id) ? { ...course, ...formData, objectives, lectures, coverImage } : course
-      );
-      setCourses(updatedCourses);
-      console.log('Course updated successfully, showing success modal');
+      const updatedCourse = {
+        id: course.id,
+        ...formData,
+        objectives,
+        lectures,
+        students,
+        coverImage,
+      };
+      updateCourse(updatedCourse); // Gọi callback để cập nhật danh sách khóa học
       setShowSuccessModal(true);
     }
   };
 
-  const handleCancel = () => {
-    console.log('Cancel button clicked, showing cancel modal');
-    setShowCancelModal(true);
+  const handleCancel = () => setShowCancelModal(true);
+
+  const handleOpenInstructorModal = () => {
+    setShowInstructorModal(true);
   };
 
   return (
     <div className="edit-course-details">
       <div className="edit-course-section">
-        <h2>Sửa thông tin khóa học</h2>
-
+        <h2>Mô tả</h2>
         <div className="edit-course-input-group">
           <label htmlFor="course-name">Tên khóa học <span style={{ color: 'red' }}>*</span></label>
           <input
@@ -224,9 +262,7 @@ const EditCourse = ({ courses, setCourses }) => {
             </div>
 
             <div className="input-group">
-              <label>
-                Tên bài giảng <span style={{ color: 'red' }}>*</span>
-              </label>
+              <label>Tên bài giảng <span style={{ color: 'red' }}>*</span></label>
               <input
                 type="text"
                 placeholder="Nhập tên bài giảng"
@@ -345,63 +381,108 @@ const EditCourse = ({ courses, setCourses }) => {
             {errors.endDate && <span className="learning-time-error">{errors.endDate}</span>}
           </div>
         </div>
+
+        <div className="select-instructor-group">
+          <h2>Chọn giảng viên <span style={{ color: 'red' }}>*</span></h2>
+          <button className="select-instructor-btn" onClick={handleOpenInstructorModal}>
+            {formData.instructor || 'Chọn giảng viên'}
+          </button>
+          {errors.instructor && <span className="error">{errors.instructor}</span>}
+        </div>
       </div>
 
-      <div className="input-group">
-        <label>Giảng viên <span style={{ color: 'red' }}>*</span></label>
-        <input
-          type="text"
-          value={formData.instructor}
-          onChange={handleChange}
-          name="instructor"
-        />
-        {errors.instructor && <span className="error">{errors.instructor}</span>}
-      </div>
-
-      <div className="input-group">
-        <label>Trạng thái</label>
-        
-        <select name="status" value={formData.status} onChange={handleChange}>
-          <option value="Hoạt động">Hoạt động</option>
-          <option value="Không hoạt động">Không hoạt động</option>
-        </select>
-      </div>
-
-      <div className="form-actions">
-        <button className="save-btn" onClick={handleSave}>Lưu</button>
+      <div className="footer-buttons">
+        <button className="create-btn" onClick={handleSave}>
+          Cập nhật
+        </button>
         <button className="cancel-btn" onClick={handleCancel}>Hủy</button>
       </div>
 
-      {showCancelModal && (
-        <Modala
-          type="cancel"
-          title="Xác nhận hủy"
-          content="Bạn có chắc chắn muốn hủy không?"
-          onClose={() => setShowCancelModal(false)}
-          onConfirm={() => {
-            console.log('Cancel confirmed, navigating to /course-management');
-            navigate('/course-management');
-          }}
-        />
-      )}
+      <Modala
+        show={showSuccessModal}
+        title="Cập nhật khóa học thành công"
+        onConfirm={() => {
+          navigate('/course-management');
+        }}
+        onCancel={() => setShowSuccessModal(false)}
+        modalClass="add-modal"
+      />
 
-      {showSuccessModal && (
-        <Modala
-          type="success"
-          title="Cập nhật thành công"
-          content="Khóa học đã được cập nhật thành công!"
-          onClose={() => {
-            console.log('Success modal closed, navigating to /course-management');
-            setShowSuccessModal(false);
-            navigate('/course-management');
-          }}
-          onConfirm={() => {
-            console.log('Success modal confirmed, navigating to /course-management');
-            setShowSuccessModal(false);
-            navigate('/course-management');
-          }}
-        />
-      )}
+      <Modala
+        show={showCancelModal}
+        title="Bạn chắc chắn muốn hủy?"
+        onConfirm={() => navigate('/course-management')}
+        onCancel={() => setShowCancelModal(false)}
+        modalClass="add-modal"
+      />
+
+      <Modala
+        show={showInstructorModal}
+        title="Tìm kiếm giảng viên"
+        onConfirm={handleConfirmInstructor}
+        onCancel={handleCancelInstructor}
+        confirmText="Xác nhận"
+        cancelText="Hủy"
+        modalClass="instructor-modal"
+      >
+        <div className="instructor-search">
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="Mã giảng viên"
+              value={searchCode}
+              onChange={(e) => setSearchCode(e.target.value)}
+              className="search-input"
+            />
+            <input
+              type="text"
+              placeholder="Tên giảng viên"
+              value={searchName}
+              onChange={(e) => setSearchName(e.target.value)}
+              className="search-input"
+            />
+            <button className="search-btn">Tìm kiếm</button>
+          </div>
+          <div className="instructor-table-container">
+            <table className="instructor-table">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Stt</th>
+                  <th>Mã định danh</th>
+                  <th>Họ tên</th>
+                  <th>Email</th>
+                  <th>Số điện thoại</th>
+                  <th>Ngày sinh</th>
+                  <th>Năm kinh nghiệm</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredInstructors.map((instructor, index) => (
+                  <tr key={instructor.id}>
+                    <td>
+                      <input
+                        type="radio"
+                        name="instructor"
+                        checked={selectedInstructor?.id === instructor.id}
+                        onChange={() => handleInstructorSelect(instructor)}
+                      />
+                    </td>
+                    <td>{index + 1}</td>
+                    <td>{instructor.code}</td>
+                    <td>{instructor.name}</td>
+                    <td>{instructor.email}</td>
+                    <td>{instructor.phone}</td>
+                    <td>{instructor.dob}</td>
+                    <td>{instructor.experience}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+        </div>
+      </Modala>
     </div>
   );
 };

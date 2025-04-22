@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import '../Style/adcm.css';
 import ConfirmModal from './Function/Confirm';
 
-const CourseManagement = () => {
+const CourseManagement = ({ courses, updateCourse }) => {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [confirmMessage, setConfirmMessage] = useState('');
@@ -18,35 +18,17 @@ const CourseManagement = () => {
     status: ''
   });
 
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      courseName: 'Java Core',
-      instructor: 'Nguyễn Văn A',
-      lessons: 20,
-      description: 'Cung cấp kiến thức cơ bản về OOP, design pattern',
-      startDate: '2023-01-01',
-      endDate: '2023-03-31',
-      status: 'Hoạt động'
-    },
-    {
-      id: 2,
-      courseName: 'ReactJS',
-      instructor: 'Trần Thị B',
-      lessons: 15,
-      description: 'Học cách xây dựng ứng dụng với ReactJS',
-      startDate: '2023-02-01',
-      endDate: '2023-04-30',
-      status: 'Không hoạt động'
-    }
-  ]);
-
   const [filteredCourses, setFilteredCourses] = useState(courses);
-
   const navigate = useNavigate();
 
   useEffect(() => {
-    setFilteredCourses(courses); // Initial load
+    setSearchCriteria({
+      courseName: '',
+      instructor: '',
+      creationDate: '',
+      status: ''
+    });
+    setFilteredCourses(courses);
   }, [courses]);
 
   const handleAddCourse = () => {
@@ -69,7 +51,6 @@ const CourseManagement = () => {
   };
 
   const handleEditCourse = (course) => {
-    console.log('Navigating to edit course with ID:', course.id, 'Data:', course);
     navigate(`/edit-course/${course.id}`, { state: { course } });
   };
 
@@ -92,7 +73,7 @@ const CourseManagement = () => {
         ? { ...course, status: confirmAction === 'disable' ? 'Không hoạt động' : 'Hoạt động' }
         : course
     );
-    setCourses(updated);
+    updateCourse(updated.find(course => selectedCourses.includes(course.id)));
     setFilteredCourses(updated);
     setConfirmModalOpen(false);
     setSelectedCourses([]);
@@ -151,8 +132,6 @@ const CourseManagement = () => {
               <button className="btn btn-blue" onClick={handleSearch}>Tìm kiếm</button>
             </div>
           </div>
-
-          
 
           <div className="table-container">
             <table>

@@ -317,6 +317,8 @@ body {
   justify-content: space-between; /* Đẩy Học viên sang trái, Tìm kiếm sang phải */
   margin: 20px 0;
   align-items: center; /* Căn giữa theo chiều dọc */
+    text-align: left;    /* ✅ Không dùng fixed nữa */
+
 }
 
 .search-bar-middle {
@@ -504,6 +506,8 @@ table td button:hover {
   transform: translateX(100%);
   animation: slideInRight 0.3s forwards;
   z-index: 1000;
+  text-align: left;    /* ✅ Không dùng fixed nữa */
+
 }
 
 
@@ -611,8 +615,10 @@ table td button:hover {
 .course-details {
   max-width: 1200px;
   margin: 0 auto;
-  padding-top: 40px;
+  padding-top: 20px;
   padding-bottom: 20px;
+  text-align: left;    /* ✅ Không dùng fixed nữa */
+
 }
 
 .section {
@@ -836,6 +842,8 @@ table td button:hover {
   margin-bottom: 10px;
   color: #333;
   padding-top: 40px;
+  text-align: left;    /* ✅ Không dùng fixed nữa */
+
 }
 
 .course-info p {
@@ -1047,90 +1055,6 @@ gap: 0.5rem;
 .icon-edit {
 color: rgb(24, 182, 255);
 font-size: 15px;
-}
-
-.table-container {
-  overflow-x: auto; /* Hỗ trợ cuộn ngang trên màn hình nhỏ */
-  margin-top: 1rem;
-  background-color: #fff; /* Nền trắng cho bảng */
-  border-radius: 5px; /* Bo góc nhẹ */
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng nhẹ */
-  padding: 1rem; /* Khoảng cách bên trong */
-  min-width: 1500px; /* Đảm bảo container đủ rộng để hiển thị thanh cuộn */
-}
-
-/* Bỏ thanh cuộn tùy chỉnh */
-.table-scroll-handle {
-  display: none; /* Không cần thanh cuộn tùy chỉnh */
-}
-
-table {
-  width: 1500px; /* Mở rộng bảng lên 1500px */
-  border-collapse: collapse; /* Gộp viền */
-  table-layout: auto; /* Tự động điều chỉnh chiều rộng cột dựa trên nội dung */
-}
-
-th, td {
-  padding: 0.75rem 1rem; /* Padding vừa đủ để dễ nhìn */
-  border-bottom: 1px solid #e6e6e6; /* Viền dưới nhẹ */
-  text-align: left; /* Căn trái mặc định */
-  vertical-align: middle; /* Căn giữa theo chiều dọc */
-  white-space: normal; /* Cho phép xuống dòng */
-  word-wrap: break-word; /* Đảm bảo từ dài được ngắt */
-}
-
-th {
-  background-color: #efefef; /* Nền xám nhạt cho header */
-  font-weight: bold; /* Chữ đậm */
-  color: #4b5563; /* Màu chữ xám đậm */
-}
-
-/* Điều chỉnh chiều rộng tối ưu cho từng cột với tổng chiều rộng 1500px */
-th:nth-child(1), td:nth-child(1) {
-  width: 80px; /* STT */
-  text-align: center; /* Căn giữa số thứ tự */
-}
-
-th:nth-child(2), td:nth-child(2) {
-  width: 200px; /* Mã khóa học */
-}
-
-th:nth-child(3), td:nth-child(3) {
-  width: 300px; /* Tên giảng viên - Tăng để chứa nội dung dài */
-}
-
-th:nth-child(4), td:nth-child(4) {
-  width: 120px; /* Số bài học */
-  text-align: center; /* Căn giữa số bài học */
-}
-
-th:nth-child(5), td:nth-child(5) {
-  width: 150px; /* Mô tả */
-}
-
-th:nth-child(6), td:nth-child(6) {
-  width: 150px; /* Ngày bắt đầu */
-}
-
-th:nth-child(7), td:nth-child(7) {
-  width: 150px; /* Ngày kết thúc */
-}
-
-th:nth-child(8), td:nth-child(8) {
-  width: 100px; /* Tính năng (icon chỉnh sửa) */
-  text-align: center; /* Căn giữa icon */
-}
-
-/* Hiệu ứng hover để cải thiện UX */
-td:hover {
-  background-color: #f3f4f6; /* Nền sáng khi hover */
-}
-
-/* Style cho icon chỉnh sửa trong cột Tính năng */
-.icon-edit {
-  color: rgb(24, 182, 255); /* Màu xanh cho icon */
-  font-size: 15px;
-  cursor: pointer; /* Con trỏ chuột khi hover */
 }
 
 .icon-edit:hover {

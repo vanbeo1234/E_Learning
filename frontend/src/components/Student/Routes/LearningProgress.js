@@ -32,6 +32,9 @@ const LearningProgress = () => {
   const [loading, setLoading] = useState(true);
   const [registeredCourses, setRegisteredCourses] = useState([]);
   const [continuingCourses, setContinuingCourses] = useState([]);
+  const [currentPage, setCurrentPage] = useState(1);
+  const coursesPerPage = 8; // Adjust how many courses to display per page
+  const totalPages = Math.ceil((registeredCourses.length + continuingCourses.length) / coursesPerPage);
 
   // Giả lập fetch API cho dữ liệu khóa học
   useEffect(() => {
@@ -113,6 +116,18 @@ const LearningProgress = () => {
     return 'Chưa bắt đầu';
   };
 
+  const handlePageChange = (page) => {
+    if (page >= 1 && page <= totalPages) {
+      setCurrentPage(page);
+    }
+  };
+
+  // Paginate courses
+  const currentCourses = [
+    ...registeredCourses,
+    ...continuingCourses
+  ].slice((currentPage - 1) * coursesPerPage, currentPage * coursesPerPage);
+
   return (
     <main className="learningprogress-main-content">
       <section className="learningprogress-courses">
@@ -126,42 +141,8 @@ const LearningProgress = () => {
           </div>
         ) : (
           <div className="learningprogress-course-grid">
-            {/* Các khóa học đã đăng ký */}
-            {registeredCourses.map((course, index) => (
-              <div className="learningprogress-course-card" key={index}>
-                <img src={course.image} alt={course.title} className="learningprogress-course-image" />
-                <div className="learningprogress-course-header">
-                  <span>{getCategoryIcon(course.category)} {course.category}</span>
-                  <span><i className="fas fa-clock"></i> {course.duration}</span>
-                </div>
-                <h3>{course.title}</h3>
-                <p>{course.description}</p>
-
-                <div className="learningprogress-progress-bar">
-                  <div 
-                    className="learningprogress-progress"
-                    style={{
-                      width: `${course.progress}%`,
-                      backgroundColor: getProgressColor(course.progress),
-                      transition: 'width 1s ease-out',
-                    }}
-                  ></div>
-                </div>
-                <p>{getFormattedProgress(course.progress)}</p>
-
-                <div className="learningprogress-details">
-                  <p>Tiến độ: {course.progress}%</p>
-                  <p>Ngày hoàn thành dự kiến: {(() => {
-                    const formattedDate = new Date();
-                    formattedDate.setMonth(formattedDate.getMonth() + 1);
-                    return formattedDate.toLocaleDateString();
-                  })()}</p>
-                </div>
-              </div>
-            ))}
-
-            {/* Các khóa học tiếp tục */}
-            {continuingCourses.map((course, index) => (
+            {/* Các khóa học */}
+            {currentCourses.map((course, index) => (
               <div className="learningprogress-course-card" key={index}>
                 <img src={course.image} alt={course.title} className="learningprogress-course-image" />
                 <div className="learningprogress-course-header">
@@ -195,6 +176,33 @@ const LearningProgress = () => {
             ))}
           </div>
         )}
+        
+        {/* Pagination Buttons */}
+        <div className="homestudents-pagination-buttons">
+          <button
+            onClick={() => handlePageChange(1)}
+            disabled={currentPage === 1}
+            className={currentPage === 1 ? 'homestudents-disabled' : ''}
+          >
+            «
+          </button>
+          {[...Array(totalPages).keys()].map((number) => (
+            <button
+              key={number + 1}
+              onClick={() => handlePageChange(number + 1)}
+              className={currentPage === number + 1 ? 'homestudents-active' : ''}
+            >
+              {number + 1}
+            </button>
+          ))}
+          <button
+            onClick={() => handlePageChange(totalPages)}
+            disabled={currentPage === totalPages}
+            className={currentPage === totalPages ? 'homestudents-disabled' : ''}
+          >
+            »
+          </button>
+        </div>
       </section>
     </main>
   );

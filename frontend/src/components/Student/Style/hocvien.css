@@ -205,6 +205,9 @@ html, body {
   font-family: 'Roboto', Arial, sans-serif;
   font-size: 14px;
   line-height: 1.6;
+  position: relative;
+  bottom: 0;
+  width: 100%;
 }
 
 /* Footer container chia cột */
@@ -214,7 +217,8 @@ html, body {
   justify-content: space-between;
   gap: 20px;
   max-width: calc(100% - 250px);
-  margin-left: 250px;
+  margin-left: 250px; /* căn sát theo Sidebar */
+  text-align: left; /* Align content to the left */
 }
 
 /* Mỗi cột footer */
@@ -222,6 +226,7 @@ html, body {
   flex: 1 1 200px;
   min-width: 220px;
   margin-bottom: 20px;
+  text-align: left; /* Align text to the left */
 }
 
 /* Cột logo */
@@ -232,14 +237,12 @@ html, body {
 }
 
 .logo-box {
-  background-color: #04bcff;
-  color: #fff;
+  background-color: #000000;
+  color: #21a3ff;
   padding: 10px 16px;
   font-weight: bold;
   border-radius: 8px;
-  font-size: 18px;
-  margin-left:40px; /* để căn sát theo Sidebar */
-
+  font-size: 24px;
 }
 
 /* Tiêu đề cột */
@@ -249,6 +252,7 @@ html, body {
   margin-bottom: 10px;
   text-transform: none;
   color: #ffffff;
+  text-align: left; /* Ensure heading is left-aligned */
 }
 
 /* Nội dung mô tả */
@@ -256,7 +260,7 @@ html, body {
   font-size: 13.5px;
   margin: 5px 0;
   color: #ddd;
-
+  text-align: left; /* Ensure paragraphs are left-aligned */
 }
 
 /* DMCA badge */
@@ -270,16 +274,16 @@ html, body {
   border-top: 1px solid #333;
   margin-top: 30px;
   padding-top: 20px;
-  text-align: center;
+  text-align: center; /* Ensure footer bottom text is left-aligned */
   font-size: 13px;
   color: #ccc;
-  margin-left: 250px; /* để căn sát theo Sidebar */
-
+  margin-left: 250px; /* căn sát theo Sidebar */
 }
 
 /* Mạng xã hội */
 .footer-social {
   margin-top: 10px;
+  text-align: center; /* Ensure social media icons are aligned left */
 }
 
 .footer-social a {
@@ -299,7 +303,7 @@ html, body {
   width: 100%;
   box-sizing: border-box;
   padding-top: 20px;     /* Né header cố định */
-  padding-bottom: 80px;   /* Né footer */
+  padding-bottom: 40px;   /* Né footer */
   min-height: 100vh;      /* Đảm bảo chiếm toàn bộ chiều cao màn hình */
   overflow-y: auto;
   position: relative;     /* ✅ Không dùng fixed nữa */
@@ -495,7 +499,7 @@ background-color: #1d4ed8;
   width: 100%;
   box-sizing: border-box;
   padding-top: 20px;     /* Né header cố định */
-  padding-bottom: 80px;   /* Né footer */
+  padding-bottom: 40px;   /* Né footer */
   min-height: 100vh;      /* Đảm bảo chiếm toàn bộ chiều cao màn hình */
   overflow-y: auto;
   position: relative;     /* ✅ Không dùng fixed nữa */
@@ -636,10 +640,11 @@ background-color: #1d4ed8;
   width: 100%;
   box-sizing: border-box;
   padding-top: 20px;     /* Né header cố định */
-  padding-bottom: 80px;   /* Né footer */
+  padding-bottom: 40px;   /* Né footer */
   min-height: 100vh;      /* Đảm bảo chiếm toàn bộ chiều cao màn hình */
   overflow-y: auto;
-  position: relative;     /* ✅ Không dùng fixed nữa */
+  position: relative; 
+  text-align: left;    /* ✅ Không dùng fixed nữa */
 }
 
 /* Pagination */
@@ -772,6 +777,7 @@ background-color: #1d4ed8;
 .featured-articles {
   padding: 40px;
   background-color: #f9f9f9;
+  text-align: left;
 }
 
 .featured-articles h2 {
