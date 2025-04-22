@@ -42,76 +42,67 @@ import EditCourse from './components/Admin/Course/Function/EditCourse';
 import SearchCourses from './components/Admin/Course/Function/Search';
 import Modala from './components/Admin/Course/Function/Modala';
 
-function App() {
-  return (
-    <Router>
-      <div className="app-wrapper">
-        <Sidebars />
-        <div className="content">
-          <Routes>
-            <Route
-              path="/homeg"
-              element={
-                <>
-                  <Headers title="Trang chủ giảng viên" />
-                  <Homes />
-                </>
-              }
-            />
-            <Route
-              path="/courses"
-              element={
-                <>
-                  <Headers title="Danh sách khóa học" />
-                  <CourseTable />
-                </>
-              }
-            />
-            <Route
-              path="/create-course"
-              element={
-                <>
-                  <Headers title="Tạo khóa học mới" />
-                  <CourseForm isEdit={false} />
-                </>
-              }
-            />
-            <Route
-              path="/edit-course/:id"
-              element={
-                <>
-                  <Headers title="Chỉnh sửa khóa học" />
-                  <Feature isEdit={true} />
-                </>
-              }
-            />
-            <Route
-              path="/course-info/:id"
-              element={
-                <>
-                  <Headers title="Thông tin khóa học" />
-                  <CourseInfo />
-                </>
-              }
-            />
-            <Route
-              path="/feedback"
-              element={
-                <>
-                  <Headers title="Phản hồi từ học viên" />
-                  <FeedbackList />
-                </>
-              }
-            />
-            <Route path="*" element={<Navigate to="/homeg" replace />} />
-          </Routes>
-        </div>
-      </div>
-    </Router>
-  );
-}
 
-export default App;
+function App() {
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+  
+    const handleLogin = () => {
+      setIsAuthenticated(true);
+    };
+  
+    const handleLogout = () => {
+      setIsAuthenticated(false);
+    };
+  
+    return (
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login onLogin={handleLogin} />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route
+            path="/user-management"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera onLogout={handleLogout} />
+                    <div className="main-content">
+                      <UserManagement />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/course-management"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera onLogout={handleLogout} />
+                    <div className="main-content">
+                      <CourseManagement />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route path="/" element={<div>Welcome to the Admin Dashboard</div>} />
+        </Routes>
+      </Router>
+    );
+  }
+  
+  export default App;
+  
 
 
 /**            <Route path="/user-management" element={<UserManagement />} />

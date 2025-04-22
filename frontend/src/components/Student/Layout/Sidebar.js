@@ -33,11 +33,7 @@ const Sidebar = () => {
             <i className="fas fa-newspaper"></i> Bài viết
           </a>
         </li>
-        <li className="logout">
-          <Link to="/login">
-            <i className="fas fa-sign-out-alt"></i> Đăng xuất
-          </Link>
-        </li>
+        
       </ul>
     </div>
   );

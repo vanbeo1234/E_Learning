@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import Modal from '../Layouts/Modal';
 import '../Style/giangvien.css';
 
-const Feature = ({ isEdit, courseId }) => {
+const Feature = ({ isEdit }) => {
   const [courseName, setCourseName] = useState('');
   const [courseContent, setCourseContent] = useState('');
   const [objectives, setObjectives] = useState([]);
-  const [lectures, setLectures] = useState([{ order: '', name: '', video: '', document: '' }]);
+  const [lectures, setLectures] = useState([{ order: '', name: '', video: '', document: '', videoType: 'url' }]);
   const [coverImage, setCoverImage] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
@@ -14,64 +15,57 @@ const Feature = ({ isEdit, courseId }) => {
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [errors, setErrors] = useState({});
 
-  // Nếu là chỉnh sửa, lấy thông tin khóa học từ localStorage
-  useEffect(() => {
-    if (isEdit && courseId) {
-      const storedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
-      const courseToEdit = storedCourses.find(course => course.id === courseId);
-      if (courseToEdit) {
-        setCourseName(courseToEdit.name);
-        setCourseContent(courseToEdit.description);
-        setObjectives(courseToEdit.objectives);
-        setLectures(courseToEdit.lectures);
-        setCoverImage(courseToEdit.image);
-        setStartDate(courseToEdit.startDate);
-        setEndDate(courseToEdit.endDate);
-      }
-    }
-  }, [isEdit, courseId]);
+  const { state } = useLocation();
+  const navigate = useNavigate();
 
-  // Hàm thêm mục tiêu
+  // Load course data for editing
+  useEffect(() => {
+    if (isEdit && state?.course) {
+      const course = state.course;
+      setCourseName(course.courseName || '');
+      setCourseContent(course.description || '');
+      setObjectives(course.objectives || []);
+      setLectures(course.lectures || [{ order: '', name: '', video: '', document: '', videoType: 'url' }]);
+      setCoverImage(course.image || null);
+      setStartDate(course.startDate || '');
+      setEndDate(course.endDate || '');
+    }
+  }, [isEdit, state]);
+
   const handleAddObjective = () => {
     setObjectives([...objectives, '']);
   };
 
-  // Hàm xóa mục tiêu
   const handleRemoveObjective = (index) => {
     setObjectives(objectives.filter((_, i) => i !== index));
   };
 
-  // Hàm thay đổi mục tiêu
   const handleObjectiveChange = (index, value) => {
     const newObjectives = [...objectives];
     newObjectives[index] = value;
     setObjectives(newObjectives);
   };
 
-  // Hàm thêm bài giảng
   const handleAddLecture = () => {
-    setLectures([...lectures, { order: '', name: '', video: '', document: '' }]);
+    setLectures([...lectures, { order: '', name: '', video: '', document: '', videoType: 'url' }]);
   };
 
-  // Hàm xóa bài giảng
   const handleRemoveLecture = (index) => {
     setLectures(lectures.filter((_, i) => i !== index));
   };
 
-  // Hàm thay đổi thông tin bài giảng
   const handleLectureChange = (index, field, value) => {
     const updatedLectures = [...lectures];
     updatedLectures[index][field] = value;
     setLectures(updatedLectures);
   };
-  
+
   const handleFileUpload = (index, file) => {
     const updatedLectures = [...lectures];
-    updatedLectures[index].video = file; // Lưu file vào bài giảng
+    updatedLectures[index].video = file ? URL.createObjectURL(file) : '';
     setLectures(updatedLectures);
   };
 
-  // Hàm thay đổi ảnh bìa
   const handleCoverImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -79,7 +73,6 @@ const Feature = ({ isEdit, courseId }) => {
     }
   };
 
-  // Hàm kiểm tra hợp lệ form
   const validateForm = () => {
     const newErrors = {};
     if (!courseName.trim()) newErrors.courseName = 'Tên khóa học là bắt buộc';
@@ -101,53 +94,47 @@ const Feature = ({ isEdit, courseId }) => {
   const handleSave = () => {
     if (validateForm()) {
       const newCourse = {
-        id: isEdit ? courseId : Date.now(), // Giả lập ID, dùng ID cũ khi chỉnh sửa
-        name: courseName,
+        id: isEdit ? state.course.id : Date.now(),
+        courseName,
         description: courseContent,
         image: coverImage || 'https://storage.googleapis.com/a1aa/image/0TzyXeqJ-3SrhNVPfxvj8ePIWFBxnJLCDSIO-0TWOhU.jpg',
         objectives,
         lectures,
         startDate,
         endDate,
-        creationDate: new Date().toISOString().split('T')[0], // Thêm ngày tạo
-        status: 'Hoạt động', // Có thể thay đổi tùy theo trạng thái khóa học
-        instructor: 'Giảng viên', // Cập nhật tên giảng viên (nếu có)
-        lessons: lectures.length // Số bài học
+        creationDate: isEdit ? state.course.creationDate : new Date().toISOString().split('T')[0],
+        status: 'Hoạt động',
+        instructor: state?.course?.instructor || 'Giảng viên',
+        lessons: lectures.length,
       };
-  
+
       const existingCourses = JSON.parse(localStorage.getItem('courses') || '[]');
-  
       if (isEdit) {
-        // Cập nhật khóa học
         const updatedCourses = existingCourses.map((course) =>
           course.id === newCourse.id ? newCourse : course
         );
         localStorage.setItem('courses', JSON.stringify(updatedCourses));
       } else {
-        // Thêm khóa học mới
         localStorage.setItem('courses', JSON.stringify([...existingCourses, newCourse]));
       }
-  
+
       setShowSuccessModal(true);
     }
-  };  
-  
-  // Hàm hủy bỏ và hiển thị modal xác nhận
+  };
+
   const handleCancel = () => {
     setShowCancelModal(true);
   };
 
-  // Hàm xác nhận hủy bỏ
   const handleConfirmCancel = () => {
-    window.history.back(); // Trở lại trang trước đó
+    navigate('/course-management');
   };
 
-  // Hàm đóng modal thành công
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
+    navigate('/course-management');
   };
 
-  // Hàm đóng modal hủy bỏ
   const handleCloseCancelModal = () => {
     setShowCancelModal(false);
   };
@@ -157,7 +144,9 @@ const Feature = ({ isEdit, courseId }) => {
       <div className="section">
         <h2>Mô tả</h2>
         <div className="input-group">
-          <label htmlFor="course-name">Tên khóa học<span style={{ color: 'red' }}>*</span></label>
+          <label htmlFor="course-name">
+            Tên khóa học<span style={{ color: 'red' }}>*</span>
+          </label>
           <input
             type="text"
             id="course-name"
@@ -165,10 +154,11 @@ const Feature = ({ isEdit, courseId }) => {
             onChange={(e) => setCourseName(e.target.value)}
           />
           {errors.courseName && <span className="error">{errors.courseName}</span>}
-
         </div>
         <div className="input-group">
-          <label htmlFor="course-content">Nội dung<span style={{ color: 'red' }}>*</span></label>
+          <label htmlFor="course-content">
+            Nội dung<span style={{ color: 'red' }}>*</span>
+          </label>
           <textarea
             id="course-content"
             value={courseContent}
@@ -204,16 +194,82 @@ const Feature = ({ isEdit, courseId }) => {
           <span>Thêm mới</span>
         </div>
         {lectures.map((lecture, index) => (
-          <div key={index} className="input-group">
-            <input
-              type="text"
-              placeholder="Tên bài giảng"
-              value={lecture.name}
-              onChange={(e) => handleLectureChange(index, 'name', e.target.value)}
-            />
-            <button className="remove-btn" onClick={() => handleRemoveLecture(index)}>
-              <i className="fas fa-trash"></i>
-            </button>
+          <div className="course-content" key={index}>
+            <div className="input-group">
+              <label htmlFor={`order-${index}`}>Thứ tự</label>
+              <input
+                type="number"
+                id={`order-${index}`}
+                placeholder="Nhập thứ tự"
+                value={lecture.order}
+                onChange={(e) => handleLectureChange(index, 'order', e.target.value)}
+              />
+            </div>
+            <div className="input-group">
+              <label htmlFor={`lecture-name-${index}`}>
+                Tên bài giảng<span style={{ color: 'red' }}>*</span>
+              </label>
+              <input
+                type="text"
+                id={`lecture-name-${index}`}
+                placeholder="Nhập tên bài giảng"
+                value={lecture.name}
+                onChange={(e) => handleLectureChange(index, 'name', e.target.value)}
+              />
+              {errors[`lectureName${index}`] && (
+                <span className="error">{errors[`lectureName${index}`]}</span>
+              )}
+            </div>
+            <div className="input-group">
+              <label htmlFor={`video-type-${index}`}>Chọn loại video</label>
+              <select
+                id={`video-type-${index}`}
+                value={lecture.videoType}
+                onChange={(e) => handleLectureChange(index, 'videoType', e.target.value)}
+              >
+                <option value="url">Dán đường link video</option>
+                <option value="file">Tải video lên</option>
+              </select>
+            </div>
+            {lecture.videoType === 'url' ? (
+              <div className="input-group">
+                <label htmlFor={`video-url-${index}`}>Video URL</label>
+                <input
+                  type="text"
+                  id={`video-url-${index}`}
+                  placeholder="Nhập đường dẫn video"
+                  value={lecture.video}
+                  onChange={(e) => handleLectureChange(index, 'video', e.target.value)}
+                />
+              </div>
+            ) : (
+              <div className="input-group">
+                <label htmlFor={`video-upload-${index}`}>Tải lên video</label>
+                <input
+                  type="file"
+                  id={`video-upload-${index}`}
+                  accept="video/*"
+                  onChange={(e) => handleFileUpload(index, e.target.files[0])}
+                />
+                <i className="fas fa-upload upload-icon"></i>
+              </div>
+            )}
+            <div className="input-group">
+              <label htmlFor={`document-${index}`}>Tài liệu</label>
+              <input
+                type="text"
+                id={`document-${index}`}
+                placeholder="Tải lên tài liệu"
+                value={lecture.document}
+                onChange={(e) => handleLectureChange(index, 'document', e.target.value)}
+              />
+            </div>
+            <div className="buttons">
+              <button className="save-btn">Lưu</button>
+              <button className="cancel-btn" onClick={() => handleRemoveLecture(index)}>
+                Xóa
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -222,18 +278,18 @@ const Feature = ({ isEdit, courseId }) => {
         <div
           className="cover-image"
           style={{
-            backgroundImage: coverImage ? `url(${coverImage})` : "none",
-            backgroundSize: "cover",
-            backgroundPosition: "center",
+            backgroundImage: coverImage ? `url(${coverImage})` : 'none',
+            backgroundSize: 'cover',
+            backgroundPosition: 'center',
           }}
-          onClick={() => document.getElementById("cover-image-upload").click()}
+          onClick={() => document.getElementById('cover-image-upload').click()}
         >
           {!coverImage && <i className="fas fa-plus upload-icon"></i>}
           <input
             type="file"
             accept="image/*"
             onChange={handleCoverImageChange}
-            style={{ display: "none" }}
+            style={{ display: 'none' }}
             id="cover-image-upload"
           />
         </div>
@@ -242,7 +298,9 @@ const Feature = ({ isEdit, courseId }) => {
         <h2>Thời gian học</h2>
         <div className="learning-time-row">
           <div className="learning-time-input">
-            <label htmlFor="start-date">Ngày bắt đầu<span style={{ color: 'red' }}>*</span></label>
+            <label htmlFor="start-date">
+              Ngày bắt đầu<span style={{ color: 'red' }}>*</span>
+            </label>
             <input
               type="date"
               id="start-date"
@@ -252,7 +310,9 @@ const Feature = ({ isEdit, courseId }) => {
             {errors.startDate && <span className="learning-time-error">{errors.startDate}</span>}
           </div>
           <div className="learning-time-input">
-            <label htmlFor="end-date">Ngày kết thúc<span style={{ color: 'red' }}>*</span></label>
+            <label htmlFor="end-date">
+              Ngày kết thúc<span style={{ color: 'red' }}>*</span>
+            </label>
             <input
               type="date"
               id="end-date"
@@ -262,25 +322,28 @@ const Feature = ({ isEdit, courseId }) => {
             {errors.endDate && <span className="learning-time-error">{errors.endDate}</span>}
           </div>
         </div>
+        {errors.dateRange && <span className="learning-time-error">{errors.dateRange}</span>}
       </div>
       <div className="footer-buttons">
         <button className="create-btn" onClick={handleSave}>
           {isEdit ? 'Cập nhật' : 'Tạo mới'}
         </button>
-        <button className="cancel-btn" onClick={handleCancel}>Hủy</button>
+        <button className="cancel-btn" onClick={handleCancel}>
+          Hủy
+        </button>
       </div>
 
       <Modal
         show={showSuccessModal}
         title={isEdit ? 'Cập nhật khóa học thành công' : 'Thêm khóa học thành công'}
-        onConfirm={() => (window.location.href = '/')} // Chuyển hướng về trang danh sách khóa học
-        onCancel={() => setShowSuccessModal(false)}
+        onConfirm={handleCloseSuccessModal}
+        onCancel={handleCloseSuccessModal}
       />
       <Modal
         show={showCancelModal}
         title="Bạn chắc chắn muốn hủy?"
-        onConfirm={() => (window.location.href = '/')}
-        onCancel={() => setShowCancelModal(false)}
+        onConfirm={handleConfirmCancel}
+        onCancel={handleCloseCancelModal}
       />
     </div>
   );
