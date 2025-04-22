@@ -24,6 +24,14 @@ public class UpdateCourseReq {
     private String statusCode;
     private List<UpdateLessonReq> lessons;
     private String updatedBy;
-    private List<Long> instructorIds;
+    private Long instructorId;
+    private String newInstructorCode;
 
+    public String getNewInstructorCode() {
+        return newInstructorCode;
+    }
+
+    public void setNewInstructorCode(String newInstructorCode) {
+        this.newInstructorCode = newInstructorCode;
+    }
 }
