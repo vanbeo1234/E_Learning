@@ -425,7 +425,9 @@ const UserManagement = () => {
   const currentUsers = filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
   // --- Render ---
-
+  const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
+  const [actionType, setActionType] = useState(''); // To differentiate between disable and enable actions
+  
   return (
     // Container chính của component
     <div className="user-management-container">
@@ -486,19 +488,26 @@ const UserManagement = () => {
               Thêm
             </button>
             <button 
-              className="btn btn-red" 
-              onClick={disableSelected}
-              disabled={selectedUsers.length === 0}
-            >
-              Vô hiệu hóa
-            </button>
-            <button 
-              className="btn btn-yellow" 
-              onClick={enableSelected}
-              disabled={selectedUsers.length === 0}
-            >
-              Kích hoạt
-            </button>
+  className="btn btn-red" 
+  onClick={() => {
+    setActionType('disable');
+    setConfirmModalOpen(true);
+  }}
+  disabled={selectedUsers.length === 0}
+>
+  Vô hiệu hóa
+</button>
+<button 
+  className="btn btn-yellow" 
+  onClick={() => {
+    setActionType('enable');
+    setConfirmModalOpen(true);
+  }}
+  disabled={selectedUsers.length === 0}
+>
+  Kích hoạt
+</button>
+
             <button className="btn btn-blue" onClick={handleSearch}>
               Tìm kiếm
             </button>
@@ -618,6 +627,36 @@ const UserManagement = () => {
           removeCertificate={removeCertificate}
         />
       )}
+
+{isConfirmModalOpen && (
+  <div className="confirm-modal">
+    <div className="confirm-modal-content">
+      <p>Bạn có chắc chắn muốn {actionType === 'disable' ? 'vô hiệu hóa' : 'kích hoạt'} người dùng đã chọn không?</p>
+      <div className="modal-actions">
+        <button 
+          className="btn btn-red" 
+          onClick={() => setConfirmModalOpen(false)}
+        >
+          Hủy
+        </button>
+        <button 
+          className="btn btn-green" 
+          onClick={() => {
+            if (actionType === 'disable') {
+              disableSelected();
+            } else {
+              enableSelected();
+            }
+            setConfirmModalOpen(false);
+          }}
+        >
+          Xác nhận
+        </button>
+      </div>
+    </div>
+  </div>
+)}
+
     </div>
   );
 };

@@ -126,21 +126,20 @@ const EditCourse = () => {
     setSearchName('');
     setSelectedInstructor(null);
   };
-
   const handleSave = () => {
     const newErrors = {};
-
+  
     if (!formData.courseName) newErrors.courseName = 'Tên khóa học không được bỏ trống';
     if (!formData.instructor) newErrors.instructor = 'Giảng viên là bắt buộc';
     if (!formData.lessons) newErrors.lessons = 'Số lượng bài học không được bỏ trống';
     if (!formData.description) newErrors.description = 'Nội dung không được bỏ trống';
     if (!formData.startDate) newErrors.startDate = 'Ngày bắt đầu là bắt buộc';
     if (!formData.endDate) newErrors.endDate = 'Ngày kết thúc là bắt buộc';
-
+  
     objectives.forEach((objective, index) => {
       if (!objective) newErrors[`objective${index}`] = 'Mục tiêu không được để trống';
     });
-
+  
     if (lectures.length === 0) {
       newErrors.lectures = 'Phải có ít nhất một bài giảng';
     } else {
@@ -151,11 +150,11 @@ const EditCourse = () => {
         if (!lecture.document) newErrors[`lectureDocument${index}`] = 'Tài liệu bài giảng không được để trống';
       });
     }
-
+  
     if (!coverImage) newErrors.coverImage = 'Ảnh bìa là bắt buộc';
-
+  
     setErrors(newErrors);
-
+  
     if (Object.keys(newErrors).length === 0) {
       const updatedCourse = {
         id: course.id,
@@ -167,6 +166,9 @@ const EditCourse = () => {
       };
       updateCourse(updatedCourse); // Gọi callback để cập nhật danh sách khóa học
       setShowSuccessModal(true);
+      setTimeout(() => {
+        navigate('/course-management'); // Quay lại trang quản lý khóa học sau khi hiển thị modal thành công
+      }, 2000); // Thời gian hiển thị modal thành công trước khi chuyển trang
     }
   };
 

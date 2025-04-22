@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../Style/adcm.css';
-import ConfirmModal from './Function/Confirm';
+
 
 const CourseManagement = ({ courses, updateCourse }) => {
   const [isConfirmModalOpen, setConfirmModalOpen] = useState(false);
@@ -127,8 +127,20 @@ const CourseManagement = ({ courses, updateCourse }) => {
           <div className="course-management-action-buttons">
             <div>
               <button className="btn btn-green" onClick={handleAddCourse}>Thêm</button>
-              <button className="btn btn-red" onClick={() => showConfirmModal('disable')}>Vô hiệu hóa</button>
-              <button className="btn btn-yellow" onClick={() => showConfirmModal('enable')}>Kích hoạt</button>
+              <button 
+                className="btn btn-red" 
+                onClick={() => showConfirmModal('disable')} 
+                disabled={selectedCourses.length === 0}
+              >
+                Vô hiệu hóa
+              </button>
+              <button 
+                className="btn btn-yellow" 
+                onClick={() => showConfirmModal('enable')} 
+                disabled={selectedCourses.length === 0}
+              >
+                Kích hoạt
+              </button>
               <button className="btn btn-blue" onClick={handleSearch}>Tìm kiếm</button>
             </div>
           </div>
@@ -189,11 +201,25 @@ const CourseManagement = ({ courses, updateCourse }) => {
       </div>
 
       {isConfirmModalOpen && (
-        <ConfirmModal
-          message={confirmMessage}
-          onConfirm={handleConfirm}
-          onCancel={hideConfirmModal}
-        />
+        <div className="confirm-modal">
+          <div className="confirm-modal-content">
+            <p>{confirmMessage}</p>
+            <div className="modal-actions">
+              <button 
+                className="btn btn-red" 
+                onClick={hideConfirmModal}
+              >
+                Hủy
+              </button>
+              <button 
+                className="btn btn-green" 
+                onClick={handleConfirm}
+              >
+                Xác nhận
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
