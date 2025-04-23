@@ -74,7 +74,6 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
-
     /**
      * API Cập nhật thông tin người dùng theo mã người dùng.
      * 
@@ -84,7 +83,7 @@ public class UserController {
      * @throws Exception                nếu có lỗi hệ thống trong quá trình cập
      *                                  nhật.
      */
-    @PutMapping("/update")
+    @PutMapping
     public ResponseEntity<Map<String, Object>> updateUser(@RequestBody UserReq request) {
         try {
 

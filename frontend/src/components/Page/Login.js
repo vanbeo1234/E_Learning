@@ -3,17 +3,17 @@ import { Link, useNavigate } from "react-router-dom";
 import { FaEye, FaEyeSlash } from 'react-icons/fa'; // Import FontAwesome icons
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
- 
+
 const Login = ({ setIsAuthenticated }) => {
   const [userCode, setUserCode] = useState('');
   const [password, setPassword] = useState('');
   const [passwordVisible, setPasswordVisible] = useState(false);
   const navigate = useNavigate();
- 
+
   const togglePasswordVisibility = () => {
     setPasswordVisible(!passwordVisible);
   };
- 
+
   const handleLogin = async () => {
     try {
       console.log('Gửi yêu cầu đăng nhập với:', { userCode, password });
@@ -24,7 +24,7 @@ const Login = ({ setIsAuthenticated }) => {
         },
         body: JSON.stringify({ userCode, password }),
       });
- 
+
       console.log('Trạng thái phản hồi:', response.status);
       if (response.ok) {
         const data = await response.json();
@@ -43,7 +43,7 @@ const Login = ({ setIsAuthenticated }) => {
       toast.error('Đã xảy ra lỗi. Vui lòng thử lại sau.');
     }
   };
- 
+
   return (
     <div style={{ backgroundColor: 'white' }}>
       <ToastContainer />
@@ -104,13 +104,14 @@ const Login = ({ setIsAuthenticated }) => {
                 </i>
               </div>
             </div>
-            <button style={ styles.loginSubmitButton} onClick={handleLogin}>Đăng nhập</button>
+            <button style={styles.loginSubmitButton} onClick={handleLogin}>Đăng nhập</button>
           </div>
         </div>
       </main>
     </div>
   );
 };
+
  
 const styles = {
   loginHeader: {  

@@ -1,15 +1,13 @@
 import React, { useState } from 'react';
-import { useLocation } from 'react-router-dom';
-
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
 import Login from './components/Page/Login';
 import Signup from './components/Page/Signup';
-import Welcome from'./components/Page/Welcome';
+import Welcome from './components/Page/Welcome';
 
-import Sidebar from'./components/Student/Layout/Sidebar';
+import Sidebar from './components/Student/Layout/Sidebar';
 import Header from './components/Student/Layout/Header';
-import Footer from'./components/Student/Layout/Footer';
+import Footer from './components/Student/Layout/Footer';
 import Home from './components/Student/Routes/Home';
 import MyCourse from './components/Student/Routes/MyCourse';
 import LearningProgress from './components/Student/Routes/LearningProgress';
@@ -18,9 +16,9 @@ import CourseReactJS from './components/Student/Routes/Course Information/Course
 import Learn1 from './components/Student/Routes/Course Information/Study Course/Learn1';
 
 import Headers from './components/Student/Layout/Header';
-import Sidebars from'./components/Lecturer/Layouts/Sidebar';
+import Sidebars from './components/Lecturer/Layouts/Sidebar';
 import Modals from './components/Lecturer/Layouts/Modal';
-import Homes from'./components/Lecturer/Routes/Homes';
+import Homes from './components/Lecturer/Routes/Homes';
 import CourseForm from './components/Lecturer/Routes/CourseForm';
 import CourseInfo from './components/Lecturer/Routes/CourseInfo';
 import CourseTable from './components/Lecturer/Routes/CourseTable';
@@ -37,81 +35,65 @@ import EditUserModal from './components/Admin/User/Function/Edit';
 import UserSearchForm from './components/Admin/User/Function/Search';
 import CourseManagement from './components/Admin/Course/CourseManagement';
 import AddCourse from './components/Admin/Course/Function/AddCourse';
-import ConfirmModalCousre from './components/Admin/Course/Function/Confirm';
+import ConfirmModalCourse from './components/Admin/Course/Function/Confirm';
 import EditCourse from './components/Admin/Course/Function/EditCourse';
 import SearchCourses from './components/Admin/Course/Function/Search';
 import Modala from './components/Admin/Course/Function/Modala';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false); // Replace with your actual authentication logic
+
   return (
     <Router>
-      <div className="app-wrapper">
-        <Sidebars />
-        <div className="content">
-          <Routes>
-            <Route
-              path="/homeg"
-              element={
-                <>
-                  <Headers title="Trang chủ giảng viên" />
-                  <Homes />
-                </>
-              }
-            />
-            <Route
-              path="/courses"
-              element={
-                <>
-                  <Headers title="Danh sách khóa học" />
-                  <CourseTable />
-                </>
-              }
-            />
-            <Route
-              path="/create-course"
-              element={
-                <>
-                  <Headers title="Tạo khóa học mới" />
-                  <CourseForm isEdit={false} />
-                </>
-              }
-            />
-            <Route
-              path="/edit-course/:id"
-              element={
-                <>
-                  <Headers title="Chỉnh sửa khóa học" />
-                  <Feature isEdit={true} />
-                </>
-              }
-            />
-            <Route
-              path="/course-info/:id"
-              element={
-                <>
-                  <Headers title="Thông tin khóa học" />
-                  <CourseInfo />
-                </>
-              }
-            />
-            <Route
-              path="/feedback"
-              element={
-                <>
-                  <Headers title="Phản hồi từ học viên" />
-                  <FeedbackList />
-                </>
-              }
-            />
-            <Route path="*" element={<Navigate to="/homeg" replace />} />
-          </Routes>
-        </div>
-      </div>
+      <Routes>
+        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route
+          path="/user-management"
+          element={
+            isAuthenticated ? (
+              <div className="app-container">
+                <Sidebara />
+                <div className="app-content">
+                  <Headera />
+                  <div className="main-content">
+                    <UserManagement />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route
+          path="/course-management"
+          element={
+            isAuthenticated ? (
+              <div className="app-container">
+                <Sidebara />
+                <div className="app-content">
+                  <Headera />
+                  <div className="main-content">
+                    <CourseManagement />
+                  </div>
+                </div>
+              </div>
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
+        <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
+      </Routes>
     </Router>
   );
 }
 
 export default App;
+
+
+
 
 
 /**            <Route path="/user-management" element={<UserManagement />} />
