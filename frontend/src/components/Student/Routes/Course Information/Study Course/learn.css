@@ -49,10 +49,11 @@
   background-color: #fff;
   position: relative;
   margin-left: 40px;
+  padding-top: 10px;
 }
 
 .learn1-content-list {
-  max-height: 567px;
+  max-height: 678px;
   overflow-y: auto;
   padding-top: 50px;
 }

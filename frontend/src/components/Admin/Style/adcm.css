@@ -1058,16 +1058,46 @@ th:first-child, td:first-child {
 }
 
 .add-new {
-  color: #28a745;
+  color: #F4B400;
   cursor: pointer;
-  display: flex;
-  align-items: center;
+  font-weight: bold;
   margin-bottom: 10px;
 }
 
-.add-new i {
-  margin-right: 5px;
+.remove-btn {
+  background-color: red;
+  color: white;
+  border: none;
+  cursor: pointer;
+  margin-left: 10px;
 }
+
+.save-btn, .cancel-btn {
+  background-color: #4CAF50;
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  margin-right: 10px;
+}
+
+.cancel-btn {
+  background-color: red;
+}
+
+.edit-course-input-group {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
+}
+
+input {
+  padding: 5px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  width: 80%;
+}
+
 
 .input-group {
   display: flex;
@@ -1255,4 +1285,83 @@ th:first-child, td:first-child {
 .instructor-modal .modal-footer button.cancel {
   background-color: #dc3545;
   color: white;
+}
+.lecture-item {
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  background-color: #f9f9f9;
+  cursor: move;
+  display: flex;
+  align-items: center;
+}
+
+.lecture-item:hover {
+  background-color: #f1f1f1;
+}
+
+.lecture-modal .modal-content {
+  width: 700px;
+}
+
+.lecture-edit-form .input-group {
+  margin-bottom: 15px;
+}
+
+.lecture-edit-form .input-group label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.lecture-edit-form .input-group input,
+.lecture-edit-form .input-group select {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  
+}
+
+.sort-btn {
+  color: #14d4ff;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: -10px;
+    width: 100px;
+    font-size: 16px;
+
+}
+
+.save-btn {
+  padding: 5px 10px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.save-btn:hover {
+  background-color: #0056b3;
+}
+
+.cancel-btn {
+  padding: 5px 10px;
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.cancel-btn:hover {
+  background-color: #c82333;
+}
+
+.remove-btn {
+  background: none;
+  border: none;
+  color: #dc3545;
+  cursor: pointer;
 }

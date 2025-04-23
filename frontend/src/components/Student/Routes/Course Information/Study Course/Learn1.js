@@ -4,7 +4,7 @@ import './learn.css';
 
 const Learn1 = () => {
   const [showNotes, setShowNotes] = useState(false);
-  const [newNote, setNewNote] = useState(''); // Note persists after saving
+  const [newNote, setNewNote] = useState('');
   const [showQA, setShowQA] = useState(false);
   const [showRating, setShowRating] = useState(false);
   const [completedLessons, setCompletedLessons] = useState(0);
@@ -15,66 +15,91 @@ const Learn1 = () => {
   const totalLessons = 10;
 
   useEffect(() => {
-    // Fetch progress data from API
-    fetch('https://api.example.com/progress')
+    // API: Fetch progress data for Learn1
+    fetch('https://api.example.com/progress/learn1')
       .then(response => response.json())
-      .then(data => setCompletedLessons(data.completedLessons))
-      .catch(error => console.error('Error fetching progress data:', error));
+      .then(data => {
+        console.log('Progress data for Learn1:', data);
+        setCompletedLessons(data.completedLessons || 0);
+      })
+      .catch(error => {
+        console.error('Error fetching progress data for Learn1:', error);
+        setCompletedLessons(0);
+      });
 
-    // Fetch comments data from API
-    fetch('https://api.example.com/comments')
+    // API: Fetch comments data for Learn1
+    fetch('https://api.example.com/comments/learn1')
       .then(response => response.json())
-      .then(data => setComments(data.comments))
-      .catch(error => console.error('Error fetching comments data:', error));
+      .then(data => {
+        console.log('Comments data for Learn1:', data);
+        setComments(data.comments || []);
+      })
+      .catch(error => console.error('Error fetching comments data for Learn1:', error));
+
+    // API: Fetch saved note for Learn1
+    fetch('https://api.example.com/notes/learn1')
+      .then(response => response.json())
+      .then(data => {
+        console.log('Note data for Learn1:', data);
+        setNewNote(data.note || '');
+      })
+      .catch(error => console.error('Error fetching note for Learn1:', error));
   }, []);
 
   const progressPercentage = (completedLessons / totalLessons) * 100;
 
-  const toggleNotes = () => {
-    setShowNotes(!showNotes);
-  };
-
-  const toggleQA = () => {
-    setShowQA(!showQA);
-  };
-
-  const toggleRating = () => {
-    setShowRating(!showRating);
-  };
+  const toggleNotes = () => setShowNotes(!showNotes);
+  const toggleQA = () => setShowQA(!showQA);
+  const toggleRating = () => setShowRating(!showRating);
 
   const handleAddComment = () => {
-    if (!newComment.trim()) return; // Prevent adding empty comments
+    if (!newComment.trim()) return;
     const newCommentData = {
       user: 'Current User',
       content: newComment,
       timestamp: new Date().toLocaleString(),
-      avatar: 'path_to_avatar_image.jpg', // Add avatar path
+      avatar: 'path_to_avatar_image.jpg',
     };
-    setComments((prevComments) => [...prevComments, newCommentData]);
-    setNewComment('');
+
+    // API: Save new comment for Learn1
+    fetch('https://api.example.com/comments/learn1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newCommentData),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Comment saved for Learn1:', data);
+        setComments((prevComments) => [...prevComments, newCommentData]);
+        setNewComment('');
+      })
+      .catch(error => console.error('Error saving comment for Learn1:', error));
   };
 
-  const handleRating = (rate) => {
-    setRating(rate);
-  };
+  const handleRating = (rate) => setRating(rate);
 
   const handleConfirmRating = () => {
-    // Log or handle rating and comment
     console.log('Rating:', rating, 'Comment:', comment);
-    // Optionally reset the rating and comment after confirmation
     setRating(0);
     setComment('');
-    toggleRating(); // Close the rating popup
+    toggleRating();
   };
 
   const handleSaveNote = () => {
-    // Handle saving the note
-    console.log('Saved Note:', newNote);
-    setShowNotes(false); // Close the notes section after saving
-    // Note is not cleared, so it persists
+    // API: Save note for Learn1
+    fetch('https://api.example.com/notes/learn1', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note: newNote }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Note saved for Learn1:', data);
+        setShowNotes(false);
+      })
+      .catch(error => console.error('Error saving note for Learn1:', error));
   };
 
-  // Course content list with lock icons
   const courseContent = [
     '1. Giới thiệu',
     '2. Lập trình ES6++',
@@ -85,11 +110,6 @@ const Learn1 = () => {
     '7. CSS, SCSS và CSS Modules',
     '8. React Router V6',
     '9. Redux (quản lý state)',
-    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
-    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
-    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
-    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
-    '10. Deploy ứng dụng lên Headde', '9. Redux (quản lý state)',
     '10. Deploy ứng dụng lên Headde',
   ];
 
@@ -106,7 +126,7 @@ const Learn1 = () => {
           </div>
           <div className="learn1-progress-notes-qa">
             <button onClick={toggleNotes} aria-label="Toggle Notes" className="notes-button">
-              <i className="fas fa-plus"></i> Thêm ghi chú 
+              <i className="fas fa-plus"></i> Thêm ghi chú
             </button>
             {showNotes && (
               <div className="notes-popup">
@@ -158,16 +178,19 @@ const Learn1 = () => {
           </div>
         </div>
 
-        {/* Navigation and Rating buttons section */}
         <div className="navigation-rating-buttons">
           <div className="navigation-buttons">
-            <Link to="/previous-lesson">
+            <Link to="/">
               <button aria-label="Previous Lesson" className="previous-button">
                 <i className="fas fa-arrow-left"></i> Bài trước
               </button>
             </Link>
-            <Link to="/next-lesson">
-              <button aria-label="Next Lesson" className="next-button">
+            <Link to="/learn2">
+              <button
+                aria-label="Next Lesson"
+                className="next-button"
+                onClick={() => console.log('Navigating to /learn2')}
+              >
                 Tiếp theo <i className="fas fa-arrow-right"></i>
               </button>
             </Link>
@@ -209,7 +232,7 @@ const Learn1 = () => {
             {courseContent.map((lesson, index) => (
               <li key={index}>
                 {lesson}
-                {index !== 0 && (
+                {index > completedLessons && (
                   <i className="fas fa-lock" style={{ marginLeft: '8px', color: '#888' }}></i>
                 )}
               </li>

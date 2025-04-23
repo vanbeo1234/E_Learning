@@ -1,42 +1,64 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom'; // Thêm useNavigate
-import '../Style/giangvien.css';
 
-const Headers = ({ title, isSearch = false }) => {
+import '../Style/giangvien.css';
+import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+
+const Header = ({ title, isSearch = false, userName }) => {
   const [showDropdown, setShowDropdown] = useState(false);
-  const navigate = useNavigate(); // Hook để điều hướng
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [notifications, setNotifications] = useState([]);
 
   const toggleDropdown = () => {
     setShowDropdown(!showDropdown);
   };
 
-  // Hàm xử lý đăng xuất
-  const handleLogout = () => {
-    // Xác nhận trước khi đăng xuất (tùy chọn)
-    const confirmLogout = window.confirm("Bạn có chắc chắn muốn đăng xuất không?");
-    if (!confirmLogout) return;
-
-    // Xóa trạng thái đăng nhập (ví dụ: xóa token từ localStorage)
-    localStorage.removeItem('authToken'); // Thay 'authToken' bằng key bạn đang dùng
-    // Nếu bạn dùng context hoặc Redux, hãy dispatch action để xóa trạng thái ở đây
-
-    // Điều hướng đến trang đăng nhập
-    navigate('/login');
+  const toggleNotifications = () => {
+    setShowNotifications(!showNotifications);
   };
+
+  // Function to add notifications
+  const addNotification = (message) => {
+    setNotifications((prevNotifications) => [...prevNotifications, message]);
+  };
+
+  // Simulating notification events for demonstration
+  useEffect(() => {
+    addNotification('Bài học mới đã được đăng tải!');
+    addNotification('Nhắc nhở: Lịch thi vào ngày mai!');
+    addNotification('Điểm bài tập mới đã có!');
+    addNotification('Hạn chót nộp bài tập đến gần!');
+    addNotification('Tin tức: Workshop mới sắp diễn ra!');
+    addNotification('Có người bình luận trong lớp học nhóm!');
+    addNotification('Nhắc nhở: Đăng nhập hàng ngày!');
+    addNotification('Cảnh báo: Sự cố kỹ thuật xảy ra!');
+  }, []);
 
   return (
     <div className="header">
       {isSearch ? <input type="text" placeholder="Tên khóa học" /> : <h1>{title}</h1>}
       <div className="user-info">
-        <i className="fas fa-bell"></i>
+        <i className="fas fa-bell" onClick={toggleNotifications}></i>
+        {showNotifications && (
+          <div className="notifications-dropdown">
+            {notifications.length === 0 ? (
+              <p>Không có thông báo mới</p>
+            ) : (
+              notifications.map((notification, index) => (
+                <p key={index}>{notification}</p>
+              ))
+            )}
+          </div>
+        )}
         <img alt="User profile" src="https://placehold.co/40x40" onClick={toggleDropdown} />
-        <span>Duc Daddy</span>
+        <span>{userName}</span>
         {showDropdown && (
           <div className="dropdown-menu">
             <button>Trang cá nhân</button>
             <button>Hỗ trợ</button>
             <button>Cài đặt</button>
-            <button onClick={handleLogout}>Đăng xuất</button> {/* Thêm onClick */}
+            <Link to="/login">
+              <button>Đăng xuất</button>
+            </Link>
           </div>
         )}
       </div>
@@ -44,4 +66,4 @@ const Headers = ({ title, isSearch = false }) => {
   );
 };
 
-export default Headers;
+export default Header;
