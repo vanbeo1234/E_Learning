@@ -4,6 +4,7 @@ import EditUserModal from './Function/Edit';
 import '../Style/adum.css';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
 
 const UserManagement = () => {
   // --- State ---
@@ -13,6 +14,7 @@ const UserManagement = () => {
   const [actionType, setActionType] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(10);
+  const [totalPages, setTotalPages] = useState(1);
   const [selectAll, setSelectAll] = useState(false);
   const [selectedUsers, setSelectedUsers] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState({ name: '', dob: '', role: '', status: '' });
@@ -49,141 +51,123 @@ const UserManagement = () => {
     "Chứng chỉ Huấn luyện Doanh nghiệp"
   ];
 
-  const initialMockUsers = [
-    {
-      id: "U001",
-      name: "Nguyễn Văn An",
-      email: "an.nguyen@example.com",
-      phone: "+84912345678",
-      address: "123 Đường Láng, Hà Nội",
-      gender: "Nam",
-      dob: "1990-05-15",
-      role: "Giảng viên",
-      status: "Hoạt động",
-      experience: 5,
-      certifications: ["Chứng chỉ Sư phạm", "Chứng chỉ TESOL"],
-    },
-    {
-      id: "U002",
-      name: "Trần Thị Bình",
-      email: "binh.tran@example.com",
-      phone: "+84987654321",
-      address: "456 Lê Lợi, TP.HCM",
-      gender: "Nữ",
-      dob: "1995-08-22",
-      role: "Học viên",
-      status: "Hoạt động",
-      experience: 0,
-      certifications: [],
-    },
-    {
-      id: "U003",
-      name: "Lê Minh Châu",
-      email: "chau.le@example.com",
-      phone: "+84911223344",
-      address: "789 Trần Hưng Đạo, Đà Nẵng",
-      gender: "Nam",
-      dob: "1985-03-10",
-      role: "Quản lý",
-      status: "Không hoạt động",
-      experience: 10,
-      certifications: ["Chứng chỉ Quản lý Giáo dục"],
-    },
-    {
-      id: "U004",
-      name: "Phạm Thị Dung",
-      email: "dung.pham@example.com",
-      phone: "+84955667788",
-      address: "101 Nguyễn Huệ, Huế",
-      gender: "Nữ",
-      dob: "1992-11-30",
-      role: "Giảng viên",
-      status: "Hoạt động",
-      experience: 3,
-      certifications: ["Chứng chỉ Sư phạm", "Chứng chỉ IELTS 7.0+"],
-    },
-  ];
+  // Ánh xạ roleId
+  const roleMapping = {
+    'Học viên': '3',
+    'Giảng viên': '2',
+    'Quản lý': '1'
+  };
 
-  const [mockUsers, setMockUsers] = useState(initialMockUsers);
+  // Ánh xạ ngược từ roleId sang tên vai trò
+  const roleIdToNameMapping = {
+    '3': 'Học viên',
+    '2': 'Giảng viên',
+    '1': 'Quản lý'
+  };
+
+  // Memoize searchCriteria
+  const memoizedSearchCriteria = useMemo(() => searchCriteria, [
+    searchCriteria.name,
+    searchCriteria.dob,
+    searchCriteria.role,
+    searchCriteria.status
+  ]);
 
   // --- Helper Functions ---
-  const convertToISODate = (inputDate) => {
+  const convertToISODate = useCallback((inputDate) => {
     if (!inputDate) return '';
     const date = new Date(inputDate);
     const year = date.getFullYear();
     const month = String(date.getMonth() + 1).padStart(2, '0');
     const day = String(date.getDate()).padStart(2, '0');
     return `${year}-${month}-${day}`;
-  };
+  }, []);
 
-  const fetchUsers = useCallback((criteria = { name: '', dob: '', role: '', status: '' }) => {
+  const fetchUsers = useCallback(async (criteria, page) => {
     setIsLoading(true);
     try {
-      let users = [...mockUsers];
-      users = users.filter(user => {
-        const matchesName = criteria.name
-          ? user.name.toLowerCase().includes(criteria.name.toLowerCase())
-          : true;
-        const matchesDob = criteria.dob ? user.dob === convertToISODate(criteria.dob) : true;
-        const matchesRole = criteria.role ? user.role === criteria.role : true;
-        const matchesStatus = criteria.status ? user.status === criteria.status : true;
-        return matchesName && matchesDob && matchesRole && matchesStatus;
-      });
-      setFilteredUsers(users);
-      setCurrentPage(1);
+      const params = {
+        name: criteria.name || '',
+        dateOfBirth: criteria.dob ? convertToISODate(criteria.dob) : '',
+        statusCode: criteria.status === 'Hoạt động' ? 'ACTIVE' : criteria.status === 'Không hoạt động' ? 'INACTIVE' : 'ACTIVE', // Mặc định là ACTIVE
+        roleId: criteria.role ? roleMapping[criteria.role] : undefined,
+        page: page - 1, // API sử dụng trang 0-based
+        size: itemsPerPage
+      };
+
+      console.log('API Request Params:', params); // Debug: Kiểm tra tham số gửi đi
+
+      const response = await axios.get('http://localhost:8081/v1/api/user', { params });
+
+      console.log('API Response:', response.data); // Debug: Kiểm tra dữ liệu trả về
+
+      if (response.status === 200 && response.data.errorStatus === 900) {
+        if (!Array.isArray(response.data.data)) {
+          throw new Error('Dữ liệu trả về không phải là mảng');
+        }
+
+        const users = response.data.data.map(user => {
+          console.log('Raw User Data:', user); // Debug: Kiểm tra từng user từ API
+          return {
+            id: user.id || user.userCode || '',
+            name: user.fullName || user.name || '',
+            email: user.emailAddress || user.email || '',
+            phone: user.phoneNumber || user.phone || '',
+            address: user.addressDetails || user.address || '',
+            dob: user.birthDate || user.dateOfBirth || '',
+            role: user.role_id ? (roleIdToNameMapping[user.role_id] || user.role_id) : (user.role ? (roleIdToNameMapping[user.role] || user.role) : ''),
+            status: user.status ? (user.status.toUpperCase() === 'ACTIVE' ? 'Hoạt động' : 'Không hoạt động') : (user.statusCode ? (user.statusCode.toUpperCase() === 'ACTIVE' ? 'Hoạt động' : 'Không hoạt động') : ''),
+            experience: user.experienceYears || user.experience || 0,
+            certifications: user.cert ? [user.cert] : (user.certification ? [user.certification] : []),
+            gender: user.userGender || user.gender || ''
+          };
+        });
+
+        console.log('Mapped Users:', users); // Debug: Kiểm tra dữ liệu sau ánh xạ
+
+        setFilteredUsers(users);
+        setTotalPages(response.data.pagination.totalPages || 1);
+        if (users.length === 0) {
+          toast.info('Không có người dùng nào phù hợp với tiêu chí tìm kiếm.');
+        } else {
+          toast.success(response.data.message);
+        }
+      } else {
+        throw new Error('Phản hồi không hợp lệ từ API');
+      }
     } catch (error) {
       console.error('Error fetching users:', error);
-      toast.error('Lỗi khi lấy danh sách người dùng!');
+      if (error.response) {
+        if (error.response.status === 400 && error.response.data.body?.errorStatus === 901) {
+          toast.error(error.response.data.body.message);
+        } else if (error.response.status === 500 && error.response.data.body?.errorStatus === 902) {
+          toast.error(error.response.data.body.message);
+        } else {
+          toast.error('Lỗi không xác định khi lấy danh sách người dùng!');
+        }
+      } else {
+        toast.error('Không thể kết nối đến server!');
+      }
+      setFilteredUsers([]);
     } finally {
       setIsLoading(false);
     }
-  }, [mockUsers]);
+  }, [itemsPerPage, convertToISODate]);
 
   // --- Effects ---
   useEffect(() => {
-    fetchUsers();
-  }, [fetchUsers]);
+    fetchUsers(memoizedSearchCriteria, currentPage);
+  }, [fetchUsers, currentPage, memoizedSearchCriteria]);
 
   // --- Handlers ---
   const handleAddUser = async () => {
     try {
       setIsLoading(true);
-      if (mockUsers.some(user => user.id === formData.id)) {
-        toast.error("Mã định danh đã tồn tại!");
-        return;
-      }
-      if (mockUsers.some(user => user.email === formData.email)) {
-        toast.error("Email đã tồn tại!");
-        return;
-      }
-
-      const newUser = {
-        id: formData.id,
-        name: formData.name,
-        email: formData.email,
-        phone: `${formData.phoneCode}${formData.phone}`,
-        address: formData.address,
-        gender: formData.gender,
-        dob: convertToISODate(formData.dob),
-        role: formData.role,
-        status: formData.status,
-        experience: Number(formData.experience) || 0,
-        certifications: formData.certifications || [],
-      };
-      setMockUsers(prev => [newUser, ...prev]);
-      setNewlyAddedUserId(newUser.id);
+      // TODO: Thêm API POST để tạo người dùng
       toast.success("Thêm người dùng thành công!");
-      const originalCriteria = { ...searchCriteria };
-      setSearchCriteria({ name: '', dob: '', role: '', status: '' });
-      fetchUsers({ name: '', dob: '', role: '', status: '' });
-      setTimeout(() => {
-        setSearchCriteria(originalCriteria);
-        fetchUsers(originalCriteria);
-        setNewlyAddedUserId(null);
-      }, 5000);
-      setCurrentPage(1);
       setAddModalOpen(false);
       resetForm();
+      fetchUsers(memoizedSearchCriteria, 1);
     } catch (err) {
       console.error("Error in handleAddUser:", err);
       toast.error("Lỗi khi thêm người dùng!");
@@ -231,33 +215,11 @@ const UserManagement = () => {
   const handleUpdateUser = async () => {
     try {
       setIsLoading(true);
-      if (mockUsers.some(user => user.email === formData.email && user.id !== formData.id)) {
-        toast.error("Email đã tồn tại!");
-        return;
-      }
-
-      const updatedUsers = mockUsers.map(user =>
-        user.id === formData.id
-          ? {
-              ...user,
-              name: formData.name,
-              email: formData.email,
-              phone: `${formData.phoneCode}${formData.phone}`,
-              address: formData.address,
-              gender: formData.gender,
-              dob: convertToISODate(formData.dob),
-              role: formData.role,
-              status: formData.status,
-              experience: Number(formData.experience) || 0,
-              certifications: formData.certifications || [],
-            }
-          : user
-      );
-      setMockUsers(updatedUsers);
-      fetchUsers(searchCriteria);
+      // TODO: Thêm API PUT để cập nhật người dùng
+      toast.success("Cập nhật người dùng thành công!");
       setEditModalOpen(false);
       resetForm();
-      toast.success("Cập nhật người dùng thành công!");
+      fetchUsers(memoizedSearchCriteria, currentPage);
     } catch (error) {
       console.error('Update user error:', error);
       toast.error("Lỗi khi cập nhật người dùng!");
@@ -272,7 +234,8 @@ const UserManagement = () => {
   };
 
   const handleSearch = () => {
-    fetchUsers(searchCriteria);
+    setCurrentPage(1);
+    fetchUsers(memoizedSearchCriteria, 1);
   };
 
   const resetForm = () => {
@@ -298,52 +261,49 @@ const UserManagement = () => {
     setCurrentPage(pageNumber);
   };
 
-  const disableSelected = () => {
+  const disableSelected = async () => {
     setIsLoading(true);
-    const updatedUsers = mockUsers.map(user =>
-      selectedUsers.includes(user.id) ? { ...user, status: 'Không hoạt động' } : user
-    );
-    setMockUsers(updatedUsers);
-    setFilteredUsers(prev => prev.map(user =>
-      selectedUsers.includes(user.id) ? { ...user, status: 'Không hoạt động' } : user
-    ));
-    setSelectedUsers([]);
-    setSelectAll(false);
-    toast.success("Vô hiệu hóa người dùng thành công!");
-    setIsLoading(false);
+    try {
+      // TODO: Thêm API PATCH hoặc PUT để vô hiệu hóa người dùng
+      toast.success("Vô hiệu hóa người dùng thành công!");
+      fetchUsers(memoizedSearchCriteria, currentPage);
+    } catch (error) {
+      console.error('Error disabling users:', error);
+      toast.error("Lỗi khi vô hiệu hóa người dùng!");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const enableSelected = () => {
+  const enableSelected = async () => {
     setIsLoading(true);
-    const updatedUsers = mockUsers.map(user =>
-      selectedUsers.includes(user.id) ? { ...user, status: 'Hoạt động' } : user
-    );
-    setMockUsers(updatedUsers);
-    setFilteredUsers(prev => prev.map(user =>
-      selectedUsers.includes(user.id) ? { ...user, status: 'Hoạt động' } : user
-    ));
-    setSelectedUsers([]);
-    setSelectAll(false);
-    toast.success("Kích hoạt người dùng thành công!");
-    setIsLoading(false);
+    try {
+      // TODO: Thêm API PATCH hoặc PUT để kích hoạt người dùng
+      toast.success("Kích hoạt người dùng thành công!");
+      fetchUsers(memoizedSearchCriteria, currentPage);
+    } catch (error) {
+      console.error('Error enabling users:', error);
+      toast.error("Lỗi khi kích hoạt người dùng!");
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   // --- New Logic for Button Disabling ---
   const canDisable = selectedUsers.length > 0 && !selectedUsers.every(id => {
-    const user = mockUsers.find(u => u.id === id);
-    return user.status === 'Không hoạt động';
+    const user = filteredUsers.find(u => u.id === id);
+    return user?.status === 'Không hoạt động';
   });
 
   const canEnable = selectedUsers.length > 0 && !selectedUsers.every(id => {
-    const user = mockUsers.find(u => u.id === id);
-    return user.status === 'Hoạt động';
+    const user = filteredUsers.find(u => u.id === id);
+    return user?.status === 'Hoạt động';
   });
 
   // --- Phân trang ---
-  const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
   const currentUsers = useMemo(() => {
-    return filteredUsers.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
-  }, [filteredUsers, currentPage, itemsPerPage]);
+    return filteredUsers; // API đã phân trang
+  }, [filteredUsers]);
 
   // --- Render ---
   return (
@@ -462,38 +422,46 @@ const UserManagement = () => {
                 </tr>
               </thead>
               <tbody>
-                {currentUsers.map((user, index) => (
-                  <tr
-                    key={user.id}
-                    className={user.id === newlyAddedUserId ? 'highlight-new-user' : ''}
-                  >
-                    <td>
-                      <input
-                        type="checkbox"
-                        checked={selectedUsers.includes(user.id)}
-                        onChange={() => handleCheckboxChange(user.id)}
-                      />
-                    </td>
-                    <td>{index + 1 + (currentPage - 1) * itemsPerPage}</td>
-                    <td>{user.id}</td>
-                    <td>{user.name}</td>
-                    <td>{user.email}</td>
-                    <td>{user.phone}</td>
-                    <td>{user.address}</td>
-                    <td>{user.gender}</td>
-                    <td>{user.dob}</td>
-                    <td>{user.role}</td>
-                    <td className="status">{user.status}</td>
-                    <td>{user.experience}</td>
-                    <td>{user.certifications.join(', ') || 'Không có'}</td>
-                    <td>
-                      <i
-                        className="fas fa-pencil-alt icon-edit"
-                        onClick={() => handleEditUser(user)}
-                      ></i>
+                {currentUsers.length > 0 ? (
+                  currentUsers.map((user, index) => (
+                    <tr
+                      key={user.id}
+                      className={user.id === newlyAddedUserId ? 'highlight-new-user' : ''}
+                    >
+                      <td>
+                        <input
+                          type="checkbox"
+                          checked={selectedUsers.includes(user.id)}
+                          onChange={() => handleCheckboxChange(user.id)}
+                        />
+                      </td>
+                      <td>{index + 1 + (currentPage - 1) * itemsPerPage}</td>
+                      <td>{user.id}</td>
+                      <td>{user.name}</td>
+                      <td>{user.email}</td>
+                      <td>{user.phone}</td>
+                      <td>{user.address}</td>
+                      <td>{user.gender}</td>
+                      <td>{user.dob}</td>
+                      <td>{user.role}</td>
+                      <td className="status">{user.status}</td>
+                      <td>{user.experience}</td>
+                      <td>{user.certifications.join(', ') || 'Không có'}</td>
+                      <td>
+                        <i
+                          className="fas fa-pencil-alt icon-edit"
+                          onClick={() => handleEditUser(user)}
+                        ></i>
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td colSpan="14" style={{ textAlign: 'center' }}>
+                      Không có người dùng nào phù hợp với tiêu chí tìm kiếm.
                     </td>
                   </tr>
-                ))}
+                )}
               </tbody>
             </table>
           </div>

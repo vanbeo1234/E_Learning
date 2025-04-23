@@ -39,59 +39,99 @@ import ConfirmModalCourse from './components/Admin/Course/Function/Confirm';
 import EditCourse from './components/Admin/Course/Function/EditCourse';
 import SearchCourses from './components/Admin/Course/Function/Search';
 import Modala from './components/Admin/Course/Function/Modala';
+import { CourseProvider } from './components/Admin/Course/Function/Context/CourseContext';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Replace with your actual authentication logic
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem('token')
+  );
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route
-          path="/user-management"
-          element={
-            isAuthenticated ? (
-              <div className="app-container">
-                <Sidebara />
-                <div className="app-content">
-                  <Headera />
-                  <div className="main-content">
-                    <UserManagement />
+    <CourseProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+          <Route
+            path="/user-management"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera />
+                    <div className="main-content">
+                      <UserManagement />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-        <Route
-          path="/course-management"
-          element={
-            isAuthenticated ? (
-              <div className="app-container">
-                <Sidebara />
-                <div className="app-content">
-                  <Headera />
-                  <div className="main-content">
-                    <CourseManagement />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/course-management"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera />
+                    <div className="main-content">
+                      <CourseManagement />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ) : (
-              <Navigate to="/login" />
-            )
-          }
-        />
-        <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
-      </Routes>
-    </Router>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/add-course"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera />
+                    <div className="main-content">
+                      <AddCourse />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/edit-course/:id"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera />
+                    <div className="main-content">
+                      <EditCourse />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
+        </Routes>
+      </Router>
+    </CourseProvider>
   );
 }
 
 export default App;
-
 
 
 

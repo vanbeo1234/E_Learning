@@ -1,10 +1,40 @@
 import React, { useState } from 'react';
 import '../../Style/adum.css';
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import axios from 'axios';
+
+// Tạo instance axios với cấu hình cơ bản
+const api = axios.create({
+  baseURL: 'http://localhost:8081/v1/api',
+});
+
+// Interceptor để thêm token vào mọi yêu cầu
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token'); // Sử dụng key 'token' như mã cũ
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+// Interceptor để xử lý lỗi token
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (error.response?.status === 400 && error.response?.data?.errorStatus === 907) {
+      toast.error('Token không hợp lệ. Vui lòng đăng nhập lại.');
+      localStorage.removeItem('token');
+      window.location.href = '/login'; // Chuyển hướng đến trang đăng nhập
+    }
+    return Promise.reject(error);
+  }
+);
 
 const AddUserModal = ({
   formData,
   setFormData,
-  handleAddUser,
+  handleAddUser, // Hàm này sẽ được gọi lại từ UserManagement
   setAddModalOpen,
   availableCertificates,
   addCertificate,
@@ -13,6 +43,17 @@ const AddUserModal = ({
   const [errors, setErrors] = useState({});
   const [selectedCertificate, setSelectedCertificate] = useState('');
 
+  // Hàm chuyển đổi ngày sang định dạng ISO (YYYY-MM-DD) để gửi API
+  const convertToISODate = (inputDate) => {
+    if (!inputDate) return '';
+    const date = new Date(inputDate);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  };
+
+  // Hàm xác thực form trước khi gửi
   const validateForm = () => {
     const newErrors = {};
     if (!formData.id?.trim()) newErrors.id = 'Mã định danh là bắt buộc';
@@ -40,7 +81,6 @@ const AddUserModal = ({
     if (!formData.gender) newErrors.gender = 'Giới tính là bắt buộc';
     if (!formData.status) newErrors.status = 'Trạng thái là bắt buộc';
 
-    // Validate date of birth (cannot be in the future)
     if (!formData.dob) {
       newErrors.dob = 'Ngày sinh là bắt buộc';
     } else if (new Date(formData.dob) > new Date()) {
@@ -72,16 +112,38 @@ const AddUserModal = ({
     return Object.keys(newErrors).length === 0;
   };
 
+  // Hàm xác thực dữ liệu sau khi thêm thành công
+  const validateResponseData = (responseData, sentData) => {
+    const errors = [];
+    // Kiểm tra các trường quan trọng
+    if (responseData.data?.userCode !== sentData.userCode) {
+      errors.push(`Mã định danh trả về (${responseData.data?.userCode}) không khớp với mã gửi (${sentData.userCode}).`);
+    }
+    if (responseData.data?.email !== sentData.email) {
+      errors.push(`Email trả về (${responseData.data?.email}) không khớp với email gửi (${sentData.email}).`);
+    }
+    if (responseData.data?.roleId !== sentData.roleId) {
+      errors.push(`Vai trò trả về (${responseData.data?.roleId}) không khớp với vai trò gửi (${sentData.roleId}).`);
+    }
+    if (responseData.data?.statusCode !== sentData.statusCode) {
+      errors.push(`Trạng thái trả về (${responseData.data?.statusCode}) không khớp với trạng thái gửi (${sentData.statusCode}).`);
+    }
+    return errors;
+  };
+
+  // Xử lý thay đổi số điện thoại (chỉ cho phép số, tối đa 15 chữ số)
   const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 15); // Limit to 15 digits
+    const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 15);
     setFormData({ ...formData, phone: value });
   };
 
+  // Xử lý thay đổi năm kinh nghiệm
   const handleExperienceChange = (e) => {
     const value = e.target.value;
     setFormData({ ...formData, experience: value === '' ? '' : Number(value) });
   };
 
+  // Xử lý chọn chứng chỉ
   const handleCertificateChange = (e) => {
     const value = e.target.value;
     setSelectedCertificate(value);
@@ -91,13 +153,61 @@ const AddUserModal = ({
     }
   };
 
-  const handleSubmit = (e) => {
+  // Xử lý gửi form
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (validateForm()) {
-      handleAddUser();
+      try {
+        const token = localStorage.getItem('token'); // Kiểm tra token
+        if (!token) {
+          toast.error('Vui lòng đăng nhập lại để tiếp tục.');
+          return;
+        }
+
+        const roleId = formData.role === 'Giảng viên' ? 2 : formData.role === 'Học viên' ? 3 : 1;
+        const body = {
+          userCode: formData.id,
+          name: formData.name,
+          email: formData.email,
+          password: formData.password,
+          confirmPassword: formData.confirmPassword || formData.password,
+          gender: formData.gender === 'Nam' ? 1 : 0,
+          dateOfBirth: convertToISODate(formData.dob),
+          address: formData.address,
+          phone: `${formData.phoneCode}${formData.phone}`,
+          roleId: roleId,
+          statusCode: formData.status === 'Hoạt động' ? 'ACTIVE' : 'INACTIVE',
+          certification: formData.certifications.join(','),
+          ...(roleId === 1 ? { createdBy: 'admin' } : {}),
+          ...(roleId === 2 ? { experience: formData.experience } : {}),
+        };
+
+        const { data } = await api.post('/auth/register', body);
+        console.warn('🧾 Registration response:\n', JSON.stringify(data, null, 2));
+
+        if (data.errorStatus === 900) {
+          // Xác thực dữ liệu trả về
+          const validationErrors = validateResponseData(data, body);
+          if (validationErrors.length > 0) {
+            toast.warn(`Thêm người dùng thành công nhưng có lỗi dữ liệu: ${validationErrors.join(' ')}`);
+          } else {
+            const roleName = formData.role === 'Giảng viên' ? 'Giảng viên' : formData.role === 'Học viên' ? 'Học viên' : 'Quản lý';
+            toast.success(`Đã thêm ${roleName} [${formData.id}] thành công!`);
+          }
+          setAddModalOpen(false);
+          handleReset();
+          handleAddUser(); // Gọi hàm từ UserManagement để làm mới danh sách
+        } else {
+          toast.error(data.message || 'Đăng ký thất bại!');
+        }
+      } catch (err) {
+        console.error('Error in handleAddUser:', err);
+        toast.error('Lỗi mạng hoặc server. Vui lòng thử lại.');
+      }
     }
   };
 
+  // Reset form
   const handleReset = () => {
     setFormData({
       id: '',
