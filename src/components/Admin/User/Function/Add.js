@@ -11,6 +11,7 @@ const AddUserModal = ({
   removeCertificate,
 }) => {
   const [errors, setErrors] = useState({});
+  const [selectedCertificate, setSelectedCertificate] = useState('');
 
   const validateForm = () => {
     const newErrors = {};
@@ -38,23 +39,33 @@ const AddUserModal = ({
 
     if (!formData.gender) newErrors.gender = 'Giới tính là bắt buộc';
     if (!formData.status) newErrors.status = 'Trạng thái là bắt buộc';
-    if (!formData.dob) newErrors.dob = 'Ngày sinh là bắt buộc';
+
+    // Validate date of birth (cannot be in the future)
+    if (!formData.dob) {
+      newErrors.dob = 'Ngày sinh là bắt buộc';
+    } else if (new Date(formData.dob) > new Date()) {
+      newErrors.dob = 'Ngày sinh không thể là ngày trong tương lai';
+    }
+
     if (!formData.role) newErrors.role = 'Vai trò là bắt buộc';
 
     const phoneRegex = /^[0-9]{9,15}$/;
     if (!formData.phone?.trim()) {
       newErrors.phone = 'Số điện thoại là bắt buộc';
     } else if (!phoneRegex.test(formData.phone)) {
-      newErrors.phone = 'Số điện thoại không hợp lệ (chỉ nhập số, 9-15 chữ số)';
+      newErrors.phone = 'Số điện thoại không hợp lệ (9-15 chữ số)';
     }
 
-    if (!formData.address?.trim()) {
-      newErrors.address = 'Địa chỉ là bắt buộc';
-    }
+    if (!formData.phoneCode) newErrors.phoneCode = 'Mã vùng điện thoại là bắt buộc';
+    if (!formData.address?.trim()) newErrors.address = 'Địa chỉ là bắt buộc';
 
     if (formData.role === 'Giảng viên') {
-      if (!formData.experience) newErrors.experience = 'Năm kinh nghiệm là bắt buộc';
-      if (!formData.certifications?.length) newErrors.certifications = 'Phải chọn ít nhất một chứng chỉ';
+      if (formData.experience === '' || formData.experience === null || formData.experience === undefined) {
+        newErrors.experience = 'Năm kinh nghiệm là bắt buộc';
+      }
+      if (!formData.certifications?.length) {
+        newErrors.certifications = 'Phải chọn ít nhất một chứng chỉ';
+      }
     }
 
     setErrors(newErrors);
@@ -62,8 +73,22 @@ const AddUserModal = ({
   };
 
   const handlePhoneChange = (e) => {
-    const value = e.target.value.replace(/[^0-9]/g, ''); // Only allow numbers
+    const value = e.target.value.replace(/[^0-9]/g, '').slice(0, 15); // Limit to 15 digits
     setFormData({ ...formData, phone: value });
+  };
+
+  const handleExperienceChange = (e) => {
+    const value = e.target.value;
+    setFormData({ ...formData, experience: value === '' ? '' : Number(value) });
+  };
+
+  const handleCertificateChange = (e) => {
+    const value = e.target.value;
+    setSelectedCertificate(value);
+    if (value) {
+      addCertificate(value);
+      setSelectedCertificate('');
+    }
   };
 
   const handleSubmit = (e) => {
@@ -73,7 +98,6 @@ const AddUserModal = ({
     }
   };
 
-  // Hàm reset form tùy chọn
   const handleReset = () => {
     setFormData({
       id: '',
@@ -84,14 +108,15 @@ const AddUserModal = ({
       phone: '',
       phoneCode: '+84',
       gender: '',
-      status: '',
+      status: 'Hoạt động',
       dob: '',
       role: '',
       address: '',
       certifications: [],
-      experience: '',
+      experience: 0,
     });
     setErrors({});
+    setSelectedCertificate('');
   };
 
   return (
@@ -102,7 +127,9 @@ const AddUserModal = ({
         <form className="modal-form" onSubmit={handleSubmit}>
           <div className="modal-grid">
             <div className="modal-grid-item">
-              <label className="field-label">Mã định danh:</label>
+              <label className="field-label" title="Mã định danh duy nhất cho người dùng">
+                Mã định danh:
+              </label>
               <input
                 type="text"
                 name="id"
@@ -110,10 +137,13 @@ const AddUserModal = ({
                 onChange={(e) => setFormData({ ...formData, id: e.target.value })}
                 required
               />
+              {errors.id && <span className="error">{errors.id}</span>}
             </div>
 
             <div className="modal-grid-item">
-              <label className="field-label">Họ và tên:</label>
+              <label className="field-label" title="Họ và tên đầy đủ của người dùng">
+                Họ và tên:
+              </label>
               <input
                 type="text"
                 name="name"
@@ -121,10 +151,13 @@ const AddUserModal = ({
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                 required
               />
+              {errors.name && <span className="error">{errors.name}</span>}
             </div>
 
             <div className="modal-grid-item">
-              <label className="field-label">Mật khẩu:</label>
+              <label className="field-label" title="Mật khẩu phải có ít nhất 6 ký tự">
+                Mật khẩu:
+              </label>
               <input
                 type="password"
                 name="password"
@@ -136,19 +169,9 @@ const AddUserModal = ({
             </div>
 
             <div className="modal-grid-item">
-              <label className="field-label">Email:</label>
-              <input
-                type="email"
-                name="email"
-                value={formData.email || ''}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                required
-              />
-              {errors.email && <span className="error">{errors.email}</span>}
-            </div>
-
-            <div className="modal-grid-item">
-              <label className="field-label">Xác nhận mật khẩu:</label>
+              <label className="field-label" title="Xác nhận mật khẩu phải khớp với mật khẩu">
+                Xác nhận mật khẩu:
+              </label>
               <input
                 type="password"
                 name="confirmPassword"
@@ -159,8 +182,24 @@ const AddUserModal = ({
               {errors.confirmPassword && <span className="error">{errors.confirmPassword}</span>}
             </div>
 
+            <div className="modal-grid-item">
+              <label className="field-label" title="Email hợp lệ để liên hệ">
+                Email:
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email || ''}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                required
+              />
+              {errors.email && <span className="error">{errors.email}</span>}
+            </div>
+
             <div className="modal-grid-item full-width">
-              <label className="field-label">Số điện thoại:</label>
+              <label className="field-label" title="Số điện thoại từ 9-15 chữ số">
+                Số điện thoại:
+              </label>
               <div className="phone-input-group">
                 <select
                   className="phone-code-select"
@@ -178,7 +217,7 @@ const AddUserModal = ({
                   <option value="+91">+91</option>
                 </select>
                 <input
-                  type="number"
+                  type="text"
                   name="phone"
                   className="phone-number-input"
                   value={formData.phone || ''}
@@ -187,10 +226,13 @@ const AddUserModal = ({
                 />
               </div>
               {errors.phone && <span className="error">{errors.phone}</span>}
+              {errors.phoneCode && <span className="error">{errors.phoneCode}</span>}
             </div>
 
             <div className="modal-grid-item horizontal-field">
-              <label className="field-label">Giới tính:</label>
+              <label className="field-label" title="Chọn giới tính của người dùng">
+                Giới tính:
+              </label>
               <div className="inline-options">
                 <label>
                   <input
@@ -219,7 +261,9 @@ const AddUserModal = ({
             </div>
 
             <div className="modal-grid-item horizontal-field">
-              <label className="field-label">Trạng thái:</label>
+              <label className="field-label" title="Trạng thái hoạt động của người dùng">
+                Trạng thái:
+              </label>
               <div className="inline-options">
                 <label>
                   <input
@@ -248,7 +292,9 @@ const AddUserModal = ({
             </div>
 
             <div className="modal-grid-item">
-              <label className="field-label">Vai trò:</label>
+              <label className="field-label" title="Vai trò của người dùng trong hệ thống">
+                Vai trò:
+              </label>
               <select
                 name="role"
                 value={formData.role || ''}
@@ -264,7 +310,9 @@ const AddUserModal = ({
             </div>
 
             <div className="modal-grid-item">
-              <label className="field-label">Ngày sinh:</label>
+              <label className="field-label" title="Ngày sinh không thể là ngày trong tương lai">
+                Ngày sinh:
+              </label>
               <input
                 type="date"
                 name="dob"
@@ -276,7 +324,9 @@ const AddUserModal = ({
             </div>
 
             <div className="modal-grid-item">
-              <label className="field-label">Địa chỉ:</label>
+              <label className="field-label" title="Địa chỉ hiện tại của người dùng">
+                Địa chỉ:
+              </label>
               <input
                 type="text"
                 name="address"
@@ -290,12 +340,23 @@ const AddUserModal = ({
             {formData.role === 'Giảng viên' && (
               <>
                 <div className="modal-grid-item">
-                  <label className="field-label">Chứng chỉ:</label>
+                  <label className="field-label" title="Chọn các chứng chỉ của giảng viên">
+                    Chứng chỉ:
+                  </label>
                   <div className="certifications">
-                    <select onChange={(e) => addCertificate(e.target.value)} defaultValue="" required>
+                    <select
+                      value={selectedCertificate}
+                      onChange={handleCertificateChange}
+                    >
                       <option value="" disabled>Chọn chứng chỉ</option>
                       {availableCertificates.map((cert, i) => (
-                        <option key={i} value={cert}>{cert}</option>
+                        <option
+                          key={i}
+                          value={cert}
+                          disabled={formData.certifications.includes(cert)}
+                        >
+                          {cert}
+                        </option>
                       ))}
                     </select>
                     <div className="certificate-list">
@@ -311,16 +372,18 @@ const AddUserModal = ({
                 </div>
 
                 <div className="modal-grid-item">
-                  <label className="field-label">Năm kinh nghiệm:</label>
+                  <label className="field-label" title="Số năm kinh nghiệm giảng dạy">
+                    Năm kinh nghiệm:
+                  </label>
                   <select
                     name="experience"
-                    value={formData.experience || ''}
-                    onChange={(e) => setFormData({ ...formData, experience: e.target.value })}
+                    value={formData.experience ?? ''}
+                    onChange={handleExperienceChange}
                     required
                   >
                     <option value="">-- Chọn số năm --</option>
                     {[...Array(20).keys()].map((year) => (
-                      <option key={year + 1} value={year + 1}>{year + 1}</option>
+                      <option key={year} value={year}>{year}</option>
                     ))}
                   </select>
                   {errors.experience && <span className="error">{errors.experience}</span>}

@@ -11,6 +11,11 @@ const Feature = ({ isEdit }) => {
   const [coverImage, setCoverImage] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
+  const [category, setCategory] = useState('');
+  const [duration, setDuration] = useState('');
+  const [instructor, setInstructor] = useState('');
+  const [courseVideo, setCourseVideo] = useState('');
+  const [learnWhatYouGet, setLearnWhatYouGet] = useState([]);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
   const [errors, setErrors] = useState({});
@@ -18,7 +23,6 @@ const Feature = ({ isEdit }) => {
   const { state } = useLocation();
   const navigate = useNavigate();
 
-  // Load course data for editing
   useEffect(() => {
     if (isEdit && state?.course) {
       const course = state.course;
@@ -29,49 +33,13 @@ const Feature = ({ isEdit }) => {
       setCoverImage(course.image || null);
       setStartDate(course.startDate || '');
       setEndDate(course.endDate || '');
+      setCategory(course.category || '');
+      setDuration(course.duration || '');
+      setInstructor(course.instructor || '');
+      setCourseVideo(course.courseVideo || '');
+      setLearnWhatYouGet(course.learnWhatYouGet || []);
     }
   }, [isEdit, state]);
-
-  const handleAddObjective = () => {
-    setObjectives([...objectives, '']);
-  };
-
-  const handleRemoveObjective = (index) => {
-    setObjectives(objectives.filter((_, i) => i !== index));
-  };
-
-  const handleObjectiveChange = (index, value) => {
-    const newObjectives = [...objectives];
-    newObjectives[index] = value;
-    setObjectives(newObjectives);
-  };
-
-  const handleAddLecture = () => {
-    setLectures([...lectures, { order: '', name: '', video: '', document: '', videoType: 'url' }]);
-  };
-
-  const handleRemoveLecture = (index) => {
-    setLectures(lectures.filter((_, i) => i !== index));
-  };
-
-  const handleLectureChange = (index, field, value) => {
-    const updatedLectures = [...lectures];
-    updatedLectures[index][field] = value;
-    setLectures(updatedLectures);
-  };
-
-  const handleFileUpload = (index, file) => {
-    const updatedLectures = [...lectures];
-    updatedLectures[index].video = file ? URL.createObjectURL(file) : '';
-    setLectures(updatedLectures);
-  };
-
-  const handleCoverImageChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setCoverImage(URL.createObjectURL(file));
-    }
-  };
 
   const validateForm = () => {
     const newErrors = {};
@@ -82,11 +50,23 @@ const Feature = ({ isEdit }) => {
     if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
       newErrors.dateRange = 'Ngày bắt đầu phải trước ngày kết thúc';
     }
+    if (!coverImage) newErrors.coverImage = 'Ảnh bìa là bắt buộc';
+    if (!category.trim()) newErrors.category = 'Danh mục là bắt buộc';
+    if (!duration.trim()) newErrors.duration = 'Thời lượng là bắt buộc';
+    if (!instructor.trim()) newErrors.instructor = 'Tên giảng viên là bắt buộc';
+    if (objectives.length === 0) newErrors.objectives = 'Mục tiêu là bắt buộc';
+    if (lectures.length === 0) newErrors.lectures = 'Ít nhất một bài giảng phải có';
+    if (learnWhatYouGet.length === 0) newErrors.learnWhatYouGet = 'Ít nhất một mục "Học được gì" phải có';
+
     lectures.forEach((lecture, index) => {
       if (!lecture.name.trim()) {
         newErrors[`lectureName${index}`] = 'Tên bài giảng là bắt buộc';
       }
+      if (!lecture.video && !lecture.document) {
+        newErrors[`lectureFile${index}`] = 'Phải có ít nhất một file video hoặc tài liệu';
+      }
     });
+
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -104,8 +84,15 @@ const Feature = ({ isEdit }) => {
         endDate,
         creationDate: isEdit ? state.course.creationDate : new Date().toISOString().split('T')[0],
         status: 'Hoạt động',
-        instructor: state?.course?.instructor || 'Giảng viên',
+        instructor,
         lessons: lectures.length,
+        category,
+        duration,
+        courseContent: lectures.map((lecture) => ({ title: lecture.name })),
+        courseInfo: { title: courseName, description: courseContent },
+        courseVideo: courseVideo || 'https://www.youtube.com/embed/sampleVideo',
+        courseDateTime: { date: startDate, time: '08:00 AM' },
+        learnWhatYouGet,
       };
 
       const existingCourses = JSON.parse(localStorage.getItem('courses') || '[]');
@@ -139,6 +126,61 @@ const Feature = ({ isEdit }) => {
     setShowCancelModal(false);
   };
 
+  const handleAddObjective = () => {
+    setObjectives([...objectives, '']);
+  };
+
+  const handleRemoveObjective = (index) => {
+    setObjectives(objectives.filter((_, i) => i !== index));
+  };
+
+  const handleObjectiveChange = (index, value) => {
+    const newObjectives = [...objectives];
+    newObjectives[index] = value;
+    setObjectives(newObjectives);
+  };
+
+  const handleAddLearnWhatYouGet = () => {
+    setLearnWhatYouGet([...learnWhatYouGet, '']);
+  };
+
+  const handleRemoveLearnWhatYouGet = (index) => {
+    setLearnWhatYouGet(learnWhatYouGet.filter((_, i) => i !== index));
+  };
+
+  const handleLearnWhatYouGetChange = (index, value) => {
+    const newLearnWhatYouGet = [...learnWhatYouGet];
+    newLearnWhatYouGet[index] = value;
+    setLearnWhatYouGet(newLearnWhatYouGet);
+  };
+
+  const handleAddLecture = () => {
+    setLectures([...lectures, { order: '', name: '', video: '', document: '', videoType: 'url' }]);
+  };
+
+  const handleRemoveLecture = (index) => {
+    setLectures(lectures.filter((_, i) => i !== index));
+  };
+
+  const handleLectureChange = (index, field, value) => {
+    const updatedLectures = [...lectures];
+    updatedLectures[index][field] = value;
+    setLectures(updatedLectures);
+  };
+
+  const handleFileUpload = (index, file) => {
+    const updatedLectures = [...lectures];
+    updatedLectures[index].video = file ? URL.createObjectURL(file) : '';
+    setLectures(updatedLectures);
+  };
+
+  const handleCoverImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setCoverImage(URL.createObjectURL(file));
+    }
+  };
+
   return (
     <div className="course-details">
       <div className="section">
@@ -166,6 +208,45 @@ const Feature = ({ isEdit }) => {
           />
           {errors.courseContent && <span className="error">{errors.courseContent}</span>}
         </div>
+        <div className="input-group">
+          <label htmlFor="category">Danh mục<span style={{ color: 'red' }}>*</span></label>
+          <input
+            type="text"
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          />
+          {errors.category && <span className="error">{errors.category}</span>}
+        </div>
+        <div className="input-group">
+          <label htmlFor="duration">Thời lượng<span style={{ color: 'red' }}>*</span></label>
+          <input
+            type="text"
+            id="duration"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+          />
+          {errors.duration && <span className="error">{errors.duration}</span>}
+        </div>
+        <div className="input-group">
+          <label htmlFor="instructor">Giảng viên<span style={{ color: 'red' }}>*</span></label>
+          <input
+            type="text"
+            id="instructor"
+            value={instructor}
+            onChange={(e) => setInstructor(e.target.value)}
+          />
+          {errors.instructor && <span className="error">{errors.instructor}</span>}
+        </div>
+        <div className="input-group">
+          <label htmlFor="course-video">Video giới thiệu</label>
+          <input
+            type="text"
+            id="course-video"
+            value={courseVideo}
+            onChange={(e) => setCourseVideo(e.target.value)}
+          />
+        </div>
       </div>
       <div className="section">
         <h2>Mục tiêu</h2>
@@ -186,6 +267,28 @@ const Feature = ({ isEdit }) => {
             </button>
           </div>
         ))}
+        {errors.objectives && <span className="error">{errors.objectives}</span>}
+      </div>
+      <div className="section">
+        <h2>Học được gì</h2>
+        <div className="add-new" onClick={handleAddLearnWhatYouGet}>
+          <i className="fas fa-plus"></i>
+          <span>Thêm mới</span>
+        </div>
+        {learnWhatYouGet.map((item, index) => (
+          <div className="input-group" key={index}>
+            <input
+              type="text"
+              placeholder="Nhập nội dung học được"
+              value={item}
+              onChange={(e) => handleLearnWhatYouGetChange(index, e.target.value)}
+            />
+            <button className="remove-btn" onClick={() => handleRemoveLearnWhatYouGet(index)}>
+              <i className="fas fa-trash"></i>
+            </button>
+          </div>
+        ))}
+        {errors.learnWhatYouGet && <span className="error">{errors.learnWhatYouGet}</span>}
       </div>
       <div className="section">
         <h2>Nội dung khóa học</h2>
@@ -259,19 +362,22 @@ const Feature = ({ isEdit }) => {
               <input
                 type="text"
                 id={`document-${index}`}
-                placeholder="Tải lên tài liệu"
+                placeholder="Nhập đường dẫn tài liệu"
                 value={lecture.document}
                 onChange={(e) => handleLectureChange(index, 'document', e.target.value)}
               />
             </div>
             <div className="buttons">
-              <button className="save-btn">Lưu</button>
               <button className="cancel-btn" onClick={() => handleRemoveLecture(index)}>
                 Xóa
               </button>
             </div>
+            {errors[`lectureFile${index}`] && (
+              <span className="error">{errors[`lectureFile${index}`]}</span>
+            )}
           </div>
         ))}
+        {errors.lectures && <span className="error">{errors.lectures}</span>}
       </div>
       <div className="section">
         <h2>Ảnh bìa</h2>
@@ -293,6 +399,7 @@ const Feature = ({ isEdit }) => {
             id="cover-image-upload"
           />
         </div>
+        {errors.coverImage && <span className="error">{errors.coverImage}</span>}
       </div>
       <div className="learning-time-section">
         <h2>Thời gian học</h2>
@@ -332,7 +439,6 @@ const Feature = ({ isEdit }) => {
           Hủy
         </button>
       </div>
-
       <Modal
         show={showSuccessModal}
         title={isEdit ? 'Cập nhật khóa học thành công' : 'Thêm khóa học thành công'}

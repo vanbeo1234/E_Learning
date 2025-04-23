@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
 import Login from './components/Page/Login';
 import Signup from './components/Page/Signup';
-import Welcome from './components/Page/Welcome';
+import Welcome from'./components/Page/Welcome';
 // Student Components
 import Sidebar from './components/Student/Layout/Sidebar';
 import Header from './components/Student/Layout/Header';
@@ -15,10 +15,10 @@ import Article from './components/Student/Routes/Article';
 import CourseReactJS from './components/Student/Routes/Course Information/CourseReactJS';
 import Learn1 from './components/Student/Routes/Course Information/Study Course/Learn1';
 import Learn2 from './components/Student/Routes/Course Information/Study Course/Learn2';
-
-// Lecturer Components  
+import Learn3 from './components/Student/Routes/Course Information/Study Course/Learn3';
+// Lecturer Components
 import Sidebars from './components/Lecturer/Layouts/Sidebar';
-import Headers from './components/Lecturer/Layouts/Header';
+import Headers from'./components/Lecturer/Layouts/Header';
 import Homes from './components/Lecturer/Routes/Homes';
 import CourseForm from './components/Lecturer/Routes/CourseForm';
 import CourseInfo from './components/Lecturer/Routes/CourseInfo';
@@ -31,131 +31,65 @@ import Feature from './components/Lecturer/Routes/Feature';
 import Headera from './components/Admin/Layout/Headera';
 import Sidebara from './components/Admin/Layout/Sidebara';
 import UserManagement from './components/Admin/User/UserManagement';
+import AddUserModal from './components/Admin/User/Function/Add';
+import ConfirmModal from './components/Admin/Course/Function/Confirm';
+import EditUserModal from './components/Admin/User/Function/Edit';
+import UserSearchForm from './components/Admin/User/Function/Search';
 import CourseManagement from './components/Admin/Course/CourseManagement';
+import AddCourse from './components/Admin/Course/Function/AddCourse';
+import ConfirmModalCousre from './components/Admin/Course/Function/Confirm';
+import EditCourse from './components/Admin/Course/Function/EditCourse';
+import SearchCourses from './components/Admin/Course/Function/Search';
+import Modala from './components/Admin/Course/Function/Modala';
+import { CourseProvider } from './components/Admin/Course/Function/Context/CourseContext';
+
+
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Add authentication state
-  const [courses, setCourses] = useState([
-    {
-      id: 1,
-      courseName: 'Java Core',
-      instructor: 'Nguyễn Văn A',
-      lessons: 20,
-      description: 'Cung cấp kiến thức cơ bản về OOP, design pattern',
-      startDate: '2023-01-01',
-      endDate: '2023-03-31',
-      status: 'Hoạt động',
-      objectives: [],
-      lectures: [],
-      coverImage: null,
-      students: []
-    },
-    {
-      id: 2,
-      courseName: 'ReactJS',
-      instructor: 'Trần Thị B',
-      lessons: 15,
-      description: 'Học cách xây dựng ứng dụng với ReactJS',
-      startDate: '2023-02-01',
-      endDate: '2023-04-30',
-      status: 'Không hoạt động',
-      objectives: [],
-      lectures: [],
-      coverImage: null,
-      students: []
-    }
-  ]);
-
-  const [users, setUsers] = useState([
-    {
-      id: 1,
-      userCode: 'user001',
-      name: 'Nguyễn Văn A',
-      email: 'nguyenvana@example.com',
-      role: 'Instructor',
-      status: 'Active'
-    },
-    {
-      id: 2,
-      userCode: 'user002',
-      name: 'Trần Thị B',
-      email: 'tranb@example.com',
-      role: 'Student',
-      status: 'Disabled'
-    }
-  ]);
-
-  const addCourse = (newCourse) => {
-    setCourses((prevCourses) => [...prevCourses, newCourse]);
-  };
-
-  const updateCourse = (updatedCourse) => {
-    setCourses((prevCourses) =>
-      prevCourses.map((course) =>
-        course.id === updatedCourse.id ? updatedCourse : course
-      )
-    );
-  };
-
-  const addUser = (newUser) => {
-    setUsers((prevUsers) => [...prevUsers, newUser]);
-  };
-
-  const updateUser = (updatedUser) => {
-    setUsers((prevUsers) =>
-      prevUsers.map((user) =>
-        user.id === updatedUser.id ? updatedUser : user
-      )
-    );
-  };
-
   return (
     <Router>
-      <Routes>
-        <Route path="/login" element={
-          isAuthenticated ? 
-            <Navigate to="/user-management" /> : 
-            <Login setIsAuthenticated={setIsAuthenticated} />
-        } />
-        <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
-        
-        {/* Protected Routes */}
-        {isAuthenticated && (
-          <>
-            <Route path="/user-management" element={
-              <div className="app-container">
-                <Sidebara />
-                <div className="app-content">
-                  <Headera />
-                  <UserManagement />
-                </div>
-              </div>
-            } />
-            
-            <Route path="/course-management" element={
-              <div className="app-container">
-                <Sidebara />
-                <div className="app-content">
-                  <Headera />
-                  <CourseManagement />
-                </div>
-              </div>
-            } />
-            
-            {/* Add other authenticated routes here */}
-          </>
-        )}
-
-        <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
-      </Routes>
+      <div className="app-wrapper">
+          <Sidebars />
+          <div className="content">
+            <Routes>
+              <Route
+                path="/homeg"
+                element={<><Headers title="Trang chủ giảng viên" /><Homes /></>}
+              />
+              <Route
+                path="/courses"
+                element={<><Headers title="Danh sách khóa học" /><CourseTable /></>}
+              />
+              <Route
+                path="/create-course"
+                element={<><Headers title="Tạo khóa học mới" /><CourseForm isEdit={false} /></>}
+              />
+              <Route
+                path="/edit-course/:id"
+                element={<><Headers title="Chỉnh sửa khóa học" /><Feature isEdit={true} /></>}
+              />
+              <Route
+                path="/course-info/:id"
+                element={<><Headers title="Thông tin khóa học" /><CourseInfo /></>}
+              />
+              <Route
+                path="/feedback"
+                element={<><Headers title="Phản hồi từ học viên" /><FeedbackList /></>}
+              />
+              <Route path="*" element={<Navigate to="/homeg" />} />
+            </Routes>
+          </div>
+        </div>
     </Router>
   );
 }
 
+// Make sure you're exporting the App component by default
 export default App;
 
 
-/**          function App() {
+
+/**     function App() {
   const [courses, setCourses] = useState([
     {
       id: 1,
@@ -231,6 +165,7 @@ export default App;
   };
 
   return (
+    <CourseProvider>
     <Router>
       <div className="container">
         <Sidebara />
@@ -249,10 +184,13 @@ export default App;
         </div>
       </div>
     </Router>
+    </CourseProvider>
   );
 }
 
 export default App;
+
+
 */
 
 
@@ -427,6 +365,8 @@ function AppContent() {
             <Route path="/article" element={<Article />} />
             <Route path="/course/:courseId" element={<CourseReactJS courses={courses} />} />
             <Route path="/learn1" element={<Learn1 />} />
+            <Route path="/learn2" element={<Learn2 />} />
+            <Route path="/learn3" element={<Learn3 />} />
 
             <Route path="/lecturer/home" element={<Homes />} />
             <Route path="/lecturer/course-form" element={<CourseForm />} />

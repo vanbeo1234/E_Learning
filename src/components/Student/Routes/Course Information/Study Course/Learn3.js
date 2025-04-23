@@ -2,12 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './learn.css';
 
-const Learn1 = () => {
+const Learn3 = () => {
   const [showNotes, setShowNotes] = useState(false);
   const [newNote, setNewNote] = useState('');
   const [showQA, setShowQA] = useState(false);
   const [showRating, setShowRating] = useState(false);
-  const [completedLessons, setCompletedLessons] = useState(0);
+  const [completedLessons, setCompletedLessons] = useState(2);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [rating, setRating] = useState(0);
@@ -15,35 +15,35 @@ const Learn1 = () => {
   const totalLessons = 10;
 
   useEffect(() => {
-    // API: Fetch progress data for Learn1
-    fetch('https://api.example.com/progress/learn1')
+    // API: Fetch progress data for Learn3
+    fetch('https://api.example.com/progress/learn3')
       .then(response => response.json())
       .then(data => {
-        console.log('Progress data for Learn1:', data);
-        setCompletedLessons(data.completedLessons || 0);
+        console.log('Progress data for Learn3:', data);
+        setCompletedLessons(data.completedLessons || 2);
       })
       .catch(error => {
-        console.error('Error fetching progress data for Learn1:', error);
-        setCompletedLessons(0);
+        console.error('Error fetching progress data for Learn3:', error);
+        setCompletedLessons(2);
       });
 
-    // API: Fetch comments data for Learn1
-    fetch('https://api.example.com/comments/learn1')
+    // API: Fetch comments data for Learn3
+    fetch('https://api.example.com/comments/learn3')
       .then(response => response.json())
       .then(data => {
-        console.log('Comments data for Learn1:', data);
+        console.log('Comments data for Learn3:', data);
         setComments(data.comments || []);
       })
-      .catch(error => console.error('Error fetching comments data for Learn1:', error));
+      .catch(error => console.error('Error fetching comments data for Learn3:', error));
 
-    // API: Fetch saved note for Learn1
-    fetch('https://api.example.com/notes/learn1')
+    // API: Fetch saved note for Learn3
+    fetch('https://api.example.com/notes/learn3')
       .then(response => response.json())
       .then(data => {
-        console.log('Note data for Learn1:', data);
+        console.log('Note data for Learn3:', data);
         setNewNote(data.note || '');
       })
-      .catch(error => console.error('Error fetching note for Learn1:', error));
+      .catch(error => console.error('Error fetching note for Learn3:', error));
   }, []);
 
   const progressPercentage = (completedLessons / totalLessons) * 100;
@@ -61,19 +61,19 @@ const Learn1 = () => {
       avatar: 'path_to_avatar_image.jpg',
     };
 
-    // API: Save new comment for Learn1
-    fetch('https://api.example.com/comments/learn1', {
+    // API: Save new comment for Learn3
+    fetch('https://api.example.com/comments/learn3', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newCommentData),
     })
       .then(response => response.json())
       .then(data => {
-        console.log('Comment saved for Learn1:', data);
+        console.log('Comment saved for Learn3:', data);
         setComments((prevComments) => [...prevComments, newCommentData]);
         setNewComment('');
       })
-      .catch(error => console.error('Error saving comment for Learn1:', error));
+      .catch(error => console.error('Error saving comment for Learn3:', error));
   };
 
   const handleRating = (rate) => setRating(rate);
@@ -86,18 +86,18 @@ const Learn1 = () => {
   };
 
   const handleSaveNote = () => {
-    // API: Save note for Learn1
-    fetch('https://api.example.com/notes/learn1', {
+    // API: Save note for Learn3
+    fetch('https://api.example.com/notes/learn3', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ note: newNote }),
     })
       .then(response => response.json())
       .then(data => {
-        console.log('Note saved for Learn1:', data);
+        console.log('Note saved for Learn3:', data);
         setShowNotes(false);
       })
-      .catch(error => console.error('Error saving note for Learn1:', error));
+      .catch(error => console.error('Error saving note for Learn3:', error));
   };
 
   const courseContent = [
@@ -118,9 +118,9 @@ const Learn1 = () => {
       <div className="learn1-left-section">
         <div className="learn1-video-and-controls">
           <div className="learn1-video-section">
-            <h2>1. Giới thiệu ReactJS. Tại sao nên học ReactJS?</h2>
+            <h2>3. React, Redux</h2>
             <video controls>
-              <source src="path_to_your_video.mp4" type="video/mp4" />
+              <source src="path_to_redux_video.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
@@ -143,7 +143,6 @@ const Learn1 = () => {
                 </div>
               </div>
             )}
-
             <button onClick={toggleQA} aria-label="Toggle Q&A" className="qa-button">
               <i className="fas fa-comment-dots"></i> Hỏi đáp
             </button>
@@ -180,16 +179,16 @@ const Learn1 = () => {
 
         <div className="navigation-rating-buttons">
           <div className="navigation-buttons">
-            <Link to="/">
+            <Link to="/learn2">
               <button aria-label="Previous Lesson" className="previous-button">
                 <i className="fas fa-arrow-left"></i> Bài trước
               </button>
             </Link>
-            <Link to="/learn2">
+            <Link to="/learn4">
               <button
                 aria-label="Next Lesson"
                 className="next-button"
-                onClick={() => console.log('Navigating to /learn2')}
+                onClick={() => console.log('Navigating to /learn4')}
               >
                 Tiếp theo <i className="fas fa-arrow-right"></i>
               </button>
@@ -244,4 +243,4 @@ const Learn1 = () => {
   );
 };
 
-export default Learn1;
+export default Learn3;

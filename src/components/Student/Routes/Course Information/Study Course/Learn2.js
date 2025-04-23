@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import './learn.css';
 
 const Learn2 = () => {
@@ -7,51 +7,50 @@ const Learn2 = () => {
   const [newNote, setNewNote] = useState('');
   const [showQA, setShowQA] = useState(false);
   const [showRating, setShowRating] = useState(false);
-  const [completedLessons, setCompletedLessons] = useState(0);
+  const [completedLessons, setCompletedLessons] = useState(1);
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState('');
   const [rating, setRating] = useState(0);
   const [comment, setComment] = useState('');
-  const [currentLessonId, setCurrentLessonId] = useState(2); // Track current lesson ID for Learn2
-  const [lessonData, setLessonData] = useState(null); // Track lesson data
   const totalLessons = 10;
-  const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch progress data from API
-    fetch('https://api.example.com/progress')
+    // API: Fetch progress data for Learn2
+    fetch('https://api.example.com/progress/learn2')
       .then(response => response.json())
-      .then(data => setCompletedLessons(data.completedLessons))
-      .catch(error => console.error('Error fetching progress data:', error));
+      .then(data => {
+        console.log('Progress data for Learn2:', data);
+        setCompletedLessons(data.completedLessons || 1);
+      })
+      .catch(error => {
+        console.error('Error fetching progress data for Learn2:', error);
+        setCompletedLessons(1);
+      });
 
-    // Fetch comments data from API
-    fetch('https://api.example.com/comments')
+    // API: Fetch comments data for Learn2
+    fetch('https://api.example.com/comments/learn2')
       .then(response => response.json())
-      .then(data => setComments(data.comments))
-      .catch(error => console.error('Error fetching comments data:', error));
+      .then(data => {
+        console.log('Comments data for Learn2:', data);
+        setComments(data.comments || []);
+      })
+      .catch(error => console.error('Error fetching comments data for Learn2:', error));
+
+    // API: Fetch saved note for Learn2
+    fetch('https://api.example.com/notes/learn2')
+      .then(response => response.json())
+      .then(data => {
+        console.log('Note data for Learn2:', data);
+        setNewNote(data.note || '');
+      })
+      .catch(error => console.error('Error fetching note for Learn2:', error));
   }, []);
-
-  useEffect(() => {
-    // Fetch lesson data based on currentLessonId
-    fetch(`https://api.example.com/lessons/${currentLessonId}`)
-      .then(response => response.json())
-      .then(data => setLessonData(data))
-      .catch(error => console.error('Error fetching lesson data:', error));
-  }, [currentLessonId]);
 
   const progressPercentage = (completedLessons / totalLessons) * 100;
 
-  const toggleNotes = () => {
-    setShowNotes(!showNotes);
-  };
-
-  const toggleQA = () => {
-    setShowQA(!showQA);
-  };
-
-  const toggleRating = () => {
-    setShowRating(!showRating);
-  };
+  const toggleNotes = () => setShowNotes(!showNotes);
+  const toggleQA = () => setShowQA(!showQA);
+  const toggleRating = () => setShowRating(!showRating);
 
   const handleAddComment = () => {
     if (!newComment.trim()) return;
@@ -61,13 +60,23 @@ const Learn2 = () => {
       timestamp: new Date().toLocaleString(),
       avatar: 'path_to_avatar_image.jpg',
     };
-    setComments((prevComments) => [...prevComments, newCommentData]);
-    setNewComment('');
+
+    // API: Save new comment for Learn2
+    fetch('https://api.example.com/comments/learn2', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(newCommentData),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Comment saved for Learn2:', data);
+        setComments((prevComments) => [...prevComments, newCommentData]);
+        setNewComment('');
+      })
+      .catch(error => console.error('Error saving comment for Learn2:', error));
   };
 
-  const handleRating = (rate) => {
-    setRating(rate);
-  };
+  const handleRating = (rate) => setRating(rate);
 
   const handleConfirmRating = () => {
     console.log('Rating:', rating, 'Comment:', comment);
@@ -77,20 +86,18 @@ const Learn2 = () => {
   };
 
   const handleSaveNote = () => {
-    console.log('Saved Note:', newNote);
-    setShowNotes(false);
-  };
-
-  const handlePreviousLesson = () => {
-    navigate('/learn1');
-  };
-  
-
-  const handleNextLesson = () => {
-    if (currentLessonId < totalLessons) {
-      setCurrentLessonId(currentLessonId + 1);
-      navigate(`/lesson/${currentLessonId + 1}`);
-    }
+    // API: Save note for Learn2
+    fetch('https://api.example.com/notes/learn2', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ note: newNote }),
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Note saved for Learn2:', data);
+        setShowNotes(false);
+      })
+      .catch(error => console.error('Error saving note for Learn2:', error));
   };
 
   const courseContent = [
@@ -111,9 +118,9 @@ const Learn2 = () => {
       <div className="learn1-left-section">
         <div className="learn1-video-and-controls">
           <div className="learn1-video-section">
-            <h2>{lessonData ? lessonData.title : 'Loading...'}</h2>
+            <h2>2. Lập trình ES6++</h2>
             <video controls>
-              <source src={lessonData ? lessonData.videoUrl : ''} type="video/mp4" />
+              <source src="path_to_es6_video.mp4" type="video/mp4" />
               Your browser does not support the video tag.
             </video>
           </div>
@@ -136,6 +143,7 @@ const Learn2 = () => {
                 </div>
               </div>
             )}
+
             <button onClick={toggleQA} aria-label="Toggle Q&A" className="qa-button">
               <i className="fas fa-comment-dots"></i> Hỏi đáp
             </button>
@@ -145,7 +153,7 @@ const Learn2 = () => {
                 <div className="comments-list">
                   {comments.map((comment, index) => (
                     <div key={index} className="comment">
-                      <img src={comment.avatar} alt="Avatar" className="comment-avatar" />
+                      <img src={comment.avatar} alt="Avatar" className="comment-audio" />
                       <div className="comment-details">
                         <div className="comment-user">{comment.user}</div>
                         <div className="comment-timestamp">{comment.timestamp}</div>
@@ -169,14 +177,23 @@ const Learn2 = () => {
             )}
           </div>
         </div>
+
         <div className="navigation-rating-buttons">
           <div className="navigation-buttons">
-            <button onClick={handlePreviousLesson} aria-label="Previous Lesson" className="previous-button">
-              <i className="fas fa-arrow-left"></i> Bài trước
-            </button>
-            <button onClick={handleNextLesson} aria-label="Next Lesson" className="next-button">
-              Tiếp theo <i className="fas fa-arrow-right"></i>
-            </button>
+            <Link to="/learn1">
+              <button aria-label="Previous Lesson" className="previous-button">
+                <i className="fas fa-arrow-left"></i> Bài trước
+              </button>
+            </Link>
+            <Link to="/learn3">
+              <button
+                aria-label="Next Lesson"
+                className="next-button"
+                onClick={() => console.log('Navigating to /learn3')}
+              >
+                Tiếp theo <i className="fas fa-arrow-right"></i>
+              </button>
+            </Link>
           </div>
           <button onClick={toggleRating} className="rate-button">
             <i className="fas fa-star"></i> Đánh giá khóa học
@@ -207,6 +224,7 @@ const Learn2 = () => {
           )}
         </div>
       </div>
+
       <div className="learn1-content-rating">
         <div className="learn1-content-list">
           <h3>Nội dung khóa học</h3>
@@ -214,7 +232,7 @@ const Learn2 = () => {
             {courseContent.map((lesson, index) => (
               <li key={index}>
                 {lesson}
-                {index !== 0 && (
+                {index > completedLessons && (
                   <i className="fas fa-lock" style={{ marginLeft: '8px', color: '#888' }}></i>
                 )}
               </li>
