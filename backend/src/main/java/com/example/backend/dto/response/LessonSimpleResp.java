@@ -11,7 +11,6 @@ public class LessonSimpleResp {
     private String lessonName;
     private String videoLink;
     private String resourceLink;
-    private Integer lessonOrder;
 
     public LessonSimpleResp(Long lessonId, String lessonCode, String lessonName, String videoLink,
             String resourceLink) {
@@ -22,13 +21,4 @@ public class LessonSimpleResp {
         this.resourceLink = resourceLink;
     }
 
-    public LessonSimpleResp(Long lessonId, String lessonCode, String lessonName, String videoLink,
-            String resourceLink, Integer lessonOrder) {
-        this.lessonId = lessonId;
-        this.lessonCode = lessonCode;
-        this.lessonName = lessonName;
-        this.videoLink = videoLink;
-        this.resourceLink = resourceLink;
-        this.lessonOrder = lessonOrder;
-    }
 }

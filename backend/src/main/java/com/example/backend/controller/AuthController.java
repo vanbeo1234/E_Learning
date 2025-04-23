@@ -91,8 +91,7 @@ public class AuthController {
                 successResp.put("token", resp.getToken());
                 successResp.put("errorStatus", 900);
                 successResp.put("message", "Đăng nhập thành công");
-                successResp.put("role", resp.getData() != null ? ((UserResp) resp.getData()).getRole() : null); // Thêm
-                                                                                                                // role
+                successResp.put("role", resp.getData() != null ? ((UserResp) resp.getData()).getRole() : null);
                 return ResponseEntity.ok(successResp);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(

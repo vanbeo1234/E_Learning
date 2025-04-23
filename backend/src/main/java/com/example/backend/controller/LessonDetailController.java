@@ -38,7 +38,7 @@ public class LessonDetailController {
      * @param request đối tượng chứa thông tin bài học cần cập nhật
      * @return thông tin bài học sau khi cập nhật (LessonResp)
      */
-    @PutMapping
+    @PutMapping("/update")
     public LessonResp updateLesson(@RequestBody LessonDetailReq request) {
         return lessonDetailService.updateLesson(request);
     }
@@ -61,7 +61,7 @@ public class LessonDetailController {
      * @param id ID của bài học cần xóa
      * @return ResponseEntity với thông báo xác nhận xóa thành công
      */
-    @DeleteMapping
+    @DeleteMapping("/{id}")
     public ResponseEntity<String> deleteLesson(@PathVariable Long id) {
         lessonDetailService.deleteLesson(id);
         return ResponseEntity.ok("Xóa bài học thành công!");
@@ -75,7 +75,7 @@ public class LessonDetailController {
      * @return ResponseEntity chứa danh sách bài giảng sắp xếp theo lessonOrder tăng
      *         dần
      */
-    @GetMapping
+    @GetMapping("/course/{courseId}")
     public ResponseEntity<List<LessonResp>> getLessonsByCourseId(@PathVariable Long courseId) {
         List<LessonResp> lessons = lessonDetailService.getLessonsByCourseId(courseId);
         return ResponseEntity.ok(lessons);

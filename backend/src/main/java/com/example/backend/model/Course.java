@@ -2,7 +2,6 @@ package com.example.backend.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.util.List;
 
 import java.time.LocalDate;
 
@@ -58,11 +57,5 @@ public class Course {
 
     @Column(name = "UPDATED_BY")
     private String updatedBy;
-
-    @OneToMany(mappedBy = "course")
-    private List<InstructorEnrollment> instructorEnrollments;
-
-    @OneToMany(mappedBy = "course")
-    private List<LessonDetail> lessons;
 
 }

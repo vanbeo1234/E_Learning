@@ -1,32 +1,23 @@
 package com.example.backend.repository.implement;
 
-import jakarta.persistence.TypedQuery;
-
 import com.example.backend.common.util.EmbedUtil;
 import com.example.backend.dto.request.CreateCourseReq;
 import com.example.backend.dto.request.LessonDetailReq;
 import com.example.backend.dto.request.UpdateCourseReq;
 import com.example.backend.dto.response.CourseResp;
 import com.example.backend.model.Course;
-import com.example.backend.model.InstructorEnrollment;
+import com.example.backend.model.Instructor;
 import com.example.backend.model.LessonDetail;
 import com.example.backend.model.User;
 import com.example.backend.repository.CourseRepositoryCustom;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.NoResultException;
 import jakarta.persistence.PersistenceContext;
-
 import jakarta.transaction.Transactional;
-
-import org.springframework.data.domain.PageImpl;
 import org.springframework.stereotype.Repository;
 import com.example.backend.dto.request.UpdateLessonReq;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
 
-import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -86,17 +77,12 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
      */
     @Override
     public List<CourseResp> findAllCoursesWithInstructorsAndLessons() {
-        // Sửa câu truy vấn JPQL để không sử dụng LEFT JOIN FETCH mà dùng JOIN thông
-        // thường
         return entityManager.createQuery("""
                     SELECT new com.example.backend.dto.response.CourseResp(
                         c.id, c.courseCode, c.courseName, c.description, c.learningOutcome, c.lessonCount,
-                        c.startDate, c.endDate, c.statusCode, c.backgroundImg, c.createdBy)
+                        c.startDate, c.endDate, c.statusCode, c.backgroundImg)
                     FROM Course c
-                    LEFT JOIN c.instructors  -- Thay 'LEFT JOIN FETCH' bằng 'LEFT JOIN'
-                    LEFT JOIN c.lessons  -- Thay 'LEFT JOIN FETCH' bằng 'LEFT JOIN'
-                """, CourseResp.class)
-                .getResultList();
+                """, CourseResp.class).getResultList();
     }
 
     /**
@@ -112,7 +98,7 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 .setParameter("courseCode", courseCode)
                 .getSingleResult();
 
-        InstructorEnrollment ins = InstructorEnrollment.builder()
+        Instructor ins = Instructor.builder()
                 .course(course)
                 .instructor(instructor)
                 .build();
@@ -260,6 +246,11 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
         }
     }
 
+    /**
+     * Xóa tất cả giảng viên của khóa học.
+     * 
+     * @param courseCode Mã khóa học
+     */
     @Override
     public void removeInstructorsFromCourse(String courseCode) {
         entityManager.createQuery(
@@ -273,41 +264,6 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
                 "SELECT u FROM User u WHERE u.id IN :instructorIds", User.class)
                 .setParameter("instructorIds", instructorIds)
                 .getResultList();
-    }
-
-    @Override
-    public Page<Course> searchCoursesForInstructor(String courseName, String instructorName, LocalDate createdDate,
-            String statusCode, Pageable pageable) {
-
-        String currentUser = SecurityContextHolder.getContext().getAuthentication().getName();
-
-        String queryStr = """
-                    SELECT c FROM Course c
-                    LEFT JOIN InstructorEnrollment ie ON c.id = ie.course.id
-                    LEFT JOIN User u ON ie.instructor.id = u.id
-                    LEFT JOIN LessonDetail l ON l.course.id = c.id
-                    LEFT JOIN User createdByUser ON c.createdBy = createdByUser.userCode
-                    WHERE (:courseName IS NULL OR c.courseName LIKE CONCAT('%', :courseName, '%'))
-                      AND (:instructorName IS NULL OR u.name LIKE CONCAT('%', :instructorName, '%'))
-                      AND (:createdDate IS NULL OR c.createdAt = :createdDate)
-                      AND (:statusCode IS NULL OR c.statusCode = :statusCode)
-                      AND c.createdBy = :createdBy
-                """;
-
-        TypedQuery<Course> query = entityManager.createQuery(queryStr, Course.class)
-                .setParameter("courseName", courseName)
-                .setParameter("instructorName", instructorName)
-                .setParameter("createdDate", createdDate)
-                .setParameter("statusCode", statusCode)
-                .setParameter("createdBy", currentUser);
-
-        long totalCount = query.getResultList().size();
-        query.setFirstResult((int) pageable.getOffset());
-        query.setMaxResults(pageable.getPageSize());
-
-        List<Course> courses = query.getResultList();
-
-        return new PageImpl<>(courses, pageable, totalCount);
     }
 
 }

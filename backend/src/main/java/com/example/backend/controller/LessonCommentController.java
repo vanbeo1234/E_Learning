@@ -35,7 +35,7 @@ public class LessonCommentController {
          * @return Danh sách các bình luận thuộc khóa học đó dưới dạng DTO
          *         (LessonCommentResp)
          */
-        @GetMapping
+        @GetMapping("/course/{courseCode}")
         public ResponseEntity<?> getCommentsByCourse(@PathVariable String courseCode, Pageable pageable) {
                 try {
 
