@@ -28,6 +28,11 @@ const Sidebars = () => {
             <i className="fas fa-book"></i> Tạo khóa học
           </Link>
         </li>
+        <li className="logout">
+          <Link to="/login">
+            <i className="fas fa-sign-out-alt"></i> Đăng xuất
+          </Link>
+        </li>
       </ul>
     </div>
   );

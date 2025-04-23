@@ -216,7 +216,7 @@ const CourseForm = ({ isEdit, courseId }) => {
       <div className="input-group">
         <label htmlFor={`order-${index}`}>Thứ tự</label>
         <input
-          type="number"
+          type="text"
           id={`order-${index}`}
           placeholder="Nhập thứ tự"
           value={lecture.order}
@@ -292,8 +292,6 @@ const CourseForm = ({ isEdit, courseId }) => {
     </div>
   ))}
 </div>
-
-
 
         <div className="section">
       <h2>Ảnh bìa</h2>
