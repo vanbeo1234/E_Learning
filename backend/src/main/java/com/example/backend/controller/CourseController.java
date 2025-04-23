@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 
+import java.time.LocalDate;
 import java.util.Map;
 
 /**
@@ -53,17 +54,21 @@ public class CourseController {
             @RequestParam(required = false) String instructorName,
             @RequestParam(required = false) String statusCode,
             @RequestParam(required = false) String createdBy,
+            @RequestParam(required = false) LocalDate createdDate,
             @RequestParam(defaultValue = "0") int pageNumber,
             @RequestParam(defaultValue = "5") int pageSize) {
         try {
+            // Khởi tạo CourseFilterReq với các tham số từ request
             CourseFilterReq req = new CourseFilterReq();
             req.setCourseName(courseName);
             req.setInstructorName(instructorName);
             req.setStatusCode(statusCode);
             req.setCreatedBy(createdBy);
+            req.setCreatedDate(createdDate);
             req.setPageNumber(pageNumber);
             req.setPageSize(pageSize);
 
+            // Gọi service để lấy danh sách khóa học
             Page<CourseResp> pageResult = courseService.filterCourses(req);
 
             CourseFilterResp resp = new CourseFilterResp();
@@ -192,5 +197,4 @@ public class CourseController {
                     "body", Map.of("errorStatus", 903, "message", "Lỗi hệ thống, vui lòng thử lại sau")));
         }
     }
-
 }

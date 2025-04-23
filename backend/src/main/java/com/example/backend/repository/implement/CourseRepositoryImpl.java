@@ -86,12 +86,17 @@ public class CourseRepositoryImpl implements CourseRepositoryCustom {
      */
     @Override
     public List<CourseResp> findAllCoursesWithInstructorsAndLessons() {
+        // Sửa câu truy vấn JPQL để không sử dụng LEFT JOIN FETCH mà dùng JOIN thông
+        // thường
         return entityManager.createQuery("""
                     SELECT new com.example.backend.dto.response.CourseResp(
                         c.id, c.courseCode, c.courseName, c.description, c.learningOutcome, c.lessonCount,
-                        c.startDate, c.endDate, c.statusCode, c.backgroundImg)
+                        c.startDate, c.endDate, c.statusCode, c.backgroundImg, c.createdBy)
                     FROM Course c
-                """, CourseResp.class).getResultList();
+                    LEFT JOIN c.instructors  -- Thay 'LEFT JOIN FETCH' bằng 'LEFT JOIN'
+                    LEFT JOIN c.lessons  -- Thay 'LEFT JOIN FETCH' bằng 'LEFT JOIN'
+                """, CourseResp.class)
+                .getResultList();
     }
 
     /**

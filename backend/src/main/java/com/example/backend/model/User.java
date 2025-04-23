@@ -3,6 +3,7 @@ package com.example.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 import com.example.backend.common.Enum;
+import java.util.List;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -77,4 +78,7 @@ public class User {
     public void setRole(Enum.Role role) {
         this.roleId = role.getValue();
     }
+
+    @OneToMany(mappedBy = "instructor")
+    private List<InstructorEnrollment> enrollments;
 }

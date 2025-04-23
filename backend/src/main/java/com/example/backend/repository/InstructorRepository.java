@@ -1,5 +1,6 @@
 package com.example.backend.repository;
 
+import com.example.backend.dto.response.InstructorResp;
 import com.example.backend.model.Course;
 import com.example.backend.model.InstructorEnrollment;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -26,4 +27,8 @@ public interface InstructorRepository extends JpaRepository<InstructorEnrollment
     void deleteInstructorFromCourse(@Param("courseCode") String courseCode, @Param("userCode") String userCode);
 
     List<InstructorEnrollment> findByCourse(Course course);
+
+    @Query("SELECT new com.example.backend.dto.response.InstructorResp(i.id, i.name, i.userCode, i.email, i.phone, i.dateOfBirth, i.roleId, i.statusCode, i.experience) "
+            + "FROM InstructorEnrollment ie JOIN ie.instructor i WHERE ie.course.id = :courseId")
+    List<InstructorResp> findInstructorsByCourseId(@Param("courseId") Long courseId);
 }

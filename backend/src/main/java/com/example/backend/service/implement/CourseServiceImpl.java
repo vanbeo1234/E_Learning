@@ -24,6 +24,8 @@ import com.example.backend.model.Course;
 import com.example.backend.model.InstructorEnrollment;
 import com.example.backend.model.User;
 import com.example.backend.common.Enum.Role;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -146,12 +148,6 @@ public class CourseServiceImpl implements CourseService {
                 return courseResp;
         }
 
-        /**
-         * Lọc các khóa học theo các tiêu chí và phân trang.
-         * 
-         * @param req Các yêu cầu lọc (tên khóa học, giảng viên, ngày tạo, trạng thái).
-         * @return Danh sách khóa học sau khi lọc và phân trang.
-         */
         @Override
         public Page<CourseResp> filterCourses(CourseFilterReq req) {
                 Pageable pageable = PageRequest.of(req.getPageNumber(), req.getPageSize());
@@ -163,10 +159,10 @@ public class CourseServiceImpl implements CourseService {
                 String createdBy = null;
 
                 if (user.getRoleId() == Role.INSTRUCTOR.getValue()) {
-
                         createdBy = currentUser;
+                } else if (user.getRoleId() == Role.ADMIN.getValue()) {
+                        createdBy = req.getCreatedBy(); 
                 } else {
-
                         createdBy = (req.getCreatedBy() != null && !req.getCreatedBy().isBlank()) ? req.getCreatedBy()
                                         : null;
                 }
@@ -176,20 +172,58 @@ public class CourseServiceImpl implements CourseService {
                                 req.getInstructorName(),
                                 req.getCreatedDate(),
                                 req.getStatusCode(),
-                                createdBy,
+                                createdBy, 
                                 pageable);
 
-                return page.map(course -> new CourseResp(
-                                course.getId(),
-                                course.getCourseCode(),
-                                course.getCourseName(),
-                                course.getDescription(),
-                                course.getLearningOutcome(),
-                                course.getLessonCount(),
-                                course.getStartDate(),
-                                course.getEndDate(),
-                                course.getStatusCode(),
-                                course.getBackgroundImg()));
+                return page.map(course -> {
+                        CourseResp courseResp = new CourseResp(
+                                        course.getId(),
+                                        course.getCourseCode(),
+                                        course.getCourseName(),
+                                        course.getDescription(),
+                                        course.getLearningOutcome(),
+                                        course.getLessonCount(),
+                                        course.getStartDate(),
+                                        course.getEndDate(),
+                                        course.getStatusCode(),
+                                        course.getBackgroundImg());
+
+
+                        List<InstructorResp> instructors = instructorEnrollmentRepository
+                                        .findInstructorsByCourseId(course.getId());
+                        if (instructors == null || instructors.isEmpty()) {
+                                instructors = new ArrayList<>();
+                        }
+                        courseResp.setInstructors(instructors);
+
+                        // Lấy danh sách bài giảng từ bảng LessonDetail và map sang LessonResp
+                        List<LessonSimpleResp> lessonSimpleResps = lessonDetailRepository
+                                        .findLessonsByCourseId(course.getId());
+                        List<LessonResp> lessons = new ArrayList<>();
+                        if (lessonSimpleResps != null && !lessonSimpleResps.isEmpty()) {
+                                lessons = lessonSimpleResps.stream()
+                                                .map(lesson -> new LessonResp(
+                                                                lesson.getLessonId(),
+                                                                lesson.getLessonCode(),
+                                                                lesson.getLessonOrder(),
+                                                                lesson.getLessonName(),
+                                                                lesson.getVideoLink(),
+                                                                lesson.getResourceLink()))
+                                                .collect(Collectors.toList());
+                        }
+                        courseResp.setLessons(lessons);
+
+                        for (LessonResp lesson : lessons) {
+                                if (lesson.getLessonOrder() == null) {
+                                        lesson.setLessonOrder(0);
+                                }
+                        }
+
+                        courseResp.setCreatedBy(
+                                        course.getCreatedBy() != null ? course.getCreatedBy() : "Không xác định");
+
+                        return courseResp;
+                });
         }
 
         @Override
