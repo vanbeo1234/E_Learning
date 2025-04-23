@@ -31,4 +31,6 @@ public interface LessonDetailRepository extends JpaRepository<LessonDetail, Long
                         "FROM LessonDetail l WHERE l.course.id = :courseId ORDER BY l.lessonOrder ASC")
         List<LessonSimpleResp> findLessonsByCourseId(@Param("courseId") Long courseId);
 
+        List<LessonDetail> findByCourse(Course course);
+
 }

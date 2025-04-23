@@ -1,0 +1,226 @@
+/* signupStyles.css */
+.signupBgMain {
+    background-color: white;
+  }
+  
+  .signupHeader {
+    background-color: rgb(128, 229, 255); /* Blue-200 */
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .signupLogo {
+    font-size: 30px;
+    font-weight: bold;
+    color: #008cff; /* Blue-600 */
+  }
+  
+  .signupNavContainer {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 5px;
+  }
+  
+  .signupNavLinks {
+    display: flex;
+    justify-content: space-between;
+    list-style-type: none;
+    margin: 0;
+    padding-right: 150px;
+  }
+  
+  .signupNavLink {
+    text-decoration: none;
+    padding: 10px 20px;
+    color: #333; /* Gray-600 */
+  }
+  
+  .signupNavLink:hover {
+    color: #67a9ff; /* Blue-500 */
+  }
+  
+  .signupFormContainer {
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    max-width: 650px;
+    background-color: rgb(255, 255, 255);
+    padding: 50px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    margin: auto;
+    border: 1px solid #88d5ff; /* Blue-300 */
+  }
+  
+  .signupButtonContainer {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 16px;
+    background-color: #7cb5ff;
+    padding: 15px;
+    border-radius: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .signupLoginButton {
+    padding: 15px 50px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    background-color: #edf2f7; /* Gray-200 */
+    color: #005eff; /* Blue-500 */
+    transition: background-color 0.3s;
+  }
+  
+  .signupRegisterButton {
+    padding: 15px 50px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    background-color: #4299e1; /* Blue-500 */
+    color: white;
+    margin-left: 20px;
+    transition: background-color 0.3s;
+  }
+  
+  .signupFormFields {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .signupFormGroup {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+  }
+  
+  .signupFormLabel {
+    width: 160px;
+    font-weight: bold;
+    text-align: left;
+    margin-right: 15px;
+  }
+  
+  .signupConditionalField {
+    margin-left: 175px;
+  }
+  
+  .signupFormInput {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #a8cbff; /* Blue-200 */
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .signupFormInputPhone {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #a8cbff; /* Blue-200 */
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .signupFormSelect {
+    flex: 1;
+    padding: 12px;
+    border: 1px solid #a8cbff; /* Blue-200 */
+    border-radius: 4px;
+    box-sizing: border-box;
+  }
+  
+  .signupFormPhone {
+    display: flex;
+    gap: 10px;
+    min-height: 48px;
+  }
+  
+  .signupFormPassword {
+    position: relative;
+    flex: 1;
+  }
+  
+  .signupPasswordIcon {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+  }
+  
+  .signupFormRadioGroup {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .signupFormRadio {
+    display: flex;
+    align-items: center;
+  }
+  
+  .signupFormExperience {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+  
+  .signupFormFooter {
+    display: flex;
+    justify-content: center;
+    margin-top: 25px;
+  }
+  
+  .signupFormSubmitBtn {
+    padding: 15px 40px;
+    border: none;
+    background-color: #008cff; /* Blue-500 */
+    color: white;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 20px;
+    text-align: center;
+    transition: background-color 0.3s;
+  }
+  
+  .signupCertificateContainer {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+  
+  .signupCertificateItem {
+    padding: 8px 16px;
+    background-color: #f0f0f0;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    display: flex;
+    align-items: center;
+  }
+  
+  .signupRemoveCertificateButton {
+    margin-left: 8px;
+    padding: 4px 8px;
+    background-color: #dc3545;
+    border: none;
+    border-radius: 4px;
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .errorText {
+    color: red;
+    font-size: 12px;
+    margin-top: 5px;
+    margin-left: 175px;
+  }
+  

@@ -4,4 +4,5 @@ import com.example.backend.dto.request.UpdateLessonReq;
 
 public interface LessonDetailRepositoryCustom {
     void updateLesson(UpdateLessonReq req);
+
 }

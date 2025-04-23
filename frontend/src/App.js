@@ -1,15 +1,12 @@
-import React, { useState } from 'react';
-import AuthPage from './features/auth/AuthPage'; // Import trang đăng nhập
+import { BrowserRouter as Router } from "react-router-dom";
+import AppRoutes from "./routes"; // Kiểm tra lại đường dẫn này
 
-
-const App = () => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+function App() {
   return (
-    <div>
-      <AuthPage setIsAuthenticated={setIsAuthenticated} />
-    </div>
+    <Router>
+      <AppRoutes /> {/* Cấu hình các route ở đây */}
+    </Router>
   );
-};
+}
 
 export default App;
