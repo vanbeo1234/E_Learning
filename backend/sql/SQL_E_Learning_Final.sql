@@ -2,7 +2,6 @@
 CREATE DATABASE E_LEARNING;
 USE E_LEARNING;
 
--- BẢNG ROLE (DANH SÁCH CÁC VAI TRÒ)
 CREATE TABLE ROLE (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     ROLE_NAME NVARCHAR(50) NOT NULL
@@ -12,16 +11,16 @@ CREATE TABLE STATUS_MANAGEMENT (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     STATUS_CODE NVARCHAR(20) NOT NULL, 
     TYPE NVARCHAR(20) NOT NULL, -- LOẠI TRẠNG THÁI (USER, COURSE, REQUEST)
-    DESCRIPTION NVARCHAR(255) NULL -- MÔ TẢ TRẠNG THÁI
+    DESCRIPTION NVARCHAR(255) NULL 
 );
 
 CREATE TABLE USER (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     USER_CODE NVARCHAR(50) UNIQUE NOT NULL, 
-    ENCRYPTION_KEY NVARCHAR(255) NULL,
+    ENCRYPTION_KEY NVARCHAR(1000) NULL,
     NAME NVARCHAR(255) NOT NULL,
     EMAIL NVARCHAR(255) UNIQUE NOT NULL,
-    PASSWORD NVARCHAR(255) NOT NULL,
+    PASSWORD NVARCHAR(1000) NOT NULL,
     PHONE NVARCHAR(20),
     ADDRESS NVARCHAR(255),
     GENDER INT(1) NOT NULL DEFAULT 0, 
@@ -51,7 +50,6 @@ CREATE TABLE ROLE_FUNCTION (
     FOREIGN KEY (FUNCTION_ID) REFERENCES SYSTEM_FUNCTION(ID) ON DELETE CASCADE
 );
 
--- BẢNG COURSE (LƯU THÔNG TIN KHÓA HỌC)
 CREATE TABLE COURSE (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     COURSE_CODE NVARCHAR(20) NOT NULL,
@@ -69,7 +67,6 @@ CREATE TABLE COURSE (
     UPDATED_AT TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
 );
 
--- SỬA BẢNG COURSE_DETAIL ĐỂ LƯU DANH SÁCH VIDEO DƯỚI DẠNG JSON
 CREATE TABLE LESSON_DETAIL (
     ID INT PRIMARY KEY AUTO_INCREMENT,
     LESSON_CODE NVARCHAR(20) NOT NULL,
@@ -81,11 +78,10 @@ CREATE TABLE LESSON_DETAIL (
     FOREIGN KEY (COURSE_ID) REFERENCES COURSE(ID) ON DELETE CASCADE
 );
 
--- BẢNG CHAT_MESSAGE
 CREATE TABLE LESSON_COMMENT (
     ID INT PRIMARY KEY AUTO_INCREMENT,
-    COURSE_CODE INT NOT NULL,
-    LESSON_ID INT NOT NULL,
+    COURSE_CODE NVARCHAR(20) NOT NULL,
+    LESSON_ID INT NULL,
     SEND_USER_ID NVARCHAR(50) NOT NULL,
     MESSAGE NVARCHAR(300) NOT NULL,
     COMMENT_TIME TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -120,33 +116,7 @@ CREATE TABLE NOTIFICATION (
     FOREIGN KEY (COURSE_ID) REFERENCES COURSE(ID) ON DELETE CASCADE 
 );
 
--- THÊM DỮ LIỆU VÀO BẢNG ROLE
-INSERT INTO ROLE (ROLE_NAME) VALUES ('ADMIN'), ('INSTRUCTOR'), ('STUDENT');
-
--- TRIGGER TẠO MÃ NGƯỜI DÙNG
-DELIMITER $$
-
-CREATE TRIGGER TRG_BEFORE_INSERT_USER
-BEFORE INSERT ON USER
-FOR EACH ROW
-BEGIN
-    DECLARE MAX_CODE VARCHAR(10);
-    DECLARE NEXT_NUMBER INT;
-
-    SELECT RIGHT(USER_CODE, 4) INTO MAX_CODE FROM USER ORDER BY USER_CODE DESC LIMIT 1;
-
-    IF MAX_CODE IS NULL THEN
-        SET NEXT_NUMBER = 1;
-    ELSE
-        SET NEXT_NUMBER = MAX_CODE + 1;
-    END IF;
-
-    SET NEW.USER_CODE = CONCAT('US', LPAD(NEXT_NUMBER, 4, '0'));
-END$$
-
-DELIMITER ;
--- --------------------------------------
--- CHÈN DỮ LIỆU
+-- ------------------------------------------------------------------------------------------------------------------
 -- Thêm dữ liệu vào bảng Role
 INSERT INTO Role (Role_Name) VALUES ('Admin'), ('Instructor'), ('Student');
 
@@ -157,32 +127,15 @@ INSERT INTO Status_Management (Status_Code, Type, Description) VALUES
 ('ACTIVE', 'Course', 'Khóa học đang mở'),
 ('INACTIVE', 'Course', 'Khóa học bị đóng');
 
-INSERT INTO User (Name, Email, Password, Phone, Address, Gender, Date_Of_Birth, Role_ID, Status_Code, Experience, Certification, Created_By) 
-VALUES 
-('Nguyễn Văn A', 'a@example.com', '123456', '0123456789', 'Hà Nội', 1, '1990-01-01', 1, 'ACTIVE', 5, 'Java Cert', 'Admin'),
-('Trần Thị B', 'b@example.com', '123456', '0987654321', 'TP HCM', 0, '1995-05-15', 2, 'ACTIVE', 3, 'Python Cert', 'Admin'),
-('Lê Văn C', 'c@example.com', '123456', '0365478921', 'Đà Nẵng', 1, '2000-07-20', 3, 'INACTIVE', NULL, NULL, 'Admin');
+-- ------------------------------------------------------------------------------------------------------------------
+-- Admin
+INSERT INTO USER (USER_CODE,NAME,EMAIL,PASSWORD,PHONE,ADDRESS,GENDER,DATE_OF_BIRTH,ROLE_ID,STATUS_CODE,CREATED_BY) 
+VALUES ('admin002','Second Admin','admin2@example.com','$2a$10$SEHzzyRjaQGLHZa2c9mWce9ubebMIBzG2GCn2h2tYPv8pR9tTeMqy','0987654321','Admin HQ',1,'1995-02-20',1,'ACTIVE','SYSTEM');
 
--- ------------------------------------------------------------
--- ĐỔI DỮ LIỆU
--- Vì dữ kiểu dữ liệu giữa cột Send_User_ID trong bảng lesson_comment và cột user_code trong bảng user không tương thích => chạy câu lệnh này để thực hiện API tìm kiếm
--- 1. Xóa ràng buộc khóa ngoại (thay 'lesson_comment_ibfk_2' bằng đúng tên khóa ngoại của bạn)
-ALTER TABLE lesson_comment DROP FOREIGN KEY lesson_comment_ibfk_2;
-
--- 2. Chỉnh sửa kiểu dữ liệu cột user_code trong bảng user
-ALTER TABLE user MODIFY COLUMN user_code VARCHAR(255) NOT NULL;
-
--- 3. Đảm bảo cột Send_User_ID có cùng kiểu dữ liệu với user_code
-ALTER TABLE lesson_comment MODIFY COLUMN Send_User_ID VARCHAR(255);
-
--- 4. Tạo lại khóa ngoại
-ALTER TABLE lesson_comment ADD CONSTRAINT lesson_comment_ibfk_2 
-FOREIGN KEY (Send_User_ID) REFERENCES user(user_code) ON DELETE CASCADE ON UPDATE CASCADE;
-
--- 5. Kiểm tra
-SELECT column_name, character_set_name, collation_name
-FROM information_schema.columns
-WHERE table_name IN ('lesson_comment', 'user') AND column_name IN ('Send_User_ID', 'user_code');
--- -------------------------------------------------------------
-
-SELECT * FROM user;
+-- ---------------------------------------------------------------------------
+-- truy vấn lấy ra danh sách học viên trong khóa học theo ID khóa học
+SELECT U.NAME AS STUDENT_NAME, C.COURSE_NAME
+FROM STUDENT_ENROLLMENT S
+JOIN USER U ON S.STUDENT_ID = U.ID
+JOIN COURSE C ON S.COURSE_ID = C.ID
+WHERE C.ID = 4;
