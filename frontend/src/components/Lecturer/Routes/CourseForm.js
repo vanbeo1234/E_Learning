@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate for navigation
 import Modal from '../Layouts/Modal';
 import '../Style/giangvien.css';
+import { useNavigate, useParams } from 'react-router-dom';
 
-const CourseForm = ({ isEdit, courseId }) => {
-  const navigate = useNavigate(); // Use navigate for SPA routing
+
+const CourseForm = ({ isEdit }) => {
+  const navigate = useNavigate();
+  const { courseId } = useParams(); // Get courseId from URL for edit mode
   const [courseName, setCourseName] = useState('');
   const [courseContent, setCourseContent] = useState('');
   const [objectives, setObjectives] = useState([]);
@@ -12,10 +14,14 @@ const CourseForm = ({ isEdit, courseId }) => {
   const [coverImage, setCoverImage] = useState(null);
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
-  const [instructor, setInstructor] = useState(''); // New state for instructor
+  const [instructor, setInstructor] = useState('');
+  const [category, setCategory] = useState(''); // Added for Homes compatibility
+  const [duration, setDuration] = useState(''); // Added for Homes compatibility
+  const [courseVideo, setCourseVideo] = useState(''); // Added for CourseInfo
+  const [learnWhatYouGet, setLearnWhatYouGet] = useState([]); // Added for CourseInfo
   const [showSuccessModal, setShowSuccessModal] = useState(false);
   const [showCancelModal, setShowCancelModal] = useState(false);
-  const [showInstructorModal, setShowInstructorModal] = useState(false); // New state for instructor modal
+  const [showInstructorModal, setShowInstructorModal] = useState(false);
   const [errors, setErrors] = useState({});
 
   // Fetch course data for editing
@@ -23,19 +29,23 @@ const CourseForm = ({ isEdit, courseId }) => {
     if (isEdit && courseId) {
       try {
         const storedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
-        const courseToEdit = storedCourses.find((course) => course.id === courseId);
+        const courseToEdit = storedCourses.find((course) => course.id === parseInt(courseId));
         if (courseToEdit) {
-          setCourseName(courseToEdit.name);
-          setCourseContent(courseToEdit.description);
-          setObjectives(courseToEdit.objectives);
+          setCourseName(courseToEdit.courseName || '');
+          setCourseContent(courseToEdit.description || '');
+          setObjectives(courseToEdit.objectives || []);
           setLectures(courseToEdit.lectures.map((lecture) => ({
             ...lecture,
-            videoType: lecture.videoType || 'url', // Ensure videoType is set
-          })));
-          setCoverImage(courseToEdit.image);
-          setStartDate(courseToEdit.startDate);
-          setEndDate(courseToEdit.endDate);
-          setInstructor(courseToEdit.instructor || ''); // Set instructor
+            videoType: lecture.videoType || 'url',
+          })) || [{ order: '', name: '', video: '', document: '', videoType: 'url' }]);
+          setCoverImage(courseToEdit.image || null);
+          setStartDate(courseToEdit.startDate || '');
+          setEndDate(courseToEdit.endDate || '');
+          setInstructor(courseToEdit.instructor || '');
+          setCategory(courseToEdit.category || '');
+          setDuration(courseToEdit.duration || '');
+          setCourseVideo(courseToEdit.courseVideo || '');
+          setLearnWhatYouGet(courseToEdit.learnWhatYouGet || []);
         }
       } catch (error) {
         console.error('Error reading from localStorage:', error);
@@ -54,8 +64,11 @@ const CourseForm = ({ isEdit, courseId }) => {
       newErrors.dateRange = 'Ngày bắt đầu phải trước ngày kết thúc';
     }
     if (!coverImage) newErrors.coverImage = 'Ảnh bìa là bắt buộc';
+    if (!category.trim()) newErrors.category = 'Danh mục là bắt buộc';
+    if (!duration.trim()) newErrors.duration = 'Thời lượng là bắt buộc';
     if (objectives.length === 0) newErrors.objectives = 'Mục tiêu là bắt buộc';
-    if (!instructor) newErrors.instructor = 'Giảng viên là bắt buộc'; // Validate instructor
+    if (lectures.length === 0) newErrors.lectures = 'Ít nhất một bài giảng phải có';
+    if (learnWhatYouGet.length === 0) newErrors.learnWhatYouGet = 'Ít nhất một mục "Học được gì" phải có';
 
     lectures.forEach((lecture, index) => {
       if (!lecture.name.trim()) {
@@ -76,18 +89,25 @@ const CourseForm = ({ isEdit, courseId }) => {
   const handleSave = () => {
     if (validateForm()) {
       const newCourse = {
-        id: isEdit ? courseId : Date.now(),
-        name: courseName,
+        id: isEdit ? parseInt(courseId) : Date.now(),
+        courseName,
         description: courseContent,
         image: coverImage || 'https://storage.googleapis.com/a1aa/image/0TzyXeqJ-3SrhNVPfxvj8ePIWFBxnJLCDSIO-0TWOhU.jpg',
         objectives,
         lectures,
         startDate,
         endDate,
-        creationDate: new Date().toISOString().split('T')[0],
+        creationDate: isEdit ? new Date().toISOString().split('T')[0] : new Date().toISOString().split('T')[0],
         status: 'Hoạt động',
-        instructor, // Use state value
+        instructor,
         lessons: lectures.length,
+        category,
+        duration,
+        courseContent: lectures.map((lecture) => ({ title: lecture.name })),
+        courseInfo: { title: courseName, description: courseContent },
+        courseVideo: courseVideo || 'https://www.youtube.com/embed/sampleVideo',
+        courseDateTime: { date: startDate, time: '08:00 AM' },
+        learnWhatYouGet,
       };
 
       try {
@@ -112,12 +132,12 @@ const CourseForm = ({ isEdit, courseId }) => {
   const handleFileUpload = (index, file) => {
     if (file) {
       const updatedLectures = [...lectures];
-      updatedLectures[index].video = URL.createObjectURL(file); // Store URL instead of File
+      updatedLectures[index].video = URL.createObjectURL(file);
       setLectures(updatedLectures);
     }
   };
 
-  // Instructor modal handler (placeholder implementation)
+  // Instructor modal handler
   const handleOpenInstructorModal = () => {
     setShowInstructorModal(true);
   };
@@ -129,15 +149,15 @@ const CourseForm = ({ isEdit, courseId }) => {
 
   // Navigation handlers
   const handleConfirmCancel = () => {
-    navigate('/courses'); // Redirect to course list
+    navigate('/courses');
   };
 
   const handleCloseSuccessModal = () => {
     setShowSuccessModal(false);
-    navigate('/courses'); // Redirect to course list
+    navigate('/courses');
   };
 
-  // Other unchanged handlers (summarized for brevity)
+  // Other handlers
   const handleCancel = () => setShowCancelModal(true);
   const handleCloseCancelModal = () => setShowCancelModal(false);
   const handleAddObjective = () => setObjectives([...objectives, '']);
@@ -158,10 +178,17 @@ const CourseForm = ({ isEdit, courseId }) => {
     const file = e.target.files[0];
     if (file) setCoverImage(URL.createObjectURL(file));
   };
+  const handleAddLearnWhatYouGet = () => setLearnWhatYouGet([...learnWhatYouGet, '']);
+  const handleRemoveLearnWhatYouGet = (index) => setLearnWhatYouGet(learnWhatYouGet.filter((_, i) => i !== index));
+  const handleLearnWhatYouGetChange = (index, value) => {
+    const newLearnWhatYouGet = [...learnWhatYouGet];
+    newLearnWhatYouGet[index] = value;
+    setLearnWhatYouGet(newLearnWhatYouGet);
+  };
 
   return (
     <div className="course-details">
-      {/* Mô tả Section (unchanged) */}
+      {/* Mô tả Section */}
       <div className="section">
         <h2>Mô tả</h2>
         <div className="input-group">
@@ -183,9 +210,38 @@ const CourseForm = ({ isEdit, courseId }) => {
           />
           {errors.courseContent && <span className="error">{errors.courseContent}</span>}
         </div>
+        <div className="input-group">
+          <label htmlFor="category">Danh mục<span style={{ color: 'red' }}>*</span></label>
+          <input
+            type="text"
+            id="category"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          />
+          {errors.category && <span className="error">{errors.category}</span>}
+        </div>
+        <div className="input-group">
+          <label htmlFor="duration">Thời lượng<span style={{ color: 'red' }}>*</span></label>
+          <input
+            type="text"
+            id="duration"
+            value={duration}
+            onChange={(e) => setDuration(e.target.value)}
+          />
+          {errors.duration && <span className="error">{errors.duration}</span>}
+        </div>
+        <div className="input-group">
+          <label htmlFor="course-video">Video giới thiệu</label>
+          <input
+            type="text"
+            id="course-video"
+            value={courseVideo}
+            onChange={(e) => setCourseVideo(e.target.value)}
+          />
+        </div>
       </div>
 
-      {/* Mục tiêu Section (unchanged) */}
+      {/* Mục tiêu Section */}
       <div className="section">
         <h2>Mục tiêu</h2>
         <div className="add-new" onClick={handleAddObjective}>
@@ -205,6 +261,30 @@ const CourseForm = ({ isEdit, courseId }) => {
             </button>
           </div>
         ))}
+        {errors.objectives && <span className="error">{errors.objectives}</span>}
+      </div>
+
+      {/* Học được gì Section */}
+      <div className="section">
+        <h2>Học được gì</h2>
+        <div className="add-new" onClick={handleAddLearnWhatYouGet}>
+          <i className="fas fa-plus"></i>
+          <span>Thêm mới</span>
+        </div>
+        {learnWhatYouGet.map((item, index) => (
+          <div className="input-group" key={index}>
+            <input
+              type="text"
+              placeholder="Nhập nội dung học được"
+              value={item}
+              onChange={(e) => handleLearnWhatYouGetChange(index, e.target.value)}
+            />
+            <button className="remove-btn" onClick={() => handleRemoveLearnWhatYouGet(index)}>
+              <i className="fas fa-trash"></i>
+            </button>
+          </div>
+        ))}
+        {errors.learnWhatYouGet && <span className="error">{errors.learnWhatYouGet}</span>}
       </div>
 
       {/* Nội dung khóa học Section */}
@@ -293,9 +373,10 @@ const CourseForm = ({ isEdit, courseId }) => {
             </div>
           </div>
         ))}
+        {errors.lectures && <span className="error">{errors.lectures}</span>}
       </div>
 
-      {/* Ảnh bìa Section (unchanged) */}
+      {/* Ảnh bìa Section */}
       <div className="section">
         <h2>Ảnh bìa</h2>
         <div
@@ -316,9 +397,10 @@ const CourseForm = ({ isEdit, courseId }) => {
             id="cover-image-upload"
           />
         </div>
+        {errors.coverImage && <span className="error">{errors.coverImage}</span>}
       </div>
 
-      {/* Thời gian học Section (unchanged) */}
+      {/* Thời gian học Section */}
       <div className="learning-time-section">
         <h2>Thời gian học</h2>
         <div className="learning-time-row">
@@ -343,16 +425,9 @@ const CourseForm = ({ isEdit, courseId }) => {
             {errors.endDate && <span className="learning-time-error">{errors.endDate}</span>}
           </div>
         </div>
+        {errors.dateRange && <span className="learning-time-error">{errors.dateRange}</span>}
       </div>
 
-      {/* Chọn giảng viên Section */}
-      <div className="select-instructor-group">
-        <h2>Chọn giảng viên <span style={{ color: 'red' }}>*</span></h2>
-        <button className="select-instructor-btn" onClick={handleOpenInstructorModal}>
-          {instructor || 'Chọn giảng viên'}
-        </button>
-        {errors.instructor && <span className="error">{errors.instructor}</span>}
-      </div>
 
       {/* Footer Buttons */}
       <div className="footer-buttons">
@@ -375,13 +450,11 @@ const CourseForm = ({ isEdit, courseId }) => {
         onConfirm={handleConfirmCancel}
         onCancel={handleCloseCancelModal}
       />
-      {/* Placeholder Instructor Modal */}
       <Modal
         show={showInstructorModal}
         title="Chọn giảng viên"
         onCancel={() => setShowInstructorModal(false)}
       >
-        {/* Placeholder: Replace with actual instructor selection UI */}
         <div>
           <button onClick={() => handleSelectInstructor('Giảng viên A')}>Giảng viên A</button>
           <button onClick={() => handleSelectInstructor('Giảng viên B')}>Giảng viên B</button>
