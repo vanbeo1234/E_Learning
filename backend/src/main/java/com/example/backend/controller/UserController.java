@@ -44,47 +44,23 @@ public class UserController {
      * @return ResponseEntity chứa danh sách người dùng và thông tin phân trang.
      */
     @GetMapping
-    public ResponseEntity<Map<String, Object>> getAllUsers(
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<UserResp> resultPage = userService.getAllUsers(pageable);
-
-        Map<String, Object> response = new HashMap<>();
-        response.put("errorStatus", 900);
-        response.put("message", "Lấy danh sách người dùng thành công");
-        response.put("data", resultPage.getContent());
-        response.put("pagination", Map.of(
-                "totalPages", resultPage.getTotalPages(),
-                "totalItems", resultPage.getTotalElements(),
-                "currentPage", resultPage.getNumber()));
-
-        return ResponseEntity.ok(response);
-    }
-
-    /**
-     * API Tìm kiếm người dùng theo các tiêu chí.
-     * 
-     * @param name        Tên người dùng cần tìm kiếm (tùy chọn).
-     * @param dateOfBirth Ngày sinh người dùng (tùy chọn).
-     * @param roleId      Vai trò người dùng (tùy chọn).
-     * @param statusCode  Mã trạng thái người dùng (tùy chọn).
-     * @param page        Số trang cần lấy (mặc định là 0).
-     * @param size        Kích thước mỗi trang (mặc định là 10).
-     * @return ResponseEntity chứa danh sách người dùng tìm được và thông tin phân
-     *         trang.
-     */
-    @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> searchUsers(
+    public ResponseEntity<Map<String, Object>> getUsers(
             @RequestParam(required = false) String name,
             @RequestParam(required = false) LocalDateTime dateOfBirth,
-            @RequestParam(defaultValue = "0") Integer roleId,
+            @RequestParam(required = false) Integer roleId,
             @RequestParam(required = false) String statusCode,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
         Pageable pageable = PageRequest.of(page, size);
-        Page<UserResp> resultPage = userService.searchUsers(name, dateOfBirth, roleId, statusCode, pageable);
+        Page<UserResp> resultPage;
+
+        // Nếu không có tiêu chí tìm kiếm nào, gọi hàm getAll
+        if (name == null && dateOfBirth == null && roleId == null && statusCode == null) {
+            resultPage = userService.getAllUsers(pageable);
+        } else {
+            resultPage = userService.searchUsers(name, dateOfBirth, roleId != null ? roleId : 0, statusCode, pageable);
+        }
 
         Map<String, Object> response = new HashMap<>();
         response.put("errorStatus", 900);
@@ -107,7 +83,7 @@ public class UserController {
      * @throws Exception                nếu có lỗi hệ thống trong quá trình cập
      *                                  nhật.
      */
-    @PutMapping("/update")
+    @PutMapping
     public ResponseEntity<Map<String, Object>> updateUser(@RequestBody UserReq request) {
         try {
 

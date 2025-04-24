@@ -3,6 +3,7 @@ package com.example.backend.controller;
 import com.example.backend.dto.request.UserRegisterReq;
 import com.example.backend.dto.request.UserReq;
 import com.example.backend.dto.response.AuthResp;
+import com.example.backend.dto.response.UserResp;
 import com.example.backend.service.AuthService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -90,6 +91,7 @@ public class AuthController {
                 successResp.put("token", resp.getToken());
                 successResp.put("errorStatus", 900);
                 successResp.put("message", "Đăng nhập thành công");
+                successResp.put("role", resp.getData() != null ? ((UserResp) resp.getData()).getRole() : null);
                 return ResponseEntity.ok(successResp);
             } else {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of(
