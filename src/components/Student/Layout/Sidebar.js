@@ -1,9 +1,10 @@
 import React from 'react';
-import { useLocation, Link } from 'react-router-dom'; 
+import { Link, useLocation } from 'react-router-dom';
 import '../Style/hocvien.css';
 
-const Sidebar = () => {
+const Sidebar = ({ handleLogout }) => {
   const location = useLocation();
+
   const getActivePage = () => {
     const path = location.pathname.slice(1);
     return path || 'home';
@@ -14,29 +15,29 @@ const Sidebar = () => {
       <h2>E LEARNING</h2>
       <ul>
         <li>
-          <a href="/" className={getActivePage() === 'home' ? 'active' : ''}>
+          <Link to="/home" className={getActivePage() === 'home' ? 'active' : ''}>
             <i className="fas fa-home"></i> Trang chủ
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/my-course" className={getActivePage() === 'my-course' ? 'active' : ''}>
+          <Link to="/my-course" className={getActivePage() === 'my-course' ? 'active' : ''}>
             <i className="fas fa-book"></i> Khóa học của tôi
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/progress" className={getActivePage() === 'progress' ? 'active' : ''}>
+          <Link to="/progress" className={getActivePage() === 'progress' ? 'active' : ''}>
             <i className="fas fa-chart-line"></i> Tiến độ học tập
-          </a>
+          </Link>
         </li>
         <li>
-          <a href="/article" className={getActivePage() === 'posts' ? 'active' : ''}>
+          <Link to="/article" className={getActivePage() === 'article' ? 'active' : ''}>
             <i className="fas fa-newspaper"></i> Bài viết
-          </a>
+          </Link>
         </li>
         <li className="logout">
-          <Link to="/login">
+          <button onClick={handleLogout} className="logout-button">
             <i className="fas fa-sign-out-alt"></i> Đăng xuất
-          </Link>
+          </button>
         </li>
       </ul>
     </div>

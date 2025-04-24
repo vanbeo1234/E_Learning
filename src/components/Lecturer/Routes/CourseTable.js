@@ -17,7 +17,7 @@ const CourseTable = () => {
     const storedCourses = JSON.parse(localStorage.getItem('courses') || '[]');
     setCourses(storedCourses);
     setFilteredCourses(storedCourses);
-  }, []);
+  }, []); // Note: You might want to add a dependency or polling for real-time updates
 
   const handleSearch = () => {
     let filtered = [...courses];

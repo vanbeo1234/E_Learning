@@ -1,9 +1,13 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import './App.css';
+import { CourseProvider } from './components/Admin/Course/Function/Context/CourseContext';
+
+// Guest Components
+import Welcome from './components/Page/Welcome';
 import Login from './components/Page/Login';
 import Signup from './components/Page/Signup';
-import Welcome from'./components/Page/Welcome';
+
 // Student Components
 import Sidebar from './components/Student/Layout/Sidebar';
 import Header from './components/Student/Layout/Header';
@@ -16,14 +20,14 @@ import CourseReactJS from './components/Student/Routes/Course Information/Course
 import Learn1 from './components/Student/Routes/Course Information/Study Course/Learn1';
 import Learn2 from './components/Student/Routes/Course Information/Study Course/Learn2';
 import Learn3 from './components/Student/Routes/Course Information/Study Course/Learn3';
+
 // Lecturer Components
 import Sidebars from './components/Lecturer/Layouts/Sidebar';
-import Headers from'./components/Lecturer/Layouts/Header';
+import Headers from './components/Lecturer/Layouts/Header';
 import Homes from './components/Lecturer/Routes/Homes';
 import CourseForm from './components/Lecturer/Routes/CourseForm';
 import CourseInfo from './components/Lecturer/Routes/CourseInfo';
 import CourseTable from './components/Lecturer/Routes/CourseTable';
-import CourseList from './components/Lecturer/Routes/CourseList';
 import FeedbackList from './components/Lecturer/Routes/FeedbackList';
 import Feature from './components/Lecturer/Routes/Feature';
 
@@ -32,59 +36,342 @@ import Headera from './components/Admin/Layout/Headera';
 import Sidebara from './components/Admin/Layout/Sidebara';
 import UserManagement from './components/Admin/User/UserManagement';
 import AddUserModal from './components/Admin/User/Function/Add';
-import ConfirmModal from './components/Admin/Course/Function/Confirm';
 import EditUserModal from './components/Admin/User/Function/Edit';
 import UserSearchForm from './components/Admin/User/Function/Search';
 import CourseManagement from './components/Admin/Course/CourseManagement';
 import AddCourse from './components/Admin/Course/Function/AddCourse';
-import ConfirmModalCousre from './components/Admin/Course/Function/Confirm';
 import EditCourse from './components/Admin/Course/Function/EditCourse';
 import SearchCourses from './components/Admin/Course/Function/Search';
 import Modala from './components/Admin/Course/Function/Modala';
-import { CourseProvider } from './components/Admin/Course/Function/Context/CourseContext';
 
+// PrivateRoute Component for Role-Based Access
+const PrivateRoute = ({ children, allowedRoles }) => {
+  const token = localStorage.getItem('token');
+  const userRole = localStorage.getItem('userRole');
 
+  if (!token) {
+    return <Navigate to="/login" />;
+  }
+
+  if (!allowedRoles.includes(userRole)) {
+    return <Navigate to="/" />;
+  }
+
+  return children;
+};
+
+// AppContent Component to Handle Layout and Footer Logic
+function AppContent() {
+  const location = useLocation();
+  // Include /course/:courseId in footer paths
+  const showFooterPaths = ['/home', '/my-course', '/progress', '/article', '/course/:courseId'];
+  const shouldShowFooter = showFooterPaths.includes(location.pathname) || location.pathname.startsWith('/course/');
+
+  // Logout Handler
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    localStorage.removeItem('userRole');
+    localStorage.removeItem('userCode');
+    window.location.href = '/login'; // Force redirect to login
+  };
+
+  return (
+    <div className="app-wrapper">
+      <Routes>
+        {/* Guest Routes */}
+        <Route path="/" element={<Welcome />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+
+        {/* Student Routes */}
+        <Route
+          path="/home"
+          element={
+            <PrivateRoute allowedRoles={['Student']}>
+              <div className="container">
+                <Sidebar handleLogout={handleLogout} />
+                <div className="content">
+                  <Header title="Trang chủ" isSearch={true} />
+                  <Home />
+                </div>
+              </div>
+              {shouldShowFooter && <Footer />}
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/my-course"
+          element={
+            <PrivateRoute allowedRoles={['Student']}>
+              <div className="container">
+                <Sidebar handleLogout={handleLogout} />
+                <div className="content">
+                  <Header title="Khóa học của tôi" />
+                  <MyCourse />
+                </div>
+              </div>
+              {shouldShowFooter && <Footer />}
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/progress"
+          element={
+            <PrivateRoute allowedRoles={['Student']}>
+              <div className="container">
+                <Sidebar handleLogout={handleLogout} />
+                <div className="content">
+                  <Header title="Tiến độ học tập" />
+                  <LearningProgress />
+                </div>
+              </div>
+              {shouldShowFooter && <Footer />}
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/article"
+          element={
+            <PrivateRoute allowedRoles={['Student']}>
+              <div className="container">
+                <Sidebar handleLogout={handleLogout} />
+                <div className="content">
+                  <Header title="Bài viết" />
+                  <Article />
+                </div>
+              </div>
+              {shouldShowFooter && <Footer />}
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/course/:courseId"
+          element={
+            <PrivateRoute allowedRoles={['Student']}>
+              <div className="container">
+                <Sidebar handleLogout={handleLogout} />
+                <div className="content">
+                  <Header title="Thông tin khóa học" />
+                  <CourseReactJS />
+                </div>
+              </div>
+              {shouldShowFooter && <Footer />}
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/learn1"
+          element={
+            <PrivateRoute allowedRoles={['Student']}>
+              <div className="container">
+                <Sidebar handleLogout={handleLogout} />
+                <div className="content">
+                  <Header title="Học ReactJS" />
+                  <Learn1 />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/learn2"
+          element={
+            <PrivateRoute allowedRoles={['Student']}>
+              <div className="container">
+                <Sidebar handleLogout={handleLogout} />
+                <div className="content">
+                  <Header title="Học ReactJS" />
+                  <Learn2 />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/learn3"
+          element={
+            <PrivateRoute allowedRoles={['Student']}>
+              <div className="container">
+                <Sidebar handleLogout={handleLogout} />
+                <div className="content">
+                  <Header title="Học ReactJS" />
+                  <Learn3 />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Lecturer Routes */}
+        <Route
+          path="/homeg"
+          element={
+            <PrivateRoute allowedRoles={['Lecturer']}>
+              <div className="container">
+                <Sidebars handleLogout={handleLogout} />
+                <div className="content">
+                  <Headers title="Trang chủ giảng viên" />
+                  <Homes />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/courses"
+          element={
+            <PrivateRoute allowedRoles={['Lecturer']}>
+              <div className="container">
+                <Sidebars handleLogout={handleLogout} />
+                <div className="content">
+                  <Headers title="Danh sách khóa học" />
+                  <CourseTable />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/create-course"
+          element={
+            <PrivateRoute allowedRoles={['Lecturer']}>
+              <div className="container">
+                <Sidebars handleLogout={handleLogout} />
+                <div className="content">
+                  <Headers title="Tạo khóa học mới" />
+                  <CourseForm isEdit={false} />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit-course/:id"
+          element={
+            <PrivateRoute allowedRoles={['Lecturer']}>
+              <div className="container">
+                <Sidebars handleLogout={handleLogout} />
+                <div className="content">
+                  <Headers title="Chỉnh sửa khóa học" />
+                  <Feature isEdit={true} />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/course-info/:id"
+          element={
+            <PrivateRoute allowedRoles={['Lecturer', 'Student']}>
+              <div className="container">
+                {localStorage.getItem('userRole') === 'Lecturer' ? (
+                  <Sidebars handleLogout={handleLogout} />
+                ) : (
+                  <Sidebar handleLogout={handleLogout} />
+                )}
+                <div className="content">
+                  {localStorage.getItem('userRole') === 'Lecturer' ? (
+                    <Headers title="Thông tin khóa học" />
+                  ) : (
+                    <Header title="Thông tin khóa học" />
+                  )}
+                  <CourseInfo />
+                </div>
+              </div>
+              {shouldShowFooter && localStorage.getItem('userRole') === 'Student' && <Footer />}
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/feedback"
+          element={
+            <PrivateRoute allowedRoles={['Lecturer']}>
+              <div className="container">
+                <Sidebars handleLogout={handleLogout} />
+                <div className="content">
+                  <Headers title="Phản hồi từ học viên" />
+                  <FeedbackList />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Admin Routes */}
+        <Route
+          path="/user-management"
+          element={
+            <PrivateRoute allowedRoles={['Admin']}>
+              <div className="container">
+                <Sidebara handleLogout={handleLogout} />
+                <div className="main-content">
+                  <Headera title="Quản lý người dùng" />
+                  <UserManagement />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/course-management"
+          element={
+            <PrivateRoute allowedRoles={['Admin']}>
+              <div className="container">
+                <Sidebara handleLogout={handleLogout} />
+                <div className="main-content">
+                  <Headera title="Quản lý khóa học" />
+                  <CourseManagement />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/add-course"
+          element={
+            <PrivateRoute allowedRoles={['Admin']}>
+              <div className="container">
+                <Sidebara handleLogout={handleLogout} />
+                <div className="main-content">
+                  <Headera title="Thêm khóa học" />
+                  <AddCourse />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/edit-course-admin/:id"
+          element={
+            <PrivateRoute allowedRoles={['Admin']}>
+              <div className="container">
+                <Sidebara handleLogout={handleLogout} />
+                <div className="main-content">
+                  <Headera title="Chỉnh sửa khóa học" />
+                  <EditCourse />
+                </div>
+              </div>
+            </PrivateRoute>
+          }
+        />
+
+        {/* Redirect Unknown Routes */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </div>
+  );
+}
 
 function App() {
   return (
     <Router>
-      <div className="app-wrapper">
-          <Sidebars />
-          <div className="content">
-            <Routes>
-              <Route
-                path="/homeg"
-                element={<><Headers title="Trang chủ giảng viên" /><Homes /></>}
-              />
-              <Route
-                path="/courses"
-                element={<><Headers title="Danh sách khóa học" /><CourseTable /></>}
-              />
-              <Route
-                path="/create-course"
-                element={<><Headers title="Tạo khóa học mới" /><CourseForm isEdit={false} /></>}
-              />
-              <Route
-                path="/edit-course/:id"
-                element={<><Headers title="Chỉnh sửa khóa học" /><Feature isEdit={true} /></>}
-              />
-              <Route
-                path="/course-info/:id"
-                element={<><Headers title="Thông tin khóa học" /><CourseInfo /></>}
-              />
-              <Route
-                path="/feedback"
-                element={<><Headers title="Phản hồi từ học viên" /><FeedbackList /></>}
-              />
-              <Route path="*" element={<Navigate to="/homeg" />} />
-            </Routes>
-          </div>
-        </div>
+      <CourseProvider>
+        <AppContent />
+      </CourseProvider>
     </Router>
   );
 }
 
-// Make sure you're exporting the App component by default
 export default App;
 
 
@@ -214,6 +501,9 @@ export default App;
             <Route path="/article" element={<><Header title="Bài viết" /><Article /></>} />
             <Route path="/course/:courseId" element={<><Header title="Thông tin khóa học" /><CourseReactJS courses={courses} /></>} />
             <Route path="/learn1" element={<><Header title="Học ReactJS" /><Learn1 /></>} />
+            <Route path="/learn2" element={<><Header title="Học ReactJS" /><Learn2 /></>} />
+            <Route path="/learn3" element={<><Header title="Học ReactJS" /><Learn3 /></>} />
+            
             <Route path="*" element={<Navigate to="/home" />} />
           </Routes>
         </div>
@@ -234,16 +524,6 @@ function App() {
 export default App; 
    */
 
-
-      /**        <div className="container">
-        <Sidebara />
-        <Routes>
-                    <Route path="/user-management" element={<><Headera title="Quản lý người dùng" /><UserManagement /></>} />
-                    <Route path="/course-management" element={<><Headera title="Quản lý khóa học" /><CourseManagement courses={courses} /></>} />
-                    <Route path="/add-course" element={<><Headera title="Thêm khóa học" /><AddCourseModal /></>} />
-                    <Route path="/" element={<Navigate to="/admin/course-management" />} />
-                  </Routes>
-        </div> */
 
 
       /*giangvien
