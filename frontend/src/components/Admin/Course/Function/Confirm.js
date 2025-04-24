@@ -1,6 +1,7 @@
 import React from 'react';
+import '../../Style/adcm.css';
 
-const ConfirmModal = ({ message, onConfirm, onCancel }) => {
+const ConfirmModalCourse = ({ message, onConfirm, onCancel }) => {
   return (
     <div className="modal confirm-modal">
       <div className="confirm-modal-content">
@@ -15,4 +16,4 @@ const ConfirmModal = ({ message, onConfirm, onCancel }) => {
   );
 };
 
-export default ConfirmModal;
+export default ConfirmModalCourse;

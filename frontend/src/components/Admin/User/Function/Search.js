@@ -1,5 +1,6 @@
 // File: components/UserManagement/Function/Search.jsx
 import React from 'react';
+import '../../Style/adum.css';
 
 const UserSearchForm = ({ searchCriteria, handleSearchChange, handleSearch }) => {
   return (

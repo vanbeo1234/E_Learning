@@ -1,5 +1,6 @@
 // components/CourseManagement/Function/Search.jsx
 import React from 'react';
+import '../../Style/adcm.css';
 
 const SearchCourses = ({ criteria, onChange, onSearch }) => {
   return (

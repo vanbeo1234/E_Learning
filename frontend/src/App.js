@@ -1,72 +1,139 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
 import './App.css';
-import Login from './components/Login';
-import Signup from './components/Signup';
-import Footer from './components/Hocvien/Footer';
-import Sidebar from './components/Hocvien/Sidebar';
-import Header from './components/Hocvien/Header';
-import Home from './components/Hocvien/Home';
-import MyCourse from './components/Hocvien/MyCourse';
-import LearningProgress from './components/Hocvien/LearningProgress';
-import Article from './components/Hocvien/Article';
-import CourseReactJS from './components/Hocvien/Course Information/CourseReactJS';
-import Learn1 from './components/Hocvien/Course Information/Study Course/Learn1';
-import UserManagement from './components/Admin/User/UserManagement';
-import CourseManagement from './components/Admin/Course/CourseManagement';
-import Headera from './components/Admin/Headera';
-import Sidebara from './components/Admin/Sidebara';
-import AddCourseModal from './components/Admin/Course/Function/AddCourse';
-import EditCourse from './components/Admin/Course/Function/EditCourse';
-import CourseForm from './components/giangvien/CourseForm';
-import FeedbackList from './components/giangvien/FeedbackList';
-import CourseTable from './components/giangvien/CourseTable';
-import CourseInfo from './components/giangvien/CourseInfo';
-import Sidebars from './components/giangvien/Sidebar';
-import Headers from './components/giangvien/Header';
-import Homeg from './components/giangvien/Homeg';
-import Feature from './components/giangvien/Feature';
+import Login from './components/Page/Login';
+import Signup from './components/Page/Signup';
+import Welcome from './components/Page/Welcome';
 
+import Sidebar from './components/Student/Layout/Sidebar';
+import Header from './components/Student/Layout/Header';
+import Footer from './components/Student/Layout/Footer';
+import Home from './components/Student/Routes/Home';
+import MyCourse from './components/Student/Routes/MyCourse';
+import LearningProgress from './components/Student/Routes/LearningProgress';
+import Article from './components/Student/Routes/Article';
+import CourseReactJS from './components/Student/Routes/Course Information/CourseReactJS';
+import Learn1 from './components/Student/Routes/Course Information/Study Course/Learn1';
+
+import Headers from './components/Student/Layout/Header';
+import Sidebars from './components/Lecturer/Layouts/Sidebar';
+import Modals from './components/Lecturer/Layouts/Modal';
+import Homes from './components/Lecturer/Routes/Homes';
+import CourseForm from './components/Lecturer/Routes/CourseForm';
+import CourseInfo from './components/Lecturer/Routes/CourseInfo';
+import CourseTable from './components/Lecturer/Routes/CourseTable';
+import CourseList from './components/Lecturer/Routes/CourseList';
+import FeedbackList from './components/Lecturer/Routes/FeedbackList';
+import Feature from './components/Lecturer/Routes/Feature';
+
+import Headera from './components/Admin/Layout/Headera';
+import Sidebara from './components/Admin/Layout/Sidebara';
+import UserManagement from './components/Admin/User/UserManagement';
+import AddUserModal from './components/Admin/User/Function/Add';
+import ConfirmModal from './components/Admin/Course/Function/Confirm';
+import EditUserModal from './components/Admin/User/Function/Edit';
+import UserSearchForm from './components/Admin/User/Function/Search';
+import CourseManagement from './components/Admin/Course/CourseManagement';
+import AddCourse from './components/Admin/Course/Function/AddCourse';
+import ConfirmModalCourse from './components/Admin/Course/Function/Confirm';
+import EditCourse from './components/Admin/Course/Function/EditCourse';
+import SearchCourses from './components/Admin/Course/Function/Search';
+import Modala from './components/Admin/Course/Function/Modala';
+import { CourseProvider } from './components/Admin/Course/Function/Context/CourseContext';
 
 function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(
+    !!localStorage.getItem('token')
+  );
+
   return (
-    <Router>
-      <Routes>
-        <Route
-          path="/user-management"
-          element={
-            <div className="app-container">
-              <Sidebara />
-              <div className="app-content">
-                <Headera />
-                <div className="main-content">
-                  <UserManagement />
+    <CourseProvider>
+      <Router>
+        <Routes>
+          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/signup" element={<Signup setIsAuthenticated={setIsAuthenticated} />} />
+          <Route
+            path="/user-management"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera />
+                    <div className="main-content">
+                      <UserManagement />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          }
-        />
-        <Route
-          path="/course-management"
-          element={
-            <div className="app-container">
-              <Sidebara />
-              <div className="app-content">
-                <Headera />
-                <div className="main-content">
-                  <CourseManagement />
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/course-management"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera />
+                    <div className="main-content">
+                      <CourseManagement />
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          }
-        />
-        <Route path="/" element={<div>Welcome to the Admin Dashboard</div>} />
-      </Routes>
-    </Router>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/add-course"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera />
+                    <div className="main-content">
+                      <AddCourse />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route
+            path="/edit-course/:id"
+            element={
+              isAuthenticated ? (
+                <div className="app-container">
+                  <Sidebara />
+                  <div className="app-content">
+                    <Headera />
+                    <div className="main-content">
+                      <EditCourse />
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <Navigate to="/login" />
+              )
+            }
+          />
+          <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
+        </Routes>
+      </Router>
+    </CourseProvider>
   );
 }
 
 export default App;
+
+
 
 
 /**            <Route path="/user-management" element={<UserManagement />} />
@@ -207,4 +274,4 @@ export default App;
       
       <Route path="/" element={<Navigate to={isAuthenticated ? "/user-management" : "/login"} />} />
     </Routes>
-  </Router>* */
+  </Router>* */ 
