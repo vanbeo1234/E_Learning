@@ -106,7 +106,7 @@ public class CourseServiceImpl implements CourseService {
                 List<InstructorResp> instructorResps = courseRepository.findInstructorsByCourseId(courseId);
                 List<LessonResp> lessonResps = courseRepository.findDetailedLessonsByCourseId(courseId);
 
-                courseResp.setInstructors(instructorResps);
+                courseResp.setInstructor(instructorResps);
                 courseResp.setLessons(lessonResps);
                 courseResp.setCreatedBy(currentUser);
 
@@ -159,10 +159,11 @@ public class CourseServiceImpl implements CourseService {
                                         course.getBackgroundImg());
 
                         Long courseId = course.getId();
-                        List<InstructorResp> instructors = courseRepository.findInstructorsByCourseId(courseId);
+                        User instructor = courseRepository.findInstructor(currentUser);
+                        InstructorResp instructorDto = new InstructorResp(instructor.getId(), instructor.getName());
                         List<LessonResp> lessons = courseRepository.findDetailedLessonsByCourseId(courseId);
 
-                        resp.setInstructors(instructors);
+                        resp.setInstructor(instructorDto);
                         resp.setLessons(lessons);
                         resp.setCreatedBy(course.getCreatedBy());
 

@@ -417,7 +417,7 @@ function Welcome() {
     {/* Logo + Info */}
     <div className="welcome-footer-column">
       <div className="welcome-footer-logo">
-        <div className="welcome-logo-box">E-LEARNING</div>
+        <div className="welcome-logo-box">Contact</div>
       </div>
       <p>
         <strong>Điện thoại:</strong> +84 123 456 789

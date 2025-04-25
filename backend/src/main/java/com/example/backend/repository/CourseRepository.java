@@ -5,6 +5,8 @@ import com.example.backend.dto.response.InstructorResp;
 import com.example.backend.dto.response.LessonResp;
 
 import com.example.backend.model.Course;
+import com.example.backend.model.User;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -127,6 +129,10 @@ public interface CourseRepository extends JpaRepository<Course, Long>, CourseRep
         @Query("SELECT new com.example.backend.dto.response.InstructorResp(u.id, u.name, u.userCode, u.email, u.phone, u.dateOfBirth, u.roleId, u.statusCode, u.experience) "
                         + "FROM Instructor i JOIN i.instructor u WHERE i.course.id = :courseId")
         List<InstructorResp> findInstructorsByCourseId(@Param("courseId") Long courseId);
+
+
+        @Query("SELECT name, email, phone, address FROM USER WHERE userCode = : userCode")
+        User findInstructor(@Param("userCode") String userCode);
 
         @Query("SELECT new com.example.backend.dto.response.LessonResp(l.id, l.lessonCode, l.lessonOrder, l.lessonName, l.videoLink, l.resourceLink) "
                         +

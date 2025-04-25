@@ -169,7 +169,7 @@ const Signup = ({ setIsAuthenticated }) => {
       const hasLowerCase = /[a-z]/.test(cleanedPassword);
       const hasDigit = /\d/.test(cleanedPassword);
       const hasSpecialChar = /[^a-zA-Z0-9]/.test(cleanedPassword);
-      if (cleanedPassword.length < 12 || !hasUpperCase || !hasLowerCase || !hasDigit || !hasSpecialChar) {
+      if (cleanedPassword.length < 8 || !hasUpperCase || !hasLowerCase || !hasDigit || !hasSpecialChar) {
         setPasswordError('Mật khẩu phải có ít nhất 12 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.');
         toast.error('Mật khẩu phải có ít nhất 12 ký tự, bao gồm chữ hoa, chữ thường, số và ký tự đặc biệt.');
         isValid = false;

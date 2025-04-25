@@ -23,7 +23,7 @@ public class CourseResp {
     private LocalDate startDate;
     private LocalDate endDate;
     private String statusCode;
-    private List<InstructorResp> instructors;
+    private InstructorResp instructor;
 
     private List<LessonResp> lessons;
     private String createdBy;
